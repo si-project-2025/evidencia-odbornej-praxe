@@ -13,7 +13,7 @@
   <section class="section-container h-full flex flex-col items-center justify-center gap-12">
     <div class="flex flex-col gap-1 text-center">
       <h1>Evidencia odbornej praxe</h1>
-      <p>Univerzita Konštantína Filozofa v Nitre :)</p>
+      <p>Univerzita Konštantína Filozofa v Nitre :),</p>
     </div>
     <img :src="Logo" alt="Logo" class="w-1/2" />
   </section>
