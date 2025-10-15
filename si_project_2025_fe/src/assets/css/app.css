@@ -45,7 +45,7 @@
 
 @layer layout {
   .section-container {
-    @apply my-3 py-6;
+    @apply mx-10 my-6;
   }
 }
 

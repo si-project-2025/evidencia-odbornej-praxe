@@ -11,8 +11,8 @@
     </div>
 
     <div class="flex flex-row gap-2">
-      <Button variant="secondary">Registrovať</Button>
-      <Button variant="primary">Prihlásiť sa</Button>
+      <Button variant="secondary" href="/">Registrovať</Button>
+      <Button variant="primary" href="/">Prihlásiť sa</Button>
     </div>
   </nav>
 </template>
