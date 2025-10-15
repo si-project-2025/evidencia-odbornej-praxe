@@ -29,12 +29,12 @@
   }
 
   h2 {
-    @apply font-montserrat font-black text-lg sm:text-xl lg:text-2xl
+    @apply font-montserrat font-bold text-lg sm:text-xl lg:text-2xl
     leading-[1.1] uppercase;
   }
 
   h3 {
-    @apply font-montserrat font-black text-base sm:text-lg lg:text-xl
+    @apply font-montserrat font-bold text-base sm:text-lg lg:text-xl
     leading-[1.1] uppercase;
   }
 }
@@ -45,7 +45,7 @@
 
 @layer layout {
   .section-container {
-    @apply mx-10 my-6;
+    @apply mx-10 my-6 2xl:mx-16 2xl:my-8;
   }
 }
 
