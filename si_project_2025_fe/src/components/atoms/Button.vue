@@ -8,26 +8,30 @@
     },
     href: {
       type: String,
-      default: '/',
+      default: '',
+    },
+    type: {
+      type: String as () => 'button' | 'submit',
+      default: 'button',
     },
   })
 
   const variantClasses = computed(() => {
     switch (props.variant) {
       case 'secondary':
-        return 'text-secondary border border-secondary hover:text-white hover:bg-secondary transition duration-500'
+        return 'text-secondary border border-secondary hover:text-white hover:bg-secondary'
       default:
-        return 'text-white border border-secondary bg-secondary hover:text-secondary hover:bg-white transition duration-500'
+        return 'text-white bg-secondary border border-secondary hover:text-secondary hover:bg-white'
     }
   })
 </script>
 
 <template>
-  <a
-    :href="href"
-    class="text-center font-semibold text-md rounded-md px-4 py-2"
-    :class="variantClasses"
-  >
+  <a v-if="href" :href="href" class="button" :class="variantClasses">
     <slot></slot>
   </a>
+
+  <button v-else :type="type" class="button" :class="variantClasses">
+    <slot></slot>
+  </button>
 </template>
