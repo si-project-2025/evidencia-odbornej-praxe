@@ -5,7 +5,7 @@
   --font-inter: 'Inter', ui-sans-serif, system-ui, sans-serif;
 
   --color-primary: #F9F0E5;
-  --color-secondary: #009959;
+  --color-secondary: #00A35F;
   --color-dark: #333333;
 
   --breakpoint-*: initial;
@@ -47,10 +47,30 @@
   .section-container {
     @apply mx-10 my-6 2xl:mx-16 2xl:my-8;
   }
+
+  .form-container {
+    @apply flex flex-col items-center gap-6
+    rounded-md px-12 py-8 border border-dark/50;
+  }
 }
 
 @layer components {
+  .button {
+    @apply text-center font-semibold rounded-md
+    px-4 py-2 transition duration-500;
+  }
+
   .nav-link {
     @apply font-semibold text-secondary hover:text-dark;
+  }
+
+  .input {
+    @apply border rounded p-2 border-dark/50
+    focus:border-2 focus:outline-none focus:border-secondary;
+  }
+
+  .checkbox {
+    @apply size-4 flex justify-center items-center
+    transition duration-500 rounded-sm;
   }
 }
