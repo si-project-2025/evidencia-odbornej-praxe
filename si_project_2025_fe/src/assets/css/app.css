@@ -50,14 +50,14 @@
 
   .form-container {
     @apply flex flex-col items-center gap-6
-    rounded-md px-12 py-8 border border-dark/50;
+    rounded-md px-12 py-8 border border-dark/40;
   }
 }
 
 @layer components {
   .button {
     @apply text-center font-semibold rounded-md
-    px-4 py-2 transition duration-500;
+    px-4 py-2 transition duration-500 cursor-pointer;
   }
 
   .nav-link {

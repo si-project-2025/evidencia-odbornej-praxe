@@ -2,12 +2,13 @@
   import { defineProps, defineEmits } from 'vue'
 
   defineProps({
-    modelValue: { type: String, required: true },
+    modelValue: { type: [String, Number, null], required: true },
     label: { type: String, default: '' },
     id: { type: String, default: '' },
     type: { type: String, default: 'text' },
     placeholder: { type: String, default: '' },
     required: { type: Boolean, default: true },
+    error: { type: [String, null], default: null },
   })
 
   const emits = defineEmits(['update:modelValue'])
@@ -26,9 +27,10 @@
       :type="type"
       :placeholder="placeholder"
       :required="required"
-      class="w-full input"
+      class="w-full input mb-1"
       :value="modelValue"
       @input="updateValue"
     />
+    <span class="text-red-600">{{ error }}</span>
   </div>
 </template>
