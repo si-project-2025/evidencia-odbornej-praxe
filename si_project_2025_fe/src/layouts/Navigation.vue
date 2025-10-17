@@ -12,8 +12,8 @@
       <div class="font-semibold text-xl">Evidencia odbornej praxe</div>
     </a>
 
-    <div class="flex flex-col md:flex-row gap-2 w-full md:w-fit">
-      <Button variant="secondary" href="/">Registrovať</Button>
+    <div class="flex flex-col md:flex-row gap-4 w-full md:w-fit">
+      <Button variant="secondary" href="/registration">Registrovať</Button>
       <Button variant="primary" href="/login">Prihlásiť sa</Button>
     </div>
   </nav>
