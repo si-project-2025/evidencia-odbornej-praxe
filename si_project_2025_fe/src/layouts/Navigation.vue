@@ -1,6 +1,9 @@
 <script setup lang="ts">
   import Button from '@/components/atoms/Button.vue'
   import Logo from '@/assets/images/logo-fpv.png'
+  import { useUserStore } from '@/stores/userStore'
+  const userStore = useUserStore()
+  userStore.loadUser()
 </script>
 
 <template>
@@ -12,9 +15,21 @@
       <div class="font-semibold text-xl">Evidencia odbornej praxe</div>
     </a>
 
-    <div class="flex flex-col md:flex-row gap-4 w-full md:w-fit">
-      <Button variant="secondary" href="/registration">Registrovať</Button>
-      <Button variant="primary" href="/login">Prihlásiť sa</Button>
-    </div>
+    <template v-if="!userStore.user">
+      <div class="flex flex-col md:flex-row gap-4 w-full md:w-fit">
+        <Button variant="secondary" href="/registration">Registrovať</Button>
+        <Button variant="primary" href="/login">Prihlásiť sa</Button>
+      </div>
+    </template>
+
+    <template v-else>
+      <div class="flex flex-col md:flex-row gap-4 w-full md:w-fit">
+        <Button variant="primary" href="/">{{ userStore.user.name }}</Button>
+
+        <Button variant="secondary" @click="userStore.logout()">Odhlásiť</Button>
+      </div>
+    </template>
+
+
   </nav>
 </template>
