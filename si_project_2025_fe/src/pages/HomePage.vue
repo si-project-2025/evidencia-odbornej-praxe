@@ -18,15 +18,17 @@
         <h1>odbornej praxe</h1>
         <h2>Prehľadne a jednoducho</h2>
       </div>
+
       <p>
         Moderný systém na evidenciu odbornej praxe pre študentov a firmy. Umožňuje rýchlo zaznamenať priebeh praxe a mať
         všetko dôležité na jednom mieste.
       </p>
+
       <p>
         Sleduj pridané praxe, nahrávaj potvrdenia, kontroluj ich schválenia a udržuj si prehľad. Všetko pohodlne online,
         bez zbytočných papierov.
       </p>
-      <p></p>
+
       <Button class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
     </div>
 
