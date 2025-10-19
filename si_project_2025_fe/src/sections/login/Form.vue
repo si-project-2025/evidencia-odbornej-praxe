@@ -5,6 +5,7 @@
   import Checkbox from '@/components/form/Checkbox.vue'
   import Input from '@/components/form/Input.vue'
   import Button from '@/components/atoms/Button.vue'
+  import { RouterLink } from 'vue-router'
 
   const form = reactive<LoginForm>({
     email: '',
@@ -38,6 +39,6 @@
     <Button type="submit" class="w-[80%]">Prihlásiť sa</Button>
 
     <p v-if="submitError" class="text-red-600">{{ submitError }}</p>
-    <a href="/" class="font-light hover:underline">Zabudli ste heslo?</a>
+    <RouterLink to="/forgot-password" class="font-light hover:underline">Zabudli ste heslo?</RouterLink>
   </form>
 </template>
