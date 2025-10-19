@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('companies', function (Blueprint $table) {
             $table->integer('company_id', true);
-            $table->string('name', 255)->unique('name_unique');
+            $table->string('name', 191)->unique('name_unique');
             $table->integer('address_id')->index('fk_companies_address1_idx');
         });
     }

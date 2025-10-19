@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->integer('users_id', true);
-            $table->string('email', 255)->unique('email_unique');
+            $table->string('email', 191)->unique('email_unique');
             $table->string('password', 255);
             $table->string('alt_email', 255)->nullable();
             $table->string('name', 100);
@@ -24,6 +24,7 @@ return new class extends Migration
             $table->timestamp('last_login')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->integer('role_id')->index('fk_users_roles_idx');
             $table->integer('address_id')->index('fk_users_address1_idx');
+            $table->rememberToken();
         });
     }
 
