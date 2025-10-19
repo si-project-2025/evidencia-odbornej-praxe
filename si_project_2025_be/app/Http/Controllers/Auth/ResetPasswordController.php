@@ -9,16 +9,30 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
 use App\Models\User;
+use Illuminate\Support\Facades\Validator;
 
 class ResetPasswordController extends Controller
 {
     public function reset(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'token' => 'required',
             'email' => 'required|email',
             'password' => 'required|min:8|confirmed',
-        ]);
+        ],[
+            'token.required' => 'Platnosť tokenu vypršala.',
+            'email.required' => 'Chyba pri zisťovaní e-mailu',
+            'password.required' => 'Prosím, zadajte nové heslo.',
+            'password.min' => 'Heslo musí mať aspoň 8 znakov.',
+            'password.confirmed' => 'Heslá sa musia zhodovať.',
+            ]
+        );
+        if ($validator->fails()) {
+            // Pošleme všetky chyby naraz na forntend
+            return response()->json([
+                'errors' => $validator->errors()->all()
+            ], 422);}
+
 
         try {
             // Skúsime nájsť záznam v password_reset_tokens

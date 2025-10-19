@@ -39,25 +39,30 @@
       })
       successMessage.value = response.data.message ?? 'Heslo bolo úspešne zmenené.'
     } catch (err: unknown) {
-      submitError.value = axios.isAxiosError(err)
-        ? (err.response?.data?.message ?? 'Pri zmene hesla nastala chyba.')
-        : 'Pri zmene hesla nastala chyba.'
+      if (axios.isAxiosError(err)) {
+        // Ak backend poslal pole chýb
+        if (err.response?.data?.errors) {
+          submitError.value = err.response.data.errors.join('\n')
+        } else {
+          submitError.value = err.response?.data?.message ?? 'Pri zmene hesla nastala chyba.'
+        }
+      } else {
+        submitError.value = 'Pri zmene hesla nastala chyba.'
+      }
     }
   }
 </script>
 
 <template>
   <form @submit.prevent="resetPassword" class="form-container w-full md:w-1/2 2xl:w-1/3">
-    <template v-if="!successMessage && !submitError">
+    <template v-if="!successMessage">
       <Input v-model="password" id="password" label="Nové heslo" type="password" />
       <Input v-model="password_confirmation" id="password_confirmation" label="Potvrďte heslo" type="password" />
 
       <Button type="submit" class="w-[80%]">Zmeniť heslo</Button>
     </template>
-    <template v-else>
-      <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
-      <p v-if="submitError" class="text-red-600 mt-2">{{ submitError }}</p>
-    </template>
+    <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
+    <p v-if="submitError" class="text-red-600 mt-2 whitespace-pre-line">{{ submitError }}</p>
 
     <RouterLink to="/login" class="font-light hover:underline">Späť na prihlásenie</RouterLink>
   </form>
