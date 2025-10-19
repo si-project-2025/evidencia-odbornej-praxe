@@ -11,14 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Address
- * 
+ *
  * @property int $address_id
  * @property string $country
  * @property string $city
  * @property string $zip_code
  * @property string $street
  * @property string $house_number
- * 
+ *
  * @property Collection|Company[] $companies
  * @property Collection|User[] $users
  *
@@ -40,11 +40,11 @@ class Address extends Model
 
 	public function companies()
 	{
-		return $this->hasMany(Company::class);
+		return $this->hasMany(Company::class, 'address_id', 'address_id');
 	}
 
 	public function users()
 	{
-		return $this->hasMany(User::class);
+		return $this->hasMany(User::class, 'address_id', 'address_id');
 	}
 }

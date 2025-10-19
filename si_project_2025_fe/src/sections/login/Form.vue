@@ -25,8 +25,6 @@
 
     try {
       const response = await axios.post('http://localhost:8000/api/login', form)
-      console.log(response.data)
-      // handle success (store token, redirect, etc.)
       userStore.setUser(response.data)
       router.push('/')
     } catch (err: unknown) {
