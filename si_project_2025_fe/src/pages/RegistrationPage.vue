@@ -17,7 +17,7 @@
 
     <div class="mt-4">
       <span class="mr-2">Už máte účet?</span>
-      <a href="/login" class="font-semibold text-secondary hover:underline">Prihláste sa</a>
+      <RouterLink to="/login" class="font-semibold text-secondary hover:underline">Prihláste sa</RouterLink>
     </div>
   </section>
 </template>
