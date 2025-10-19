@@ -5,6 +5,11 @@
   import Checkbox from '@/components/form/Checkbox.vue'
   import Input from '@/components/form/Input.vue'
   import Button from '@/components/atoms/Button.vue'
+  import { useUserStore } from '@/stores/userStore'
+  import { useRouter } from 'vue-router'
+
+  const userStore = useUserStore()
+  const router = useRouter()
 
   const form = reactive<LoginForm>({
     email: '',
@@ -18,9 +23,11 @@
     submitError.value = ''
 
     try {
-      const response = await axios.post('/login', form)
+      const response = await axios.post('http://localhost:8000/api/login', form)
       console.log(response.data)
       // handle success (store token, redirect, etc.)
+      userStore.setUser(response.data)
+      router.push('/')
     } catch (err: unknown) {
       submitError.value = axios.isAxiosError(err)
         ? (err.response?.data?.message ?? 'Pri prihlasovaní nastala chyba.')
