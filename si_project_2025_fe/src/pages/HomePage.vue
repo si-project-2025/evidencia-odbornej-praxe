@@ -16,29 +16,18 @@
       <div class="space-y-1.5">
         <h1>Evidencia</h1>
         <h1>odbornej praxe</h1>
+        <h2>Prehľadne a jednoducho</h2>
       </div>
       <p>
-        Informatika je dnes nevyhnutnou súčasťou bežného života. Prídete s ňou do kontaktu v rôznych
-        podobách avšak prakticky v každom odbore. Aplikovaná informatika svojim obsahom pokrýva
-        široké spektrum aplikácií súvisiacich so získavaním, vyhľadávaním, prenosom, zhromažďovaním,
-        organizáciou, ukladaním, interpretáciou, prezentovaním a využívaním informácií a znalostí v
-        rôznych podobách.
+        Moderný systém na evidenciu odbornej praxe pre študentov a firmy. Umožňuje rýchlo zaznamenať priebeh praxe a mať
+        všetko dôležité na jednom mieste.
       </p>
       <p>
-        Informatika je dnes nevyhnutnou súčasťou bežného života. Prídete s ňou do kontaktu v rôznych
-        podobách avšak prakticky v každom odbore. Aplikovaná informatika svojim obsahom pokrýva
-        široké spektrum aplikácií súvisiacich so získavaním, vyhľadávaním, prenosom, zhromažďovaním,
-        organizáciou, ukladaním, interpretáciou, prezentovaním a využívaním informácií a znalostí v
-        rôznych podobách.
+        Sleduj pridané praxe, nahrávaj potvrdenia, kontroluj ich schválenia a udržuj si prehľad. Všetko pohodlne online,
+        bez zbytočných papierov.
       </p>
-      <p>
-        Informatika je dnes nevyhnutnou súčasťou bežného života. Prídete s ňou do kontaktu v rôznych
-        podobách avšak prakticky v každom odbore. Aplikovaná informatika svojim obsahom pokrýva
-        široké spektrum aplikácií súvisiacich so získavaním, vyhľadávaním, prenosom, zhromažďovaním,
-        organizáciou, ukladaním, interpretáciou, prezentovaním a využívaním informácií a znalostí v
-        rôznych podobách.
-      </p>
-      <Button class="lg:w-1/3" href="/">Pridať prax</Button>
+      <p></p>
+      <Button class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
     </div>
 
     <img :src="Logo" alt="Logo" class="lg:w-[40%]" />

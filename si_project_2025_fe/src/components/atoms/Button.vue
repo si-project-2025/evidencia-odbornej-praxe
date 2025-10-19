@@ -27,9 +27,9 @@
 </script>
 
 <template>
-  <a v-if="href" :href="href" class="button" :class="variantClasses">
+  <RouterLink v-if="href" :to="href" class="button" :class="variantClasses">
     <slot></slot>
-  </a>
+  </RouterLink>
 
   <button v-else :type="type" class="button" :class="variantClasses">
     <slot></slot>
