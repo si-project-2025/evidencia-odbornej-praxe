@@ -42,7 +42,7 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $primaryKey = 'users_id';
-    public $timestamps = false;
+
 
     protected $casts = [
         'last_login' => 'datetime',
@@ -67,7 +67,8 @@ class User extends Authenticatable
 
     public function address()
     {
-        return $this->belongsTo(Address::class);
+        return $this->belongsTo(Address::class, 'address_id', 'id');
+
     }
 
     public function role()

@@ -13,7 +13,9 @@ Route::get('/user', function (Request $request) {
 
 Route::apiResource('posts', PostController::class);
 
+Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
+Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);

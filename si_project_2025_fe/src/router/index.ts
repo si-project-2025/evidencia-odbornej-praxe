@@ -31,6 +31,11 @@ const routes = [
     name: 'Reset_Password',
     component: ResetPasswordPage,
   },
+  {
+    path: '/set-password',
+    name: 'SetPassword',
+    component: () => import('@/pages/SetPasswordPage.vue')
+  },
 ]
 
 const router = createRouter({
