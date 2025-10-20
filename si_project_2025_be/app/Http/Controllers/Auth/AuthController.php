@@ -208,6 +208,7 @@ class AuthController extends Controller
             ], 200);
         } catch (\Exception $e) {
             Log::error('Logout failed: ' . $e->getMessage());
+
             return response()->json([
                 'message' => 'Odhlásenie zlyhalo.'
             ], 500);
