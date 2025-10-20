@@ -194,4 +194,20 @@ class AuthController extends Controller
             'user' => $user
         ]);
     }
+
+    public function logout(Request $request): JsonResponse
+    {
+        try {
+            $request->user()->currentAccessToken()->delete();
+
+            return response()->json([
+                'message' => 'Úspešne odhlásený.'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Logout failed: ' . $e->getMessage());
+            return response()->json([
+                'message' => 'Odhlásenie zlyhalo.'
+            ], 500);
+        }
+    }
 }

@@ -1,4 +1,6 @@
 import { defineStore } from 'pinia'
+import axios from 'axios'
+import { useRouter } from 'vue-router'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
@@ -11,6 +13,7 @@ export const useUserStore = defineStore('user', {
       this.token = data.access_token
       localStorage.setItem('token', data.access_token)
       localStorage.setItem('user', JSON.stringify(data.user))
+      axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`
     },
     loadUser() {
       const token = localStorage.getItem('token')
@@ -18,13 +21,29 @@ export const useUserStore = defineStore('user', {
       if (token && user) {
         this.token = token
         this.user = JSON.parse(user)
+        axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
       }
     },
-    logout() {
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      this.user = null
-      this.token = null
+    async logout() {
+      const router = useRouter()
+
+      try {
+        await axios.post('http://localhost:8000/api/logout', {}, {
+          headers: {
+            'Authorization': `Bearer ${this.token}`
+          }
+        })
+      } catch (error) {
+        console.error('Logout API error:', error)
+      } finally {
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        this.user = null
+        this.token = null
+        delete axios.defaults.headers.common['Authorization']
+
+        router.push('/login')
+      }
     }
   }
 })
