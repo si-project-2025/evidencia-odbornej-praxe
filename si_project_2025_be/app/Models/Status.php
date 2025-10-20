@@ -11,10 +11,10 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Status
- * 
+ *
  * @property int $status_id
  * @property string $type
- * 
+ *
  * @property Collection|Internship[] $internships
  *
  * @package App\Models
@@ -31,6 +31,6 @@ class Status extends Model
 
 	public function internships()
 	{
-		return $this->hasMany(Internship::class);
+		return $this->hasMany(Internship::class, 'status_id', 'status_id');
 	}
 }

@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Internship
- * 
+ *
  * @property int $internships_id
  * @property string $semester
  * @property int $hours_total
@@ -23,7 +23,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $users_id
  * @property int $company_id
  * @property int $status_id
- * 
+ *
  * @property Company $company
  * @property Status $status
  * @property User $user
@@ -57,21 +57,21 @@ class Internship extends Model
 
 	public function company()
 	{
-		return $this->belongsTo(Company::class);
+		return $this->belongsTo(Company::class, 'company_id', 'company_id');
 	}
 
 	public function status()
 	{
-		return $this->belongsTo(Status::class);
+		return $this->belongsTo(Status::class, 'status_id', 'status_id');
 	}
 
 	public function user()
 	{
-		return $this->belongsTo(User::class, 'users_id');
+		return $this->belongsTo(User::class, 'users_id', 'users_id');
 	}
 
 	public function documents()
 	{
-		return $this->hasMany(Document::class, 'internships_id');
+		return $this->hasMany(Document::class, 'internships_id', 'internships_id');
 	}
 }

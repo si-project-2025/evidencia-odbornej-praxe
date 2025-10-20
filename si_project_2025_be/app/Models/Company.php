@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Company
- * 
+ *
  * @property int $company_id
  * @property string $name
  * @property int $address_id
- * 
+ *
  * @property Address $address
  * @property Collection|Internship[] $internships
  *
@@ -38,11 +38,11 @@ class Company extends Model
 
 	public function address()
 	{
-		return $this->belongsTo(Address::class);
+		return $this->belongsTo(Address::class, 'address_id', 'address_id');
 	}
 
 	public function internships()
 	{
-		return $this->hasMany(Internship::class);
+		return $this->hasMany(Internship::class, 'company_id', 'company_id');
 	}
 }

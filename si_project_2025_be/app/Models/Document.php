@@ -11,14 +11,14 @@ use Illuminate\Database\Eloquent\Model;
 
 /**
  * Class Document
- * 
+ *
  * @property int $document_id
  * @property string $type
  * @property string $file_name
  * @property bool $is_verified
  * @property int $internships_id
  * @property Carbon $created_at
- * 
+ *
  * @property Internship $internship
  *
  * @package App\Models
@@ -43,6 +43,6 @@ class Document extends Model
 
 	public function internship()
 	{
-		return $this->belongsTo(Internship::class, 'internships_id');
+		return $this->belongsTo(Internship::class, 'internships_id', 'internships_id');
 	}
 }

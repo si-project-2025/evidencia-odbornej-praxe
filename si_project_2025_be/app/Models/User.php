@@ -42,7 +42,7 @@ class User extends Authenticatable
 
     protected $table = 'users';
     protected $primaryKey = 'users_id';
-
+    public $timestamps = false;
 
     protected $casts = [
         'last_login' => 'datetime',
@@ -67,17 +67,16 @@ class User extends Authenticatable
 
     public function address()
     {
-        return $this->belongsTo(Address::class, 'address_id', 'id');
-
+        return $this->belongsTo(Address::class, 'address_id', 'address_id');
     }
 
     public function role()
     {
-        return $this->belongsTo(Role::class);
+        return $this->belongsTo(Role::class, 'role_id', 'role_id');
     }
 
     public function internships()
     {
-        return $this->hasMany(Internship::class, 'users_id');
+        return $this->hasMany(Internship::class, 'users_id', 'users_id');
     }
 }
