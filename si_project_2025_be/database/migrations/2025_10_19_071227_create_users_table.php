@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('surname', 100);
             $table->string('study_program', 100)->nullable();
             $table->string('phone_number', 20)->nullable();
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
             $table->timestamp('last_login')->useCurrentOnUpdate()->nullable()->useCurrent();
             $table->integer('role_id')->index('fk_users_roles_idx');
             $table->integer('address_id')->nullable()->index('fk_users_address1_idx');

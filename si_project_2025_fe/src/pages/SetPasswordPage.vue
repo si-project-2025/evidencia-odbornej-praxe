@@ -1,12 +1,11 @@
-
 <script setup lang="ts">
-import Form from '@/sections/set_password/Form.vue'
+  import Form from '@/sections/set_password/Form.vue'
 </script>
 
 <template>
-  <div class="flex flex-col items-center justify-center min-h-screen">
-    <h1 class="text-3xl font-bold mb-8">Nastavenie hesla</h1>
-    <p class="text-gray-600 mb-6 text-center max-w-md">Dokončite aktiváciu vášho účtu nastavením hesla</p>
+  <section class="section-container flex flex-col justify-center items-center gap-4">
+    <p class="font-semibold text-4xl mb-2">Nastavenie hesla</p>
+    <p class="text-gray-600">Dokončite aktiváciu vášho účtu nastavením hesla</p>
     <Form />
-  </div>
+  </section>
 </template>

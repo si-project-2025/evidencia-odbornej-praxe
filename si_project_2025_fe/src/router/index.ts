@@ -4,6 +4,7 @@ import LoginPage from '@/pages/LoginPage.vue'
 import RegistrationPage from '@/pages/RegistrationPage.vue'
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage.vue'
 import ResetPasswordPage from '@/pages/ResetPasswordPage.vue'
+import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 
 const routes = [
   {
@@ -34,7 +35,7 @@ const routes = [
   {
     path: '/set-password',
     name: 'SetPassword',
-    component: () => import('@/pages/SetPasswordPage.vue')
+    component: SetPasswordPage,
   },
 ]
 
