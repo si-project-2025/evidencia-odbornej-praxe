@@ -25,13 +25,13 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'last_login' => $this->last_login,
             'role' => $this->role->name,
-            'address' => [
+            'address' => $this->address ? [
                 'country' => $this->address->country,
                 'city' => $this->address->city,
                 'zip_code' => $this->address->zip_code,
                 'street' => $this->address->street,
                 'house_number' => $this->address->house_number,
-            ],
+            ] : null,
         ];
     }
 }

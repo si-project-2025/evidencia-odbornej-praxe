@@ -1,5 +1,5 @@
 import type { Address } from './address'
-import type { Role } from './common'
+import type { Role } from '@/types/common.ts'
 
 export interface LoginForm {
   email: string
