@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $company_id
  * @property string $name
+ * @property string|null $ico
  * @property int $address_id
  *
  * @property Address $address
@@ -33,6 +34,7 @@ class Company extends Model
 
 	protected $fillable = [
 		'name',
+        'ico',
 		'address_id'
 	];
 
