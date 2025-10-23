@@ -36,24 +36,26 @@ class Internship extends Model
 	protected $table = 'internships';
 	protected $primaryKey = 'internships_id';
 
-	protected $casts = [
-		'hours_total' => 'int',
-		'year' => 'int',
-		'end_at' => 'datetime',
-		'users_id' => 'int',
-		'company_id' => 'int',
-		'status_id' => 'int'
-	];
+    protected $casts = [
+        'hours_total' => 'int',
+        'year' => 'int',
+        'end_at' => 'datetime',
+        'users_id' => 'int',
+        'company_id' => 'int',
+        'status_id' => 'int',
+        'garant_id' => 'int',
+    ];
 
-	protected $fillable = [
-		'semester',
-		'hours_total',
-		'year',
-		'end_at',
-		'users_id',
-		'company_id',
-		'status_id'
-	];
+    protected $fillable = [
+        'semester',
+        'hours_total',
+        'year',
+        'end_at',
+        'users_id',
+        'company_id',
+        'status_id',
+        'garant_id' => 'int',
+    ];
 
 	public function company()
 	{
@@ -70,8 +72,13 @@ class Internship extends Model
 		return $this->belongsTo(User::class, 'users_id', 'users_id');
 	}
 
-	public function documents()
-	{
-		return $this->hasMany(Document::class, 'internships_id', 'internships_id');
-	}
+    public function garant()
+    {
+        return $this->belongsTo(User::class, 'garant_id', 'users_id');
+    }
+
+    public function documents()
+    {
+        return $this->hasMany(Document::class, 'internships_id', 'internships_id');
+    }
 }
