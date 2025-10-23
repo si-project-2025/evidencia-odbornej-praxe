@@ -78,7 +78,7 @@
 
     <FormSection v-if="form.role === 'student'" title="Adresa">
       <Input v-model="form.address!.street" id="street" label="Ulica*" type="text" />
-      <Input v-model="form.address!.house_number" id="house_number" label="Číslo domu*" type="number" />
+      <Input v-model="form.address!.house_number" id="house_number" label="Číslo domu*" type="text" />
       <Input v-model="form.address!.city" id="city" label="Mesto*" type="text" />
       <Input v-model="form.address!.zip" id="zip" label="PSČ*" type="number" :error="zipError" />
       <Input v-model="form.address!.country" id="country" label="Krajina*" type="text" />
