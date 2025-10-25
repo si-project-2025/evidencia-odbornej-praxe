@@ -14,20 +14,36 @@ class PasswordService
 {
     public function sendResetLink(string $email): bool
     {
-        // Zakáž reset pre alternatívne študentské emaily
-        // TODO
 
-        // Skúsime nájsť používateľa
-        $user = User::where('email', $email)->first();
+        // Skúsime nájsť používateľa podľa e-mailu alebo alternatívneho e-mailu
+        $user = User::where('email', $email)
+            ->orWhere('alt_email', $email)
+            ->first();
+
         if (!$user) {
-            return false;
+            throw new \Exception('Používateľ s týmto e-mailom neexistuje.');
         }
 
+        // Overenie e-mailu študenta
+        if ($user->role_id === 2) { // študent
+            if ($user->alt_email === $email) {
+                throw new \Exception('Študent nemôže použiť alternatívny e-mail na obnovenie hesla.');
+            }
+            if ( $user->email === $email && !str_ends_with($email, '@student.ukf.sk')) {
+                throw new \Exception('Študent musí použiť študentský e-mail končiaci @student.ukf.sk.');
+            }
+            // Ak je školský e-mail, pokračujeme ďalej
+        }
+
+        // Ak používateľ nie je študent, e-mail aj alt_email sú povolené na reset hesla
+        $targetEmail = ($user->alt_email === $email) ? $user->alt_email : $user->email;
+
+        // Vygenerovanie tokenu
         $token = Str::random(64);
 
         // Uloženie tokenu do tabuľky password_reset_tokens
         DB::table('password_reset_tokens')->updateOrInsert(
-            ['email' => $user->email],
+            ['email' => $targetEmail],
             [
                 'token' => $token,
                 'created_at' => Carbon::now(),
@@ -35,12 +51,12 @@ class PasswordService
         );
 
         //Link na stránku resetu hesla
-        $resetUrl = "http://localhost:5173/reset-password?token=$token&email=" . urlencode($user->email);
+        $resetUrl = "http://localhost:5173/reset-password?token=$token&email=" . urlencode($targetEmail);
 
-        // Pošleme email cez Brevo
+        // Pošleme email
         try {
-            Mail::send('emails.reset-password', ['url' => $resetUrl], function ($message) use ($user) {
-                $message->to($user->email)->subject('Obnova hesla');
+            Mail::send('emails.reset-password', ['url' => $resetUrl], function ($message) use ($targetEmail) {
+                $message->to($targetEmail)->subject('Obnova hesla');
             });
             return true;
         } catch (\Exception $e) {
@@ -66,11 +82,25 @@ class PasswordService
             throw new \Exception('Platnosť tokenu vypršala.');
         }
 
-        // Nájdeme používateľa
-        $user = User::where('email', $email)->first();
+
+        // Nájdeme používateľa podľa e-mailu alebo alt_email
+        $user = User::where('email', $email)
+            ->orWhere('alt_email', $email)
+            ->first();
+
         if (!$user) {
             throw new \Exception('Používateľ s týmto emailom neexistuje.');
         }
+
+        if ($user->role_id === 2) { // 2 = študent
+            if ($user->alt_email === $email) {
+                throw new \Exception('Študent nemôže obnoviť heslo pomocou alternatívneho e-mailu.');
+            }
+            if (!str_ends_with($email, '@student.ukf.sk')) {
+                throw new \Exception('Študent musí použiť školský e-mail na reset hesla.');
+            }
+        }
+
 
         // Zmeníme heslo
         $user->update(['password' => Hash::make($password)]);
