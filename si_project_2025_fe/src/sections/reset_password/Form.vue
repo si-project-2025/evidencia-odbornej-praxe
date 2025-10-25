@@ -40,11 +40,19 @@
       successMessage.value = response.data.message ?? 'Heslo bolo úspešne zmenené.'
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        // Ak backend poslal pole chýb
-        if (err.response?.data?.errors) {
-          submitError.value = err.response.data.errors.join('\n')
+        const data = err.response?.data
+
+        if (data?.errors) {
+          if (Array.isArray(data.errors)) {
+            submitError.value = data.errors.join('\n')
+          } else if (typeof data.errors === 'object') {
+            // Laravel validation errors (object s poľami)
+            submitError.value = Object.values(data.errors).flat().join('\n')
+          } else {
+            submitError.value = String(data.errors)
+          }
         } else {
-          submitError.value = err.response?.data?.message ?? 'Pri zmene hesla nastala chyba.'
+          submitError.value = data?.message ?? 'Pri zmene hesla nastala chyba.'
         }
       } else {
         submitError.value = 'Pri zmene hesla nastala chyba.'
