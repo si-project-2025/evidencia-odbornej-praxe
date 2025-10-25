@@ -46,7 +46,6 @@
           if (Array.isArray(data.errors)) {
             submitError.value = data.errors.join('\n')
           } else if (typeof data.errors === 'object') {
-            // Laravel validation errors (object s poľami)
             submitError.value = Object.values(data.errors).flat().join('\n')
           } else {
             submitError.value = String(data.errors)
