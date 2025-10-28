@@ -22,6 +22,7 @@ export const useInternshipStore = defineStore('internships', {
         this.internships = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať praxe:', error)
+        this.error = 'Nepodarilo sa načítať praxe'
       } finally {
         this.loading = false
       }

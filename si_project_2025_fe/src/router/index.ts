@@ -39,10 +39,9 @@ const routes = [
     component: SetPasswordPage,
   },
   {
-    path: '/student/internships',
+    path: '/internships',
     name: 'StudentInternships',
     component: StudentInternshipsPage,
-    meta: { requiresAuth: true, role: 'student' },
   },
 ]
 

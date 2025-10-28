@@ -18,7 +18,7 @@ export interface Garant {
 
 export interface Internship {
   internships_id: number
-  semester: string
+  semester: 'Z' | 'L'
   hours_total: number
   year: number
   created_at: string | null
