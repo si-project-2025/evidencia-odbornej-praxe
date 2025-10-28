@@ -20,13 +20,25 @@
 
   const zipError = ref('')
   const phoneError = ref('')
+  const emailError = ref('')
   const submitError = ref('')
   const registrationSuccess = ref(false)
   const registrationEmail = ref('')
 
   const validateForm = () => {
+    zipError.value = ''
+    phoneError.value = ''
+    emailError.value = ''
+    submitError.value = ''
+
     if (form.role === 'student') {
       validateAddress()
+    }
+
+    const emailPattern = /^[A-Za-z0-9._%+-]+@(student\.)?ukf\.sk$/i
+    if (!emailPattern.test(form.email)) {
+      emailError.value = 'Registrácia je povolená len pre e-maily z domény ukf.sk alebo student.ukf.sk'
+      return false
     }
 
     if (form.phone && form.phone.trim() !== '') {
@@ -73,14 +85,14 @@
     <FormSection title="Osobné údaje">
       <Input v-model="form.name" id="name" label="Meno*" type="text" />
       <Input v-model="form.surname" id="surname" label="Priezvisko*" type="text" />
-      <Input v-model="form.email" id="email" label="Email*" type="email" />
+      <Input v-model="form.email" id="email" label="Email*" type="email" :error="emailError" />
     </FormSection>
 
     <FormSection v-if="form.role === 'student'" title="Adresa">
       <Input v-model="form.address!.street" id="street" label="Ulica*" type="text" />
       <Input v-model="form.address!.house_number" id="house_number" label="Číslo domu*" type="text" />
       <Input v-model="form.address!.city" id="city" label="Mesto*" type="text" />
-      <Input v-model="form.address!.zip" id="zip" label="PSČ*" type="number" :error="zipError" />
+      <Input v-model="form.address!.zip" id="zip" label="PSČ*" type="text" :error="zipError" />
       <Input v-model="form.address!.country" id="country" label="Krajina*" type="text" />
     </FormSection>
 
