@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -14,7 +15,6 @@ class PasswordService
 {
     public function sendResetLink(string $email): bool
     {
-
         // Skúsime nájsť používateľa podľa e-mailu alebo alternatívneho e-mailu
         $user = User::where('email', $email)
             ->orWhere('alt_email', $email)
@@ -24,8 +24,11 @@ class PasswordService
             throw new \Exception('Používateľ s týmto e-mailom neexistuje.');
         }
 
+        // Získame ID role študenta
+        $studentRoleId = Role::where('name', 'student')->value('role_id');
+
         // Overenie e-mailu študenta
-        if ($user->role_id === 2) { // študent
+        if ($user->role_id === $studentRoleId) {
             if ($user->alt_email === $email) {
                 throw new \Exception('Študent nemôže použiť alternatívny e-mail na obnovenie hesla.');
             }
@@ -92,7 +95,11 @@ class PasswordService
             throw new \Exception('Používateľ s týmto emailom neexistuje.');
         }
 
-        if ($user->role_id === 2) { // 2 = študent
+        // Získame ID role študenta
+        $studentRoleId = Role::where('name', 'student')->value('role_id');
+
+
+        if ($user->role_id === $studentRoleId) {
             if ($user->alt_email === $email) {
                 throw new \Exception('Študent nemôže obnoviť heslo pomocou alternatívneho e-mailu.');
             }
