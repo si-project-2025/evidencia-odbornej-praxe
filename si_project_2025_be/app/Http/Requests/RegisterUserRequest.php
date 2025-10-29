@@ -24,7 +24,17 @@ class RegisterUserRequest extends FormRequest
         return [
             'name' => 'required|string|max:100',
             'surname' => 'required|string|max:100',
-            'email' => 'required|string|email|max:191|unique:users',
+
+            //validacia ukf emailu
+            'email' => [
+                'required',
+                'string',
+                'email',
+                'max:191',
+                'unique:users,email',
+                'regex:/^[a-zA-Z0-9._%+-]+@(student\.)?ukf\.sk$/i'
+            ],
+
             'role' => 'required|string|exists:roles,name',
 
             'alt_email' => 'nullable|string|email|max:191|unique:users,alt_email',
@@ -55,6 +65,7 @@ class RegisterUserRequest extends FormRequest
             'email.email' => 'Email musí byť platný.',
             'email.max' => 'Email môže mať maximálne :max znakov.',
             'email.unique' => 'Tento email už je registrovaný.',
+            'email.regex' => 'Registrácia je povolená len pre e-maily z domény ukf.sk alebo student.ukf.sk.',
 
             'role.required' => 'Rola je povinná.',
             'role.string' => 'Rola musí byť text.',
