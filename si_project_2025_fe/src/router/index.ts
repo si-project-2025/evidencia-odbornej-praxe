@@ -6,6 +6,7 @@ import ForgotPasswordPage from '@/pages/ForgotPasswordPage.vue'
 import ResetPasswordPage from '@/pages/ResetPasswordPage.vue'
 import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 import StudentInternshipsPage from '@/pages/StudentInternshipsPage.vue'
+import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 
 const routes = [
   {
@@ -42,6 +43,11 @@ const routes = [
     path: '/internships',
     name: 'StudentInternships',
     component: StudentInternshipsPage,
+  },
+  {
+    path: '/internships/:id',
+    name: 'internship-detail',
+    component: InternshipDetailPage,
   },
 ]
 

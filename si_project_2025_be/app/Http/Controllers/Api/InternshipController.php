@@ -33,7 +33,9 @@ class InternshipController extends Controller
      */
     public function show(string $id)
     {
-        $internship = Internship::findOrFail($id);
+        #$internship = Internship::findOrFail($id);
+        $internship = Internship::with(['company', 'status', 'garant'])
+            ->findOrFail($id);
         return response()->json($internship);
     }
 

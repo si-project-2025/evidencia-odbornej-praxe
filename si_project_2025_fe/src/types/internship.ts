@@ -1,7 +1,7 @@
 export interface Company {
   company_id: number
   name: string
-  ico: number
+  ico: string
   address_id: number
 }
 
@@ -12,8 +12,11 @@ export interface Status {
 
 export interface Garant {
   users_id: number
-  first_name: string
-  last_name: string
+  name: string
+  surname: string
+  email: string
+  alt_email: string | null
+  phone_number: string | null
 }
 
 export interface Internship {
