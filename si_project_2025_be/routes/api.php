@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\InternshipController;
 use App\Http\Controllers\Api\PostController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
@@ -16,6 +17,8 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::apiResource('posts', PostController::class);
+Route::apiResource('internships', InternshipController::class);
+
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
