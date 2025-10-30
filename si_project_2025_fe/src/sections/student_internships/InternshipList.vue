@@ -18,6 +18,23 @@
     if (!store.internships.length) return null
     return [...store.internships].sort((a, b) => b.year - a.year)[0]
   })
+
+  const getStatusClass = (type?: string) => {
+    switch (type) {
+      case 'Vytvorená':
+        return 'bg-gray-200 text-gray-700'
+      case 'Potvrdená':
+        return 'bg-blue-100 text-blue-700'
+      case 'Zamietnutá':
+        return 'bg-rose-100 text-rose-700'
+      case 'Schválená':
+        return 'bg-amber-100 text-amber-700'
+      case 'Obhájená':
+        return 'bg-emerald-100 text-emerald-700'
+      default:
+        return 'bg-purple-100 text-purple-700'
+    }
+  }
 </script>
 
 <template>
@@ -112,20 +129,7 @@
             <div class="col-span-2 md:col-span-2 flex justify-start sm:justify-end mt-2 md:mt-0">
               <span
                 class="px-4 py-1.5 text-xs font-medium rounded-full"
-                :class="{
-                  'bg-gray-200 text-gray-700': internship.status?.type === 'Vytvorená',
-                  'bg-blue-100 text-blue-700': internship.status?.type === 'Potvrdená',
-                  'bg-rose-100 text-rose-700': internship.status?.type === 'Zamietnutá',
-                  'bg-amber-100 text-amber-700': internship.status?.type === 'Schválená',
-                  'bg-emerald-100 text-emerald-700': internship.status?.type === 'Obhájená',
-                  'bg-purple-100 text-purple-700': ![
-                    'Vytvorená',
-                    'Potvrdená',
-                    'Zamietnutá',
-                    'Schválená',
-                    'Obhájená',
-                  ].includes(internship.status?.type),
-                }"
+                :class="getStatusClass(internship.status?.type)"
               >
                 {{ internship.status?.type || 'Neznámy stav' }}
               </span>
@@ -136,5 +140,3 @@
     </div>
   </div>
 </template>
-
-<style scoped></style>
