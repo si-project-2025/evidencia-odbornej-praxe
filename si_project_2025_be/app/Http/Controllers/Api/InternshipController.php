@@ -51,4 +51,16 @@ class InternshipController extends Controller
 
         return response()->json(['message' => 'Internship deleted successfully']);
     }
+
+    public function internshipsOfStudent(Request $request)
+    {
+        $user = $request->user();
+
+        $internships = Internship::with(['company', 'status', 'garant'])
+            ->where('users_id', $user->users_id)
+            ->orderByDesc('year')
+            ->get();
+
+        return response()->json($internships);
+    }
 }
