@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InternshipRequest;
+use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
 use Illuminate\Http\Request;
 
@@ -61,6 +62,6 @@ class InternshipController extends Controller
             ->orderByDesc('year')
             ->get();
 
-        return response()->json($internships);
+        return response()->json(InternshipResource::collection($internships));
     }
 }

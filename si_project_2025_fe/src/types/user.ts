@@ -13,6 +13,6 @@ export interface User {
   created_at: Date
   last_login?: Date
   role: Role
-  address: Address
+  address?: Address
   remember_token?: string
 }

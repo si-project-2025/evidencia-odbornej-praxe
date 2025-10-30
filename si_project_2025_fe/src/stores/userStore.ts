@@ -16,14 +16,16 @@ export const useUserStore = defineStore('user', {
 
       localStorage.setItem('token', data.access_token)
       localStorage.setItem('user', JSON.stringify(data.user))
+
       axios.defaults.headers.common['Authorization'] = `Bearer ${data.access_token}`
     },
 
     loadUser() {
       const user = localStorage.getItem('user')
-      if (!this.token || !user) return
 
+      if (!this.token || !user) return
       this.user = JSON.parse(user)
+
       axios.defaults.headers.common['Authorization'] = `Bearer ${this.token}`
     },
 
@@ -47,8 +49,10 @@ export const useUserStore = defineStore('user', {
     clearSession() {
       localStorage.removeItem('token')
       localStorage.removeItem('user')
+
       this.user = null
       this.token = null
+
       delete axios.defaults.headers.common.Authorization
     },
   },

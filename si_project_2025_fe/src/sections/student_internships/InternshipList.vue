@@ -19,8 +19,8 @@
     return [...store.internships].sort((a, b) => b.year - a.year)[0]
   })
 
-  const getStatusClass = (type?: string) => {
-    switch (type) {
+  const getStatusClass = (status?: string) => {
+    switch (status) {
       case 'Vytvorená':
         return 'bg-gray-200 text-gray-700'
       case 'Potvrdená':
@@ -40,7 +40,7 @@
 <template>
   <div class="px-5 sm:px-10 2xl:px-16 py-8 flex-col justify-start items-start min-h-screen">
     <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Moje odborné praxe</h2>
+      <h2 class="text-2xl font-bold text-gray-800 mb-2">Moje odborné praxe</h2>
       <p class="text-gray-500 text-sm">Zoznam všetkých praxí, ktoré ste absolvovali alebo máte naplánované.</p>
     </div>
 
@@ -127,11 +127,8 @@
 
             <!-- Stav -->
             <div class="col-span-2 md:col-span-2 flex justify-start sm:justify-end mt-2 md:mt-0">
-              <span
-                class="px-4 py-1.5 text-xs font-medium rounded-full"
-                :class="getStatusClass(internship.status?.type)"
-              >
-                {{ internship.status?.type || 'Neznámy stav' }}
+              <span class="px-4 py-1.5 text-xs font-medium rounded-full" :class="getStatusClass(internship.status)">
+                {{ internship.status || 'Neznámy stav' }}
               </span>
             </div>
           </div>

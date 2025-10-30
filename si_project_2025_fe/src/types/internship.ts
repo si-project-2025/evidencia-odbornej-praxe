@@ -1,19 +1,16 @@
+import type { Address } from '@/types/address.ts'
+
 export interface Company {
   company_id: number
   name: string
-  ico: number
-  address_id: number
-}
-
-export interface Status {
-  status_id: number
-  type: string
+  ico: string
+  address: Address
 }
 
 export interface Garant {
-  users_id: number
-  first_name: string
-  last_name: string
+  name: string
+  surname: string
+  email: string
 }
 
 export interface Internship {
@@ -25,6 +22,6 @@ export interface Internship {
   updated_at: string | null
   end_at: string | null
   company: Company
-  status: Status
+  status: string
   garant: Garant
 }
