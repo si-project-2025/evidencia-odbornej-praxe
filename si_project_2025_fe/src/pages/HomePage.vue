@@ -1,13 +1,9 @@
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted } from 'vue'
   import Logo from '@/assets/images/home-main.svg'
   import Button from '@/components/atoms/Button.vue'
+  import { useUserStore } from '@/stores/userStore.ts'
 
-  onMounted(async () => {
-    const response = await axios.get('http://127.0.0.1:8000/api/posts')
-    console.log(response.data)
-  })
+  const userStore = useUserStore()
 </script>
 
 <template>
@@ -29,7 +25,8 @@
         bez zbytočných papierov.
       </p>
 
-      <Button class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
+      <Button v-if="!userStore.user" class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
+      <Button v-else class="lg:w-1/3" href="/internships">Moje odborné praxe</Button>
     </div>
 
     <img :src="Logo" alt="Logo" class="lg:w-[40%]" />
