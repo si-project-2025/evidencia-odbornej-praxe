@@ -9,50 +9,43 @@ use Illuminate\Http\Request;
 
 class InternshipController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
         $internships = Internship::all();
         return response()->json($internships);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(InternshipRequest $request)
     {
-        $internship = Internship::create($request->validated());
+        $data = $request->validated();
+        $data['created_at'] = now();
+        $data['updated_at'] = now();
+
+        $internship = Internship::create($data);
 
         return response()->json($internship, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         #$internship = Internship::findOrFail($id);
-        $internship = Internship::with(['company', 'status', 'garant'])
+        $internship = Internship::with(['company', 'status', 'garant','documents','company.address'])
             ->findOrFail($id);
         return response()->json($internship);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(InternshipRequest $request, string $id)
     {
         $internship = Internship::findOrFail($id);
-        $internship->update($request->validated());
+
+        $data = $request->validated();
+        $data['updated_at'] = now();
+
+        $internship->update($data);
 
         return response()->json($internship);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $internship = Internship::findOrFail($id);

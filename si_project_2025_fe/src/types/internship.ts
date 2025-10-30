@@ -1,8 +1,16 @@
+export interface Address {
+  address_id: number
+  country: string
+  city: string
+  zip_code: string
+  street: string
+  house_number: string
+}
 export interface Company {
   company_id: number
   name: string
   ico: string
-  address_id: number
+  address: Address
 }
 
 export interface Status {
@@ -19,6 +27,14 @@ export interface Garant {
   phone_number: string | null
 }
 
+export interface Document {
+  document_id: number
+  type: string
+  file_name: string
+  is_verified: boolean
+  internships_id: number
+  created_at: string
+}
 export interface Internship {
   internships_id: number
   semester: 'Z' | 'L'
@@ -30,4 +46,5 @@ export interface Internship {
   company: Company
   status: Status
   garant: Garant
+  documents?: Document[]
 }
