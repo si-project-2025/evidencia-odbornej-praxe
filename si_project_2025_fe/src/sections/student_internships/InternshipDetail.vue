@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import { onMounted } from 'vue'
   import { useRoute } from 'vue-router'
+
   import { useInternshipStore } from '@/stores/internships'
   import { Building, Calendar, Clock, User, Info, ArrowLeft, FileText, Plus, Trash2 } from 'lucide-vue-next'
 
@@ -35,7 +36,7 @@
 
     <div v-else>
       <div
-        class="r bg-white/95 border border-gray-50 rounded-3xl shadow-md p-6 md:p-10 sm:p-10 space-y-8 backdrop-blur-sm"
+        class="bg-white border-t-4 border-emerald-500 rounded-3xl shadow-md hover:shadow-lg p-6 md:p-10 sm:p-10 space-y-8 transition-all duration-200 backdrop-blur-sm"
       >
         <!-- Názov a stav -->
         <div class="flex justify-between items-center">
@@ -137,12 +138,12 @@
             <div class="pl-7 text-gray-700 text-sm space-y-1">
               <p>
                 <strong>Meno:</strong>
-                {{ store.internshipDetail.garant.name }}
-                {{ store.internshipDetail.garant.surname }}
+                {{ store.internshipDetail.garant?.name || 'Neznáme meno' }}
+                {{ store.internshipDetail.garant?.surname || '' }}
               </p>
               <p>
                 <strong>Kontakt:</strong>
-                {{ store.internshipDetail.garant.email }}
+                {{ store.internshipDetail.garant?.email || '—' }}
               </p>
             </div>
           </div>
@@ -150,22 +151,26 @@
 
         <hr class="border-gray-200" />
 
-        <!-- Dokumenty -->
+        <!-- Dokumenty k praxi-->
         <div>
-          <div class="flex flex-col sm:flex-row justify-between sm:items-center mb-4">
+          <div class="flex flex-col md:flex-row md:justify-between md:items-center mb-6 gap-3">
+            <!-- Nadpis -->
             <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
               <FileText class="w-5 h-5 text-emerald-600" />
               Dokumenty k praxi
             </h3>
-            <div class="flex flex-wrap gap-2 mt-3 sm:mt-0">
+
+            <!-- Tlačidlá -->
+            <div class="flex flex-wrap justify-start md:justify-end gap-3">
               <button
-                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
+                class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors"
               >
                 <Plus class="w-4 h-4" />
                 Pridať dokument
               </button>
+
               <button
-                class="inline-flex items-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-sm font-medium px-4 py-2 rounded-lg shadow-sm"
+                class="inline-flex items-center gap-2 bg-emerald-100 hover:bg-emerald-200 text-emerald-700 text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-colors"
               >
                 <FileText class="w-4 h-4" />
                 Generovať dohodu
@@ -192,7 +197,7 @@
                   </div>
                 </div>
 
-                <!-- stav -->
+                <!-- stav dokumetu-->
                 <span
                   v-if="doc.is_verified"
                   class="ml-2 text-xs font-semibold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-full whitespace-nowrap"
@@ -219,7 +224,7 @@
           Ak bola prax vytvorená omylom alebo už nie je aktuálna, môžete ju odstrániť z evidencie.
         </p>
         <button
-          class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-sm"
+          class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-sm disabled:opacity-60"
         >
           <Trash2 class="w-4 h-4" />
           Zmazať prax
