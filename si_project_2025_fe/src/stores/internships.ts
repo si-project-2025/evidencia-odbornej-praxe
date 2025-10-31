@@ -1,11 +1,13 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { Internship } from '@/types/internship'
+import type { Internship, InternshipCreateInput } from '@/types/internship'
 
 export const useInternshipStore = defineStore('internships', {
   state: () => ({
     internships: [] as Internship[],
     internshipDetail: null as Internship | null,
+    companies: [] as { company_id: number; name: string }[],
+    garants: [] as { users_id: number; name: string; surname: string }[],
     loading: false,
     error: null as string | null,
   }),
@@ -44,6 +46,48 @@ export const useInternshipStore = defineStore('internships', {
         this.error = 'Nepodarilo sa načítať detail praxe.'
       } finally {
         this.loading = false
+      }
+    },
+    async fetchCompaniesAndGarants() {
+      try {
+        const [companiesRes, garantsRes] = await Promise.all([
+          axios.get('http://localhost:8000/api/internships/companies'),
+          axios.get('http://localhost:8000/api/internships/garants'),
+        ])
+        this.companies = companiesRes.data
+        this.garants = garantsRes.data
+      } catch (error) {
+        console.error('Nepodarilo sa načítať firmy alebo garantov:', error)
+      }
+    },
+    async createInternship(data: InternshipCreateInput) {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.post('http://localhost:8000/api/internships', data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        this.internships.push(response.data)
+        return response.data
+      } catch (error) {
+        if (axios.isAxiosError(error) && error.response) {
+          console.error('Chyba pri vytváraní praxe:', error.response.data)
+        } else {
+          console.error('Neznáma chyba pri vytváraní praxe:', error)
+        }
+        throw error
+      }
+    },
+
+    async deleteInternship(id: number) {
+      try {
+        const token = localStorage.getItem('token')
+        await axios.delete(`http://localhost:8000/api/internships/${id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        this.internships = this.internships.filter((i) => i.internships_id !== id)
+      } catch (error) {
+        console.error('Nepodarilo sa zmazať prax:', error)
+        throw error
       }
     },
   },

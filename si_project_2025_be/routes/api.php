@@ -16,10 +16,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 });
 
+Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
+Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
+
+
 Route::apiResource('posts', PostController::class);
 Route::apiResource('internships', InternshipController::class);
 Route::middleware('auth:sanctum')->get('/student/internships', [InternshipController::class, 'internshipsOfStudent']);
-
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);

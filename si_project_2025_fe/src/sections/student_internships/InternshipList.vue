@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, computed } from 'vue'
   import { useInternshipStore } from '@/stores/internships'
-  import { Clock, Building, CalendarDays } from 'lucide-vue-next'
+  import { Clock, Building, CalendarDays, Plus } from 'lucide-vue-next'
   const store = useInternshipStore()
 
   onMounted(() => {
@@ -27,37 +27,54 @@
       <p class="text-gray-500 text-sm">Zoznam všetkých praxí, ktoré ste absolvovali alebo máte naplánované.</p>
     </div>
 
-    <!-- Štatistiky -->
-    <div v-if="store.internships.length" class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
-      <!-- Počet praxí -->
-      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
-        <p class="text-3xl font-bold text-emerald-700">
-          {{ store.internships.length }}
-        </p>
-        <p class="text-gray-600 text-sm font-medium">Praxí spolu</p>
-      </div>
-      <!-- Hodiny -->
-      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
-        <p class="text-3xl font-bold text-emerald-700">
-          {{ store.internships.reduce((sum, internship) => sum + (internship.hours_total || 0), 0) }}
-        </p>
-        <p class="text-gray-600 text-sm font-medium">Odpracovaných hodín</p>
-      </div>
-      <!-- Najnovšia prax -->
-      <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
-        <p v-if="latestInternship" class="text-3xl font-bold text-emerald-700">
-          {{ latestInternship.semester }} - {{ latestInternship.year }}
-        </p>
-        <p v-if="latestInternship" class="text-gray-600 text-sm font-medium">Najnovšia prax</p>
-        <p v-else class="text-gray-500 text-sm">Žiadne údaje</p>
-      </div>
-    </div>
-
     <div v-if="store.loading" class="text-gray-500">Načítavam...</div>
     <div v-else-if="store.error" class="text-red-600">{{ store.error }}</div>
-    <div v-else-if="!store.internships.length" class="text-gray-500">Nemáte zatiaľ žiadne praxe.</div>
+    <div v-else-if="!store.internships.length" class="text-gray-500">
+      Nemáte zatiaľ žiadne praxe.
+      <RouterLink
+        to="/internships/create"
+        class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
+      >
+        <Plus class="w-4 h-4" />
+        Pridať prax
+      </RouterLink>
+    </div>
 
     <div v-else class="space-y-4">
+      <RouterLink
+        to="/internships/create"
+        class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
+      >
+        <Plus class="w-4 h-4" />
+        Pridať prax
+      </RouterLink>
+
+      <!-- Štatistiky -->
+      <div v-if="store.internships.length" class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+        <!-- Počet praxí -->
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
+          <p class="text-3xl font-bold text-emerald-700">
+            {{ store.internships.length }}
+          </p>
+          <p class="text-gray-600 text-sm font-medium">Praxí spolu</p>
+        </div>
+        <!-- Hodiny -->
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
+          <p class="text-3xl font-bold text-emerald-700">
+            {{ store.internships.reduce((sum, internship) => sum + (internship.hours_total || 0), 0) }}
+          </p>
+          <p class="text-gray-600 text-sm font-medium">Odpracovaných hodín</p>
+        </div>
+        <!-- Najnovšia prax -->
+        <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-5 text-center shadow-sm">
+          <p v-if="latestInternship" class="text-3xl font-bold text-emerald-700">
+            {{ latestInternship.semester }} - {{ latestInternship.year }}
+          </p>
+          <p v-if="latestInternship" class="text-gray-600 text-sm font-medium">Najnovšia prax</p>
+          <p v-else class="text-gray-500 text-sm">Žiadne údaje</p>
+        </div>
+      </div>
+
       <div
         class="hidden md:grid grid-cols-13 gap-2 px-8 py-3 text-xs font-semibold uppercase text-gray-500 border-b border-gray-200"
       >

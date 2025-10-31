@@ -7,6 +7,11 @@ use App\Http\Requests\InternshipRequest;
 use App\Models\Internship;
 use Illuminate\Http\Request;
 
+use App\Models\Company;
+use App\Models\User;
+use App\Models\Role;
+
+
 class InternshipController extends Controller
 {
     public function index()
@@ -65,4 +70,33 @@ class InternshipController extends Controller
 
         return response()->json($internships);
     }
+
+    //Len dočasné riešenie
+    //Zoznam firiem (pre dropdown vo formulári)
+    public function getCompanies()
+    {
+        $companies = Company::select('company_id', 'name')
+            ->orderBy('name')
+            ->get();
+
+        return response()->json($companies);
+    }
+
+    // Zoznam garantov (pre dropdown vo formulári)
+    public function getGarants()
+    {
+        $garantRoleId = Role::where('name', 'garant')->value('role_id');
+
+        if (!$garantRoleId) {
+            return response()->json([]);
+        }
+
+        $garants = User::where('role_id', $garantRoleId)
+            ->select('users_id', 'name', 'surname', 'email')
+            ->orderBy('surname')
+            ->get();
+
+        return response()->json($garants);
+    }
+
 }

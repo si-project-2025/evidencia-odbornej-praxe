@@ -7,6 +7,7 @@ import ResetPasswordPage from '@/pages/ResetPasswordPage.vue'
 import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 import StudentInternshipsPage from '@/pages/StudentInternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
+import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
 
 const routes = [
   {
@@ -48,6 +49,11 @@ const routes = [
     path: '/internships/:id',
     name: 'internship-detail',
     component: InternshipDetailPage,
+  },
+  {
+    path: '/internships/create',
+    name: 'InternshipCreate',
+    component: InternshipCreatePage,
   },
 ]
 

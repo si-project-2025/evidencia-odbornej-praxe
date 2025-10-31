@@ -1,11 +1,17 @@
 <script setup lang="ts">
-  import { onMounted } from 'vue'
+  import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
+  import { useRouter } from 'vue-router'
+
   import { useInternshipStore } from '@/stores/internships'
   import { Building, Calendar, Clock, User, Info, ArrowLeft, FileText, Plus, Trash2 } from 'lucide-vue-next'
 
   const store = useInternshipStore()
   const route = useRoute()
+
+  const router = useRouter()
+  const deleting = ref(false)
+  const deleteError = ref('')
 
   onMounted(() => {
     store.fetchInternshipDetail(Number(route.params.id))
@@ -15,6 +21,22 @@
     if (!date) return '—'
     const d = new Date(date)
     return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
+  }
+
+  const deleteInternship = async () => {
+    if (!confirm('Naozaj chcete túto prax zmazať?')) return
+
+    try {
+      deleting.value = true
+      deleteError.value = ''
+      await store.deleteInternship(Number(route.params.id))
+      alert('Prax bola úspešne zmazaná.')
+      router.push('/internships') // presmerovanie späť
+    } catch {
+      deleteError.value = 'Nepodarilo sa zmazať prax.'
+    } finally {
+      deleting.value = false
+    }
   }
 </script>
 
@@ -137,12 +159,12 @@
             <div class="pl-7 text-gray-700 text-sm space-y-1">
               <p>
                 <strong>Meno:</strong>
-                {{ store.internshipDetail.garant.name }}
-                {{ store.internshipDetail.garant.surname }}
+                {{ store.internshipDetail.garant?.name || 'Neznáme meno' }}
+                {{ store.internshipDetail.garant?.surname || '' }}
               </p>
               <p>
                 <strong>Kontakt:</strong>
-                {{ store.internshipDetail.garant.email }}
+                {{ store.internshipDetail.garant?.email || '—' }}
               </p>
             </div>
           </div>
@@ -219,11 +241,14 @@
           Ak bola prax vytvorená omylom alebo už nie je aktuálna, môžete ju odstrániť z evidencie.
         </p>
         <button
-          class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-sm"
+          @click="deleteInternship"
+          class="inline-flex items-center gap-2 bg-rose-600 hover:bg-rose-700 text-white text-sm font-medium px-5 py-2 rounded-lg shadow-sm disabled:opacity-60"
+          :disabled="deleting"
         >
           <Trash2 class="w-4 h-4" />
-          Zmazať prax
+          {{ deleting ? 'Mazanie...' : 'Zmazať prax' }}
         </button>
+        <p v-if="deleteError" class="text-red-600 text-sm mt-2">{{ deleteError }}</p>
       </div>
     </div>
   </div>

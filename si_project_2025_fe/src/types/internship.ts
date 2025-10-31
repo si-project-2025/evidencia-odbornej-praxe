@@ -48,3 +48,14 @@ export interface Internship {
   garant: Garant
   documents?: Document[]
 }
+
+export interface InternshipCreateInput {
+  users_id: number
+  company_id: number
+  semester: 'Z' | 'L'
+  year: number
+  hours_total?: number
+  end_at?: string
+  status_id: number
+  garant_id: number
+}
