@@ -22,33 +22,25 @@
 
 <template>
   <div class="px-5 sm:px-10 2xl:px-16 py-8 flex-col justify-start items-start min-h-screen">
-    <div class="mb-6">
-      <h2 class="text-2xl font-bold text-gray-800">Moje odborné praxe</h2>
-      <p class="text-gray-500 text-sm">Zoznam všetkých praxí, ktoré ste absolvovali alebo máte naplánované.</p>
+    <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
+      <div>
+        <h2 class="normal-case text-2xl text-gray-800">Moje odborné praxe</h2>
+        <p class="text-gray-500 text-sm">Zoznam všetkých praxí, ktoré ste absolvovali alebo máte naplánované.</p>
+      </div>
+      <RouterLink
+        to="/internships/create"
+        class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
+      >
+        <Plus class="w-4 h-4" />
+        Pridať prax
+      </RouterLink>
     </div>
 
     <div v-if="store.loading" class="text-gray-500">Načítavam...</div>
     <div v-else-if="store.error" class="text-red-600">{{ store.error }}</div>
-    <div v-else-if="!store.internships.length" class="text-gray-500">
-      Nemáte zatiaľ žiadne praxe.
-      <RouterLink
-        to="/internships/create"
-        class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
-      >
-        <Plus class="w-4 h-4" />
-        Pridať prax
-      </RouterLink>
-    </div>
+    <div v-else-if="!store.internships.length" class="text-gray-500">Nemáte zatiaľ žiadne praxe.</div>
 
     <div v-else class="space-y-4">
-      <RouterLink
-        to="/internships/create"
-        class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
-      >
-        <Plus class="w-4 h-4" />
-        Pridať prax
-      </RouterLink>
-
       <!-- Štatistiky -->
       <div v-if="store.internships.length" class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
         <!-- Počet praxí -->
@@ -89,7 +81,7 @@
       <div
         v-for="internship in store.internships"
         :key="internship.internships_id"
-        class="border-l-4 border-emerald-500 rounded-2xl bg-white shadow-md hover:shadow-lg hover:bg-emerald-50/50 transition-all duration-200"
+        class="border-l-4 border-emerald-500 rounded-2xl bg-white shadow-md hover:shadow-lg hover:bg-emerald-50/50"
       >
         <RouterLink :to="`/internships/${internship.internships_id}`">
           <!-- Tabuľka -->

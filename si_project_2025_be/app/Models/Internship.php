@@ -54,7 +54,7 @@ class Internship extends Model
         'users_id',
         'company_id',
         'status_id',
-        'garant_id' => 'int',
+        'garant_id',
     ];
 
 	public function company()
