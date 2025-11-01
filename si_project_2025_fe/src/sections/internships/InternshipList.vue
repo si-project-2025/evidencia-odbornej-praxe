@@ -45,7 +45,7 @@
         <p class="text-gray-500 text-sm">Zoznam všetkých praxí, ktoré ste absolvovali alebo máte naplánované.</p>
       </div>
       <RouterLink
-        to="/internships"
+        to="/internships/create"
         class="inline-flex items-center gap-2 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium px-4 py-2 rounded-lg shadow-sm transition-all duration-200"
       >
         <Plus class="w-4 h-4" />

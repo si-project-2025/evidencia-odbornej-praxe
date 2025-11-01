@@ -29,9 +29,11 @@
     try {
       deleting.value = true
       deleteError.value = ''
+
       await store.deleteInternship(Number(route.params.id))
+
       alert('Prax bola úspešne zmazaná.')
-      router.push('/internships') // presmerovanie späť
+      router.push('/internships')
     } catch {
       deleteError.value = 'Nepodarilo sa zmazať prax.'
     } finally {

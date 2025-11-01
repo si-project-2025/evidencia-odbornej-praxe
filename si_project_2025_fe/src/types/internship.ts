@@ -1,4 +1,5 @@
 import type { Address } from '@/types/address.ts'
+import type { Status } from '@/types/common.ts'
 
 export interface Company {
   company_id: number
@@ -22,6 +23,7 @@ export interface Document {
   internships_id: number
   created_at: string
 }
+
 export interface Internship {
   users_id: number
   internships_id: number
@@ -32,18 +34,7 @@ export interface Internship {
   updated_at: string | null
   end_at: string | null
   company: Company
-  status: string
+  status: Status
   garant: Garant
   documents?: Document[]
-}
-
-export interface InternshipCreateInput {
-  users_id: number
-  company_id: number
-  semester: 'Z' | 'L'
-  year: number
-  hours_total?: number
-  end_at?: string
-  status_id: number
-  garant_id: number
 }

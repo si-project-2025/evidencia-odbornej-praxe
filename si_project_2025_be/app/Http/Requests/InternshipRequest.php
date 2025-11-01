@@ -18,11 +18,11 @@ class InternshipRequest extends FormRequest
         return [
             'semester' => ['required', Rule::enum(SemesterEnum::class)],
             'hours_total' => 'required|integer',
-            'end_at' => 'required|date_format:Y-m-d H:i:s',
+            'end_at' => 'required|date_format:Y-m-d',
             'year' => 'required|integer',
             'users_id' => 'required|integer|exists:users,users_id',
             'company_id' => 'required|integer|exists:companies,company_id',
-            'status_id' => 'required|integer|exists:status,status_id',
+            'status' => 'required|string|exists:status,type',
             'garant_id' => 'required|integer|exists:users,users_id',
         ];
     }
@@ -37,7 +37,7 @@ class InternshipRequest extends FormRequest
             'hours_total.integer' => 'Počet hodín musí byť celé číslo.',
 
             'end_at.required' => 'Dátum ukončenia je povinný.',
-            'end_at.date_format' => 'Dátum ukončenia musí byť vo formáte RRRR-MM-DD HH:MM:SS.',
+            'end_at.date_format' => 'Dátum ukončenia musí byť vo formáte RRRR-MM-DD',
 
             'year.required' => 'Rok je povinný.',
             'year.integer' => 'Rok musí byť celé číslo.',
@@ -50,9 +50,9 @@ class InternshipRequest extends FormRequest
             'company_id.integer' => 'ID firmy musí byť celé číslo.',
             'company_id.exists' => 'Zvolená firma neexistuje.',
 
-            'status_id.required' => 'Status je povinný.',
-            'status_id.integer' => 'ID statusu musí byť celé číslo.',
-            'status_id.exists' => 'Zvolený status neexistuje.',
+            'status.required' => 'Status je povinný.',
+            'status.string' => 'Status musí byť text.',
+            'status.exists' => 'Zvolený status neexistuje.',
 
             'garant_id.required' => 'Garant je povinný.',
             'garant_id.integer' => 'ID garanta musí byť celé číslo.',

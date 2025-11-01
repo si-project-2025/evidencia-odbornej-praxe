@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\InternshipRequest;
 use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
+use App\Models\Status;
 use Illuminate\Http\Request;
 
 use App\Models\Company;
@@ -24,6 +25,8 @@ class InternshipController extends Controller
     public function store(InternshipRequest $request)
     {
         $data = $request->validated();
+        $data['status_id'] = Status::where('type', 'Vytvorená')->value('status_id');
+        $data['end_at'] = $request->end_at . ' 00:00:00';
         $data['created_at'] = now();
         $data['updated_at'] = now();
 
@@ -80,12 +83,14 @@ class InternshipController extends Controller
     //Zoznam firiem (pre dropdown vo formulári)
     public function getCompanies()
     {
-        $companies = Company::select('company_id', 'name')
+        $companies = Company::with('address')
+            ->select('company_id', 'name', 'address_id')
             ->orderBy('name')
             ->get();
 
         return response()->json($companies);
     }
+
 
     // Zoznam garantov (pre dropdown vo formulári)
     public function getGarants()
