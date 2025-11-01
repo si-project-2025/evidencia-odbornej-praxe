@@ -3,7 +3,7 @@
 </script>
 
 <template>
-  <div class="container section-container">
+  <div class="container mx-auto section-container">
     <InternshipDetail />
   </div>
 </template>

@@ -7,7 +7,7 @@
 </script>
 
 <template>
-  <section class="container section-container h-full flex flex-col lg:flex-row justify-between gap-12">
+  <section class="container section-container mx-auto h-full flex flex-col lg:flex-row justify-between gap-12">
     <div class="flex flex-col gap-6">
       <div class="space-y-1.5">
         <h1>Evidencia</h1>
