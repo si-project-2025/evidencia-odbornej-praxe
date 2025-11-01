@@ -10,9 +10,7 @@
 
     <div class="mt-4">
       <span class="mr-2">Nemáte účet?</span>
-      <a href="/registration" class="font-semibold text-secondary hover:underline">
-        Zaregistrujte sa
-      </a>
+      <a href="/registration" class="font-semibold text-secondary hover:underline">Zaregistrujte sa</a>
     </div>
   </section>
 </template>

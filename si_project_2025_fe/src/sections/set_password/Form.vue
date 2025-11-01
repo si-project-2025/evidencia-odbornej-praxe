@@ -60,7 +60,7 @@
     <Button type="submit" class="w-[80%]">Nastaviť heslo a aktivovať účet</Button>
   </form>
 
-  <div class="rounded-md px-12 py-8 border border-dark/40 flex flex-col gap-2 text-center" v-if="successMessage">
+  <div class="form-container !gap-2 text-center" v-if="successMessage">
     <p class="flex flex-col gap-1 text-green-600">
       <span>{{ successMessage }}</span>
       <span class="text-sm">Presmerovávame Vás na prihlásenie...</span>

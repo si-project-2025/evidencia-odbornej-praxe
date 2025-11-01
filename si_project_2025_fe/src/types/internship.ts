@@ -1,11 +1,5 @@
-export interface Address {
-  address_id: number
-  country: string
-  city: string
-  zip_code: string
-  street: string
-  house_number: string
-}
+import type { Address } from '@/types/address.ts'
+
 export interface Company {
   company_id: number
   name: string
@@ -13,18 +7,11 @@ export interface Company {
   address: Address
 }
 
-export interface Status {
-  status_id: number
-  type: string
-}
-
 export interface Garant {
   users_id: number
   name: string
   surname: string
   email: string
-  alt_email: string | null
-  phone_number: string | null
 }
 
 export interface Document {
@@ -36,6 +23,7 @@ export interface Document {
   created_at: string
 }
 export interface Internship {
+  users_id: number
   internships_id: number
   semester: 'Z' | 'L'
   hours_total: number
@@ -44,7 +32,7 @@ export interface Internship {
   updated_at: string | null
   end_at: string | null
   company: Company
-  status: Status
+  status: string
   garant: Garant
   documents?: Document[]
 }

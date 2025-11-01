@@ -1,17 +1,13 @@
 <script setup lang="ts">
-  import axios from 'axios'
-  import { onMounted } from 'vue'
   import Logo from '@/assets/images/home-main.svg'
   import Button from '@/components/atoms/Button.vue'
+  import { useUserStore } from '@/stores/user.ts'
 
-  onMounted(async () => {
-    const response = await axios.get('http://127.0.0.1:8000/api/posts')
-    console.log(response.data)
-  })
+  const userStore = useUserStore()
 </script>
 
 <template>
-  <section class="section-container h-full flex flex-col lg:flex-row justify-between gap-12">
+  <section class="container section-container mx-auto h-full flex flex-col lg:flex-row justify-between gap-12">
     <div class="flex flex-col gap-6">
       <div class="space-y-1.5">
         <h1>Evidencia</h1>
@@ -29,9 +25,10 @@
         bez zbytočných papierov.
       </p>
 
-      <Button class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
+      <Button v-if="!userStore.user" class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
+      <Button v-else class="lg:w-1/3" href="/internships">Moje odborné praxe</Button>
     </div>
 
-    <img :src="Logo" alt="Logo" class="lg:w-[40%]" />
+    <img :src="Logo" alt="Logo" class="lg:w-[35%]" />
   </section>
 </template>

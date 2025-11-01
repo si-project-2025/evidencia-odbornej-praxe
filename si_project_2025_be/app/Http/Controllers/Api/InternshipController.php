@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\InternshipRequest;
+use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
 use Illuminate\Http\Request;
 
@@ -33,10 +34,8 @@ class InternshipController extends Controller
 
     public function show(string $id)
     {
-        #$internship = Internship::findOrFail($id);
-        $internship = Internship::with(['company', 'status', 'garant','documents','company.address'])
-            ->findOrFail($id);
-        return response()->json($internship);
+        $internship = Internship::findOrFail($id);
+        return response()->json(new InternshipResource($internship));
     }
 
     public function update(InternshipRequest $request, string $id)
@@ -59,16 +58,22 @@ class InternshipController extends Controller
         return response()->json(['message' => 'Internship deleted successfully']);
     }
 
-    public function internshipsOfStudent(Request $request)
+    public function getInternshipsByUser(Request $request)
     {
         $user = $request->user();
 
-        $internships = Internship::with(['company', 'status', 'garant'])
-            ->where('users_id', $user->users_id)
-            ->orderByDesc('year')
-            ->get();
+        $query = Internship::query()
+            ->orderByDesc('year');
 
-        return response()->json($internships);
+        if ($user->role->name === 'garant') {
+            $query->where('garant_id', $user->users_id);
+        } else {
+            $query->where('users_id', $user->users_id);
+        }
+
+        $internships = $query->get();
+
+        return response()->json(InternshipResource::collection($internships));
     }
 
     //Len dočasné riešenie
