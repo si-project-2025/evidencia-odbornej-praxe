@@ -13,8 +13,6 @@ Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
-
-
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();
@@ -22,7 +20,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    Route::get('/student/internships', [InternshipController::class, 'internshipsOfStudent']);
+    Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
 
     Route::apiResource('internships', InternshipController::class);
 });

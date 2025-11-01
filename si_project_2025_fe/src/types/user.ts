@@ -2,7 +2,7 @@ import type { Role } from '@/types/common.ts'
 import type { Address } from '@/types/address.ts'
 
 export interface User {
-  id: string
+  users_id: number
   email: string
   password: string
   name: string

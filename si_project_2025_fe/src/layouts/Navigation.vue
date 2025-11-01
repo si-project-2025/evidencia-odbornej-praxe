@@ -3,7 +3,7 @@
   import Logo from '@/assets/images/logo-fpv.png'
   import { CircleUser, CirclePlus, LogOut, Menu, X } from 'lucide-vue-next'
   import { computed, ref } from 'vue'
-  import { useUserStore } from '@/stores/userStore'
+  import { useUserStore } from '@/stores/user.ts'
 
   const userStore = useUserStore()
 

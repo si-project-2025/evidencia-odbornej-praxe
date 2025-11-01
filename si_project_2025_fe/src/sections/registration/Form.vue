@@ -5,7 +5,7 @@
   import Button from '@/components/atoms/Button.vue'
   import FormSection from '@/components/form/FormSection.vue'
   import { reactive, ref } from 'vue'
-  import { useUserStore } from '@/stores/userStore.ts'
+  import { useUserStore } from '@/stores/user.ts'
 
   const userStore = useUserStore()
 

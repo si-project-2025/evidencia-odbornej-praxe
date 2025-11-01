@@ -9,6 +9,7 @@ class InternshipResource extends JsonResource
     public function toArray($request): array
     {
         return [
+            'users_id' => $this->users_id,
             'internships_id' => $this->internships_id,
             'semester' => $this->semester,
             'hours_total' => $this->hours_total,
@@ -16,7 +17,6 @@ class InternshipResource extends JsonResource
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'end_at' => $this->end_at,
-            'users_id' => $this->users_id,
 
             'company' => [
                 'company_id' => $this->company->company_id,
@@ -34,10 +34,21 @@ class InternshipResource extends JsonResource
             'status' => $this->status->type,
 
             'garant' => [
+                'users_id' => $this->garant->users_id,
                 'email' => $this->garant->email,
                 'name' => $this->garant->name,
                 'surname' => $this->garant->surname,
             ],
+
+            'documents' => $this->documents->map(function ($document) {
+                return [
+                    'document_id' => $document->document_id,
+                    'type' => $document->type,
+                    'file_name' => $document->file_name,
+                    'is_verified' => $document->is_verified,
+                    'created_at' => $document->created_at,
+                ];
+            }),
         ];
     }
 }

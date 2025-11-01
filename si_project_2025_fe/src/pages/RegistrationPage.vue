@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import Form from '@/sections/registration/Form.vue'
-  import { useUserStore } from '@/stores/userStore.ts'
+  import { useUserStore } from '@/stores/user.ts'
 
   const userStore = useUserStore()
 </script>
