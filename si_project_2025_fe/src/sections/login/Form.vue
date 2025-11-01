@@ -5,7 +5,7 @@
   import Input from '@/components/form/Input.vue'
   import Button from '@/components/atoms/Button.vue'
   import { RouterLink } from 'vue-router'
-  import { useUserStore } from '@/stores/userStore'
+  import { useUserStore } from '@/stores/user.ts'
   import { useRouter } from 'vue-router'
 
   const userStore = useUserStore()

@@ -1,9 +1,9 @@
 <script setup lang="ts">
-  import InternshipDetail from '@/sections/internships/InternshipDetail.vue'
+  import InternshipList from '@/sections/internships/InternshipList.vue'
 </script>
 
 <template>
   <div class="container section-container">
-    <InternshipDetail />
+    <InternshipList />
   </div>
 </template>

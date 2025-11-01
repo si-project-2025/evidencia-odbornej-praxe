@@ -5,9 +5,9 @@ import RegistrationPage from '@/pages/RegistrationPage.vue'
 import ForgotPasswordPage from '@/pages/ForgotPasswordPage.vue'
 import ResetPasswordPage from '@/pages/ResetPasswordPage.vue'
 import SetPasswordPage from '@/pages/SetPasswordPage.vue'
-import StudentInternshipsPage from '@/pages/StudentInternshipsPage.vue'
+import InternshipsPage from '@/pages/InternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
-import { useUserStore } from '@/stores/userStore.ts'
+import { useUserStore } from '@/stores/user.ts'
 
 const routes = [
   {
@@ -43,13 +43,14 @@ const routes = [
   {
     path: '/internships',
     name: 'StudentInternships',
-    component: StudentInternshipsPage,
-    meta: { requiresAuth: true, requiresStudent: true },
+    component: InternshipsPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/internships/:id',
     name: 'internship-detail',
     component: InternshipDetailPage,
+    meta: { requiresAuth: true },
   },
 ]
 
@@ -62,20 +63,16 @@ router.beforeEach((to, from, next) => {
   const userStore = useUserStore()
   userStore.loadUser()
   const isAuthenticated = !!userStore.token
-  const isStudent = userStore.user?.role === 'student'
+  const isGarant = userStore.user?.role === 'garant'
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return next({ name: 'Login' })
   }
 
-  if (to.meta.requiresStudent && !isStudent) {
-    return next({ name: 'Home' })
-  }
-
   if (
     isAuthenticated &&
     ['Login', 'Registration'].includes(to.name as string) &&
-    !(to.name === 'Registration' && userStore.user?.role === 'garant')
+    !(to.name === 'Registration' && isGarant)
   ) {
     return next({ name: 'Home' })
   }

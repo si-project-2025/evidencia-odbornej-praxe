@@ -11,13 +11,13 @@ export const useInternshipStore = defineStore('internships', {
   }),
 
   actions: {
-    async fetchStudentInternships() {
+    async fetchInternships() {
       this.loading = true
       this.error = null
 
       try {
         const token = localStorage.getItem('token')
-        const response = await axios.get('http://localhost:8000/api/student/internships', {
+        const response = await axios.get('http://localhost:8000/api/user/internships', {
           headers: { Authorization: `Bearer ${token}` },
         })
         this.internships = response.data

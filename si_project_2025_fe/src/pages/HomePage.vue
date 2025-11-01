@@ -1,13 +1,13 @@
 <script setup lang="ts">
   import Logo from '@/assets/images/home-main.svg'
   import Button from '@/components/atoms/Button.vue'
-  import { useUserStore } from '@/stores/userStore.ts'
+  import { useUserStore } from '@/stores/user.ts'
 
   const userStore = useUserStore()
 </script>
 
 <template>
-  <section class="section-container h-full flex flex-col lg:flex-row justify-between gap-12">
+  <section class="container section-container h-full flex flex-col lg:flex-row justify-between gap-12">
     <div class="flex flex-col gap-6">
       <div class="space-y-1.5">
         <h1>Evidencia</h1>
@@ -29,6 +29,6 @@
       <Button v-else class="lg:w-1/3" href="/internships">Moje odborné praxe</Button>
     </div>
 
-    <img :src="Logo" alt="Logo" class="lg:w-[40%]" />
+    <img :src="Logo" alt="Logo" class="lg:w-[35%]" />
   </section>
 </template>

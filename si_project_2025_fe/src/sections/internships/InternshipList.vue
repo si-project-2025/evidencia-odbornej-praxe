@@ -5,7 +5,7 @@
   const store = useInternshipStore()
 
   onMounted(() => {
-    store.fetchStudentInternships()
+    store.fetchInternships()
   })
 
   const formatDate = (date: string | null) => {
@@ -38,7 +38,7 @@
 </script>
 
 <template>
-  <div class="px-5 sm:px-10 2xl:px-16 py-8 flex-col justify-start items-start min-h-screen">
+  <div class="flex-col justify-start items-start min-h-screen">
     <div class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
       <div>
         <h2 class="normal-case text-2xl text-gray-800">Moje odborné praxe</h2>
@@ -98,7 +98,7 @@
       <div
         v-for="internship in store.internships"
         :key="internship.internships_id"
-        class="border-l-4 border-emerald-500 rounded-2xl bg-white shadow-md hover:shadow-lg hover:bg-emerald-50/50"
+        class="border-l-4 border-emerald-500 rounded-2xl bg-white shadow-md hover:shadow-lg hover:bg-emerald-50/50 transition duration-500"
       >
         <RouterLink :to="`/internships/${internship.internships_id}`">
           <!-- Tabuľka -->
@@ -139,22 +139,9 @@
               <div class="col-span-2 md:col-span-2 flex justify-start sm:justify-end mt-2 md:mt-0">
                 <span
                   class="px-4 py-1.5 text-xs font-medium rounded-full shadow-sm"
-                  :class="{
-                    'bg-gray-200 text-gray-700': internship.status?.type === 'Vytvorená',
-                    'bg-blue-100 text-blue-700': internship.status?.type === 'Potvrdená',
-                    'bg-rose-100 text-rose-700': internship.status?.type === 'Zamietnutá',
-                    'bg-amber-100 text-amber-700': internship.status?.type === 'Schválená',
-                    'bg-emerald-100 text-emerald-700': internship.status?.type === 'Obhájená',
-                    'bg-purple-100 text-purple-700': ![
-                      'Vytvorená',
-                      'Potvrdená',
-                      'Zamietnutá',
-                      'Schválená',
-                      'Obhájená',
-                    ].includes(internship.status?.type),
-                  }"
+                  :class="getStatusClass(internship.status)"
                 >
-                  {{ internship.status?.type || 'Neznámy stav' }}
+                  {{ internship.status || 'Neznámy stav' }}
                 </span>
               </div>
             </div>

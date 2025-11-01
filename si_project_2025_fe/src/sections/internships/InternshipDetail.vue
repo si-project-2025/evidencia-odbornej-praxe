@@ -20,7 +20,7 @@
 </script>
 
 <template>
-  <div class="md:px-10 mx-auto justify-start items-start min-h-screen">
+  <div class="justify-start items-start min-h-screen">
     <!-- Späť na zoznam -->
     <RouterLink
       to="/internships"
@@ -48,14 +48,14 @@
           <span
             class="px-4 py-2 text-sm font-medium rounded-full shadow-sm"
             :class="{
-              'bg-gray-100 text-gray-700': store.internshipDetail.status?.type === 'Vytvorená',
-              'bg-blue-100 text-blue-700': store.internshipDetail.status?.type === 'Potvrdená',
-              'bg-red-100 text-red-700': store.internshipDetail.status?.type === 'Zamietnutá',
-              'bg-yellow-100 text-yellow-800': store.internshipDetail.status?.type === 'Schválená',
-              'bg-green-100 text-green-700': store.internshipDetail.status?.type === 'Obhájená',
+              'bg-gray-100 text-gray-700': store.internshipDetail.status === 'Vytvorená',
+              'bg-blue-100 text-blue-700': store.internshipDetail.status === 'Potvrdená',
+              'bg-red-100 text-red-700': store.internshipDetail.status === 'Zamietnutá',
+              'bg-yellow-100 text-yellow-800': store.internshipDetail.status === 'Schválená',
+              'bg-green-100 text-green-700': store.internshipDetail.status === 'Obhájená',
             }"
           >
-            {{ store.internshipDetail.status?.type || 'Neznámy stav' }}
+            {{ store.internshipDetail.status || 'Neznámy stav' }}
           </span>
         </div>
 

@@ -12,8 +12,6 @@ export interface Garant {
   name: string
   surname: string
   email: string
-  alt_email: string | null
-  phone_number: string | null
 }
 
 export interface Document {
@@ -25,6 +23,7 @@ export interface Document {
   created_at: string
 }
 export interface Internship {
+  users_id: number
   internships_id: number
   semester: 'Z' | 'L'
   hours_total: number
