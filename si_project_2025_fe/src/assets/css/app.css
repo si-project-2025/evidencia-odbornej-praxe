@@ -25,17 +25,17 @@
 
   h1 {
     @apply font-montserrat font-bold text-xl sm:text-2xl lg:text-3xl
-    leading-[1.1] uppercase;
+    leading-[1.1];
   }
 
   h2 {
     @apply font-montserrat font-bold text-lg sm:text-xl lg:text-2xl
-    leading-[1.1] uppercase;
+    leading-[1.1];
   }
 
   h3 {
     @apply font-montserrat font-bold text-base sm:text-lg lg:text-xl
-    leading-[1.1] uppercase;
+    leading-[1.1];
   }
 }
 
@@ -50,14 +50,15 @@
 
   .form-container {
     @apply flex flex-col items-center gap-6
-    rounded-md px-12 py-8 border border-dark/40;
+    rounded-2xl px-12 py-8 border-x-4 border-emerald-500 shadow-md;
   }
 }
 
 @layer components {
   .button {
-    @apply text-center font-semibold rounded-md
-    px-4 py-2 transition duration-500 cursor-pointer;
+    @apply flex flex-row gap-2 justify-center
+    font-semibold rounded-xl px-4 py-2 hover:scale-105
+    transition duration-500 cursor-pointer;
   }
 
   .nav-link {

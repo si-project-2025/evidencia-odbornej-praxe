@@ -1,5 +1,3 @@
-IntenrshipList
-
 <script setup lang="ts">
   import { onMounted, computed } from 'vue'
   import { useInternshipStore } from '@/stores/internships'
@@ -20,6 +18,23 @@ IntenrshipList
     if (!store.internships.length) return null
     return [...store.internships].sort((a, b) => b.year - a.year)[0]
   })
+
+  const getStatusClass = (status?: string) => {
+    switch (status) {
+      case 'Vytvorená':
+        return 'bg-gray-200 text-gray-700'
+      case 'Potvrdená':
+        return 'bg-blue-100 text-blue-700'
+      case 'Zamietnutá':
+        return 'bg-rose-100 text-rose-700'
+      case 'Schválená':
+        return 'bg-amber-100 text-amber-700'
+      case 'Obhájená':
+        return 'bg-emerald-100 text-emerald-700'
+      default:
+        return 'bg-purple-100 text-purple-700'
+    }
+  }
 </script>
 
 <template>
@@ -149,5 +164,3 @@ IntenrshipList
     </div>
   </div>
 </template>
-
-<style scoped></style>

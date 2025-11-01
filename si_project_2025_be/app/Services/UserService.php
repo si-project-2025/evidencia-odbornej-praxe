@@ -96,6 +96,7 @@ class UserService
         // Nastavenie hesla
         $user = User::where('email', $data['email'])->firstOrFail();
         $user->password = Hash::make($data['password']);
+        $user->email_verified_at = Carbon::now();
         $user->save();
 
         // Vymazanie tokenu
