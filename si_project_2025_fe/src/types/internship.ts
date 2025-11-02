@@ -1,6 +1,14 @@
 import type { Address } from '@/types/address.ts'
 import type { Status } from '@/types/common.ts'
 
+export interface ContactPerson {
+  id: number
+  name: string
+  surname: string
+  email: string
+  phone: string | null
+}
+
 export interface Company {
   company_id: number
   name: string
@@ -37,4 +45,5 @@ export interface Internship {
   status: Status
   garant: Garant
   documents?: Document[]
+  contact_persons?: ContactPerson[]
 }

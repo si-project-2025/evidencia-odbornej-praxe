@@ -81,4 +81,9 @@ class Internship extends Model
     {
         return $this->hasMany(Document::class, 'internships_id', 'internships_id');
     }
+
+    public function contactPersons()
+    {
+        return $this->hasMany(ContactPerson::class, 'internships_id', 'internships_id');
+    }
 }
