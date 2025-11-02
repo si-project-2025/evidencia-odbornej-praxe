@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import Logo from '@/assets/images/logo-fpv.png'
   import { CircleUser, CirclePlus, LogOut, Menu, X } from 'lucide-vue-next'
   import { computed, ref } from 'vue'
@@ -19,16 +19,16 @@
         <div class="font-semibold text-lg md:text-xl">Evidencia odbornej praxe</div>
       </a>
 
-      <button @click="menuOpen = !menuOpen" class="md:hidden text-emerald-700 focus:outline-none">
+      <base-button @click="menuOpen = !menuOpen" class="md:hidden text-emerald-700 focus:outline-none">
         <Menu v-if="!menuOpen" class="size-7" />
         <X v-else class="size-7" />
-      </button>
+      </base-button>
     </div>
 
     <template v-if="!userStore.user">
       <div :class="menuOpen ? 'block' : 'hidden md:flex'" class="flex flex-col md:flex-row gap-4 w-full md:w-fit">
-        <Button variant="secondary" href="/registration">Registrovať</Button>
-        <Button variant="primary" href="/login">Prihlásiť sa</Button>
+        <BaseButton variant="secondary" href="/registration">Registrovať</BaseButton>
+        <BaseButton variant="primary" href="/login">Prihlásiť sa</BaseButton>
       </div>
     </template>
 
@@ -48,10 +48,10 @@
           <CirclePlus v-if="isGarant" class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
         </RouterLink>
 
-        <Button class="group" @click="userStore.logout()" variant="secondary">
+        <BaseButton class="group" @click="userStore.logout()" variant="secondary">
           <LogOut class="size-6 text-emerald-600 group-hover:text-white" />
           <span class="text-primary-dark">Odhlásiť</span>
-        </Button>
+        </BaseButton>
       </div>
     </template>
   </nav>

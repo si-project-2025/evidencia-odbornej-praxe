@@ -1,7 +1,7 @@
 <script setup lang="ts">
   import { onMounted, reactive, ref } from 'vue'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import FormSection from '@/components/form/FormSection.vue'
   import Select from '@/components/form/Select.vue'
   import { Save } from 'lucide-vue-next'
@@ -112,10 +112,10 @@
 
     <!-- Tlačidlo -->
     <div class="text-center pt-4">
-      <Button type="submit" class="w-full">
+      <BaseButton type="submit" class="w-full">
         <Save class="w-5 h-5" />
         {{ loading ? 'Ukladám...' : 'Uložiť prax' }}
-      </Button>
+      </BaseButton>
     </div>
   </form>
 

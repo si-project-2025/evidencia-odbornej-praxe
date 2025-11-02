@@ -44,7 +44,7 @@ class RegisterUserRequest extends FormRequest
             'address.street' => 'nullable|string|required_if:role,student',
             'address.house_number' => 'nullable|string|required_if:role,student',
             'address.city' => 'nullable|string|required_if:role,student',
-            'address.zip' => 'nullable|string|required_if:role,student',
+            'address.zip_code' => 'nullable|string|required_if:role,student',
             'address.country' => 'nullable|string|required_if:role,student',
         ];
     }
@@ -91,8 +91,8 @@ class RegisterUserRequest extends FormRequest
             'address.city.required_if' => 'Mesto je povinné pre študentov.',
             'address.city.string' => 'Mesto musí byť text.',
 
-            'address.zip.required_if' => 'PSČ je povinné pre študentov.',
-            'address.zip.string' => 'PSČ musí byť text.',
+            'address.zip_code.required_if' => 'PSČ je povinné pre študentov.',
+            'address.zip_code.string' => 'PSČ musí byť text.',
 
             'address.country.required_if' => 'Krajina je povinná pre študentov.',
             'address.country.string' => 'Krajina musí byť text.',

@@ -2,7 +2,7 @@
   import type { RegistrationForm } from '@/types/form.ts'
   import axios from 'axios'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import FormSection from '@/components/form/FormSection.vue'
   import { reactive, ref } from 'vue'
   import { useUserStore } from '@/stores/user.ts'
@@ -111,7 +111,7 @@
       </FormSection>
     </div>
 
-    <Button type="submit" class="w-[80%]">Registrovať sa</Button>
+    <BaseButton type="submit" class="w-[80%]">Registrovať sa</BaseButton>
     <p v-if="submitError" class="text-red-600">{{ submitError }}</p>
   </form>
 
@@ -119,11 +119,11 @@
     <div class="text-center p-6 bg-green-100 text-secondary rounded-2xl">
       <h3 class="text-semibold mb-2">Registrácia takmer hotová!</h3>
       <p>
-        Na Váš e-mail
+        Na e-mail
         <strong>{{ registrationEmail }}</strong>
         sme odoslali odkaz pre aktiváciu účtu a nastavenie hesla.
       </p>
-      <p class="mt-2 text-sm">Prosím, skontrolujte si svoju e-mailovú schránku.</p>
+      <p class="mt-2 text-sm">Prosím, skontrolujte danú e-mailovú schránku.</p>
     </div>
   </div>
 </template>

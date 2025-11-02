@@ -3,7 +3,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import { RouterLink } from 'vue-router'
 
   const route = useRoute()
@@ -66,7 +66,7 @@
       <Input v-model="password" id="password" label="Nové heslo" type="password" />
       <Input v-model="password_confirmation" id="password_confirmation" label="Potvrďte heslo" type="password" />
 
-      <Button type="submit" class="w-[80%]">Zmeniť heslo</Button>
+      <BaseButton type="submit" class="w-[80%]">Zmeniť heslo</BaseButton>
     </template>
     <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
     <p v-if="submitError" class="text-red-600 mt-2 whitespace-pre-line">{{ submitError }}</p>
