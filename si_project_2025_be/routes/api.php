@@ -7,6 +7,7 @@ use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\InternshipVerificationController;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -27,6 +28,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::apiResource('internships.contact-persons', ContactPersonController::class)
         ->parameters(['contact-persons' => 'contactPerson']);
+
+    Route::post('/internships/{internship}/send-verification',
+        [InternshipVerificationController::class, 'sendVerificationEmail']);
 
     Route::apiResource('internships', InternshipController::class);
 });
