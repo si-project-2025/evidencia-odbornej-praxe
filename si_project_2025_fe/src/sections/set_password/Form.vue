@@ -3,7 +3,7 @@
   import { useRoute, useRouter } from 'vue-router'
   import axios from 'axios'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import { RouterLink } from 'vue-router'
 
   const route = useRoute()
@@ -57,7 +57,7 @@
     <Input v-model="password" id="password" label="Heslo" type="password" placeholder="Minimálne 8 znakov" />
     <Input v-model="password_confirmation" id="password_confirmation" label="Potvrďte heslo" type="password" />
 
-    <Button type="submit" class="w-[80%]">Nastaviť heslo a aktivovať účet</Button>
+    <BaseButton type="submit" class="w-[80%]">Nastaviť heslo a aktivovať účet</BaseButton>
   </form>
 
   <div class="form-container !gap-2 text-center" v-if="successMessage">

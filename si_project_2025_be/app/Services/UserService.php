@@ -24,7 +24,7 @@ class UserService
                     'street' => $addr['street'],
                     'house_number' => $addr['house_number'],
                     'city' => $addr['city'],
-                    'zip_code' => $addr['zip'],
+                    'zip_code' => $addr['zip_code'],
                     'country' => $addr['country'],
                 ]);
                 $addressId = $address->address_id;

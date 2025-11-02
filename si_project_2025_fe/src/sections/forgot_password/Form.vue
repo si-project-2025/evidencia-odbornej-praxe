@@ -3,7 +3,7 @@
   import axios from 'axios'
   import { RouterLink } from 'vue-router'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
 
   const email = ref('')
   const successMessage = ref('')
@@ -28,7 +28,7 @@
   <form @submit.prevent="submitEmail" class="form-container w-full md:w-1/2 2xl:w-1/3">
     <Input v-model="email" id="email" label="Email" type="email" />
 
-    <Button type="submit" class="w-[80%]">Odoslať odkaz na reset hesla</Button>
+    <BaseButton type="submit" class="w-[80%]">Odoslať odkaz na reset hesla</BaseButton>
 
     <p v-if="successMessage" class="text-green-600 mt-2">{{ successMessage }}</p>
     <p v-if="submitError" class="text-red-600 mt-2">{{ submitError }}</p>

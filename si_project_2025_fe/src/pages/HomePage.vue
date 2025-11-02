@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import Logo from '@/assets/images/home-main.svg'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import { useUserStore } from '@/stores/user.ts'
 
   const userStore = useUserStore()
@@ -25,8 +25,8 @@
         bez zbytočných papierov.
       </p>
 
-      <Button v-if="!userStore.user" class="lg:w-1/3" href="/login">Prihlásiť sa</Button>
-      <Button v-else class="lg:w-1/3" href="/internships">Moje odborné praxe</Button>
+      <BaseButton v-if="!userStore.user" class="lg:w-1/3" href="/login">Prihlásiť sa</BaseButton>
+      <BaseButton v-else class="lg:w-1/3" href="/internships">Moje odborné praxe</BaseButton>
     </div>
 
     <img :src="Logo" alt="Logo" class="lg:w-[35%]" />

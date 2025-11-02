@@ -28,12 +28,12 @@ const routes = [
   },
   {
     path: '/forgot-password',
-    name: 'Forgot_Password',
+    name: 'ForgotPassword',
     component: ForgotPasswordPage,
   },
   {
     path: '/reset-password',
-    name: 'Reset_Password',
+    name: 'ResetPassword',
     component: ResetPasswordPage,
   },
   {
@@ -43,13 +43,13 @@ const routes = [
   },
   {
     path: '/internships',
-    name: 'StudentInternships',
+    name: 'Internships',
     component: InternshipsPage,
     meta: { requiresAuth: true },
   },
   {
     path: '/internships/:id',
-    name: 'internship-detail',
+    name: 'InternshipDetail',
     component: InternshipDetailPage,
     meta: { requiresAuth: true },
   },
@@ -82,6 +82,10 @@ router.beforeEach((to, from, next) => {
     !(to.name === 'Registration' && isGarant)
   ) {
     return next({ name: 'Home' })
+  }
+
+  if (to.name === 'InternshipCreate' && isGarant) {
+    return next({ name: 'Internships' })
   }
 
   next()

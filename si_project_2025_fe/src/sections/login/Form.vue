@@ -3,7 +3,7 @@
   import type { LoginForm } from '@/types/form.ts'
   import axios from 'axios'
   import Input from '@/components/form/Input.vue'
-  import Button from '@/components/atoms/Button.vue'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
   import { RouterLink } from 'vue-router'
   import { useUserStore } from '@/stores/user.ts'
   import { useRouter } from 'vue-router'
@@ -40,7 +40,7 @@
     <Input v-model="form.password" id="password" label="Heslo" type="password" />
     <!--<Checkbox v-model="form.remember" id="remember" label="Zapamätať si ma" />-->
 
-    <Button type="submit" class="w-[80%]">Prihlásiť sa</Button>
+    <BaseButton type="submit" class="w-[80%]">Prihlásiť sa</BaseButton>
 
     <p v-if="submitError" class="text-red-600">{{ submitError }}</p>
     <RouterLink to="/forgot-password" class="font-light hover:underline">Zabudli ste heslo?</RouterLink>

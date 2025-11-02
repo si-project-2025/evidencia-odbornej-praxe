@@ -27,11 +27,11 @@
 </script>
 
 <template>
-  <RouterLink v-if="href" :to="href" class="button" :class="variantClasses">
+  <RouterLink v-if="href" :to="href" class="button hover:scale-105" :class="variantClasses">
     <slot></slot>
   </RouterLink>
 
-  <button v-else :type="type" class="button" :class="variantClasses">
+  <button v-else :type="type" class="button hover:scale-105" :class="variantClasses">
     <slot></slot>
   </button>
 </template>
