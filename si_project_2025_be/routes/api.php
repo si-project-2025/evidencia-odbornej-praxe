@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\InternshipController;
+use App\Http\Controllers\Api\ContactPersonController;
 use App\Http\Controllers\Auth\AuthController;
 use App\Http\Controllers\Auth\ForgotPasswordController;
 use App\Http\Controllers\Auth\ResetPasswordController;
@@ -23,6 +24,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
+
+    Route::apiResource('internships.contact-persons', ContactPersonController::class)
+        ->parameters(['contact-persons' => 'contactPerson']);
 
     Route::apiResource('internships', InternshipController::class);
 });

@@ -1,47 +1,47 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
-  import { useRoute } from 'vue-router'
-  import { useRouter } from 'vue-router'
-  import { useInternshipStore } from '@/stores/internships'
-  import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature } from 'lucide-vue-next'
-  import ActionButton from '@/components/atoms/ActionButton.vue'
-  import StatusBadge from '@/components/atoms/StatusBadge.vue'
-  import DocumentCard from '@/components/DocumentCard.vue'
+import { ref } from 'vue'
+import { useRoute } from 'vue-router'
+import { useRouter } from 'vue-router'
+import { useInternshipStore } from '@/stores/internships'
+import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature, Users } from 'lucide-vue-next'
+import ActionButton from '@/components/atoms/ActionButton.vue'
+import StatusBadge from '@/components/atoms/StatusBadge.vue'
+import DocumentCard from '@/components/DocumentCard.vue'
 
-  const store = useInternshipStore()
-  const route = useRoute()
+const store = useInternshipStore()
+const route = useRoute()
 
-  const router = useRouter()
-  const deleting = ref(false)
-  const deleteError = ref('')
+const router = useRouter()
+const deleting = ref(false)
+const deleteError = ref('')
 
-  const formatDate = (date: string | null) => {
-    if (!date) return '—'
-    const d = new Date(date)
-    return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
+const formatDate = (date: string | null) => {
+  if (!date) return '—'
+  const d = new Date(date)
+  return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
+}
+
+const deleteInternship = async () => {
+  if (!confirm('Naozaj chcete túto prax zmazať?')) return
+
+  try {
+    deleting.value = true
+    deleteError.value = ''
+
+    await store.deleteInternship(Number(route.params.id))
+
+    alert('Prax bola úspešne zmazaná.')
+    router.push('/internships')
+  } catch {
+    deleteError.value = 'Nepodarilo sa zmazať prax.'
+  } finally {
+    deleting.value = false
   }
+}
 
-  const deleteInternship = async () => {
-    if (!confirm('Naozaj chcete túto prax zmazať?')) return
-
-    try {
-      deleting.value = true
-      deleteError.value = ''
-
-      await store.deleteInternship(Number(route.params.id))
-
-      alert('Prax bola úspešne zmazaná.')
-      router.push('/internships')
-    } catch {
-      deleteError.value = 'Nepodarilo sa zmazať prax.'
-    } finally {
-      deleting.value = false
-    }
-  }
-
-  const sendToCompany = async () => {
-    // overiť firmou
-  }
+const sendToCompany = async () => {
+  // overiť firmou
+}
 </script>
 
 <template>
@@ -99,7 +99,7 @@
       </div>
 
       <hr class="border-gray-200" />
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <!-- Firma -->
         <div>
           <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
@@ -145,6 +145,38 @@
               <strong>Kontakt:</strong>
               {{ store.internshipDetail?.garant?.email || '—' }}
             </p>
+          </div>
+        </div>
+
+        <!-- Kontaktné osoby -->
+        <!-- Kontaktné osoby -->
+        <div>
+          <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
+            <Users class="w-5 h-5 text-green-600" />
+            Kontaktné osoby
+          </h3>
+          <div class="pl-7 text-gray-700 text-sm space-y-3">
+            <template v-if="store.internshipDetail?.contact_persons?.length">
+              <div
+                v-for="person in store.internshipDetail.contact_persons"
+                :key="person.id"
+                class="space-y-1 pb-2 border-b border-gray-100 last:border-0"
+              >
+                <p>
+                  <strong>Meno:</strong>
+                  {{ person.name }} {{ person.surname }}
+                </p>
+                <p>
+                  <strong>Email:</strong>
+                  {{ person.email }}
+                </p>
+                <p v-if="person.phone">
+                  <strong>Telefón:</strong>
+                  {{ person.phone }}
+                </p>
+              </div>
+            </template>
+            <p v-else class="text-gray-500">Žiadne kontaktné osoby</p>
           </div>
         </div>
       </div>
