@@ -52,6 +52,9 @@
     @apply flex flex-col items-center gap-6
     rounded-2xl px-12 py-8 border-x-4 border-emerald-500 shadow-md;
   }
+  .card {
+    @apply flex flex-col items-center justify-between border border-emerald-100 rounded-xl bg-emerald-50/40 p-4 shadow-sm hover:shadow-md hover:bg-emerald-50;
+  }
 }
 
 @layer components {
