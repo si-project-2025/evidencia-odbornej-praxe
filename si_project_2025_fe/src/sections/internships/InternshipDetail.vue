@@ -15,6 +15,9 @@ const router = useRouter()
 const deleting = ref(false)
 const deleteError = ref('')
 
+const sending = ref(false)
+const sendError = ref('')
+
 const formatDate = (date: string | null) => {
   if (!date) return '—'
   const d = new Date(date)
@@ -41,6 +44,25 @@ const deleteInternship = async () => {
 
 const sendToCompany = async () => {
   // overiť firmou
+  if (!store.internshipDetail?.contact_persons?.length) {
+    alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
+    return
+  }
+
+  if (!confirm('Odoslať email na overenie praxe kontaktným osobám?')) return
+
+  try {
+    sending.value = true
+    sendError.value = ''
+
+    await store.sendVerificationEmail(Number(route.params.id))
+
+    alert('Email na overenie bol úspešne odoslaný.')
+  } catch {
+    sendError.value = 'Nepodarilo sa poslať overovací email.'
+  } finally {
+    sending.value = false
+  }
 }
 </script>
 
@@ -148,7 +170,6 @@ const sendToCompany = async () => {
           </div>
         </div>
 
-        <!-- Kontaktné osoby -->
         <!-- Kontaktné osoby -->
         <div>
           <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">

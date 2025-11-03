@@ -103,5 +103,22 @@ export const useInternshipStore = defineStore('internships', {
         throw error
       }
     },
+
+    async sendVerificationEmail(id: number) {
+      try {
+        const token = localStorage.getItem('token')
+
+        await axios.post(
+          `http://localhost:8000/api/internships/${id}/send-verification`,
+          {},
+          {
+            headers: { Authorization: `Bearer ${token}` }
+          }
+        )
+      } catch (error) {
+        console.error('Nepodarilo sa odoslať overovací email:', error)
+        throw error
+      }
+    },
   },
 })
