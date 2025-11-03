@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\Internship;
+use App\Models\Status;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -58,9 +59,6 @@ class InternshipVerificationService
      */
     private function sendVerificationEmailToContact(Internship $internship, string $contactEmail, string $token): void
     {
-        $verificationUrl = config('app.frontend_url') . '/verify-internship?token=' . $token
-            . '&email=' . urlencode($contactEmail);
-
         $verificationUrl = "http://localhost:5173/verify-internship?token=$token&email=" . urlencode($contactEmail);
 
         Mail::send('emails.company-verification', [
@@ -106,12 +104,13 @@ class InternshipVerificationService
         }
 
         // Over, či už nie je potvrdená
-        if ($internship->status_id == 2) {
+        if ($internship->status->type == 'Potvrdená') {
             throw new \Exception('Prax už bola overená.');
         }
 
-        // Zmeň status na "Potvrdená" (status_id = 2)
-        $internship->update(['status_id' => 2]);
+        // Zmeň status na "Potvrdená"
+        $statusId = Status::where('name', 'Potvrdená')->value('id');
+        $internship->update(['status_id' => $statusId]);
 
         // Vymaž token (jednorazové použitie)
         DB::table('internship_verification_tokens')

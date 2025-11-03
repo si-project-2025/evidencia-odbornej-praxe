@@ -26,11 +26,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
 
+    Route::apiResource('internships', InternshipController::class);
     Route::apiResource('internships.contact-persons', ContactPersonController::class)
         ->parameters(['contact-persons' => 'contactPerson']);
 
     Route::post('/internships/{internship}/send-verification',
         [InternshipVerificationController::class, 'sendVerificationEmail']);
-
-    Route::apiResource('internships', InternshipController::class);
 });
