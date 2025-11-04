@@ -53,7 +53,7 @@
     rounded-2xl px-12 py-8 border-x-4 border-emerald-500 shadow-md;
   }
   .card {
-    @apply flex flex-col items-center justify-between border border-emerald-100 rounded-xl bg-emerald-50/40 p-4 shadow-sm hover:shadow-md hover:bg-emerald-50;
+    @apply flex flex-col items-center justify-between border border-t-4 p-4 border-emerald-500 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm;
   }
 }
 

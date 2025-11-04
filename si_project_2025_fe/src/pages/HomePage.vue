@@ -1,6 +1,7 @@
 <script setup lang="ts">
   import Logo from '@/assets/images/home-main.svg'
   import BaseButton from '@/components/atoms/BaseButton.vue'
+  import FeatureCard from '@/components/FeatureCard.vue'
   import { NotebookPen, Building, ChartLine, Laptop, Zap, Folder } from 'lucide-vue-next'
   import { useUserStore } from '@/stores/user.ts'
   const userStore = useUserStore()
@@ -31,59 +32,53 @@
       </div>
     </div>
 
-    <img :src="Logo" alt="Logo" class="lg:w-[60%] w-full max-w-md mx-auto" />
+    <img :src="Logo" alt="Logo" class="lg:w-[40%] w-full max-w-md mx-auto" />
   </section>
 
   <div
-    class="mx-20 px-10 mb-10 bg-white border-t-4 border-emerald-500 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm"
+    class="container mx-auto md:px-10 mb-10 border-t-4 border-emerald-500 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm"
   >
-    <section
-      class="px-5 py-5 my-10 bg-white border-t-4 border-emerald-50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm"
-    >
-      <div class="container mx-auto text-center mt-10">
-        <h2 class="mb-12">Ako to funguje</h2>
-        <div class="grid md:grid-cols-3 gap-8">
-          <div class="card">
-            <NotebookPen class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-xl mb-2">Študent pridá prax</h3>
-            <p>Jednoducho zadaj informácie o svojej praxi a odošli ich na schválenie.</p>
-          </div>
-          <div class="card">
-            <Building class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-xl mb-2">Firma potvrdí priebeh</h3>
-            <p>Firma schváli priebeh praxe online bez potreby tlačených dokumentov.</p>
-          </div>
-          <div class="card">
-            <ChartLine class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-xl mb-2">Škola sleduje priebeh</h3>
-            <p>Škola má prístup k záznamom a štatistikám.</p>
-          </div>
+    <section>
+      <section class="py-10 text-center">
+        <h2 class="mb-12 text-2xl font-bold">Ako to funguje</h2>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 md:px-0">
+          <FeatureCard
+            :icon="NotebookPen"
+            title="Študent pridá prax"
+            description="Jednoducho zadaj informácie o svojej praxi a odošli ich na schválenie."
+          />
+          <FeatureCard
+            :icon="Building"
+            title="Firma potvrdí priebeh"
+            description="Firma schváli priebeh praxe online bez potreby tlačených dokumentov."
+          />
+          <FeatureCard
+            :icon="ChartLine"
+            title="Škola sleduje priebeh"
+            description="Škola má prístup k záznamom a štatistikám."
+          />
         </div>
-      </div>
+      </section>
     </section>
 
-    <section
-      class="px-5 py-5 my-10 bg-white border-t-4 border-emerald-50 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm"
-    >
-      <div class="container mx-auto text-center">
-        <h2 class="text-2xl mb-12">Prečo používať evidenciu praxe</h2>
-        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <div class="card">
-            <Laptop class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-lg mb-2">Jednoduché rozhranie</h3>
-            <p>Používateľsky prívetivé pre študentov aj firmy.</p>
-          </div>
-          <div class="card">
-            <Zap class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-lg mb-2">Rýchly záznam</h3>
-            <p>Zadaj prax za pár sekúnd a maj všetko na jednom mieste.</p>
-          </div>
-          <div class="card">
-            <Folder class="w-12 h-12 mb-4" />
-            <h3 class="font-semibold text-lg mb-2">Prehľadné údaje</h3>
-            <p>Všetky praxe, potvrdenia a stavy na jednom paneli.</p>
-          </div>
-        </div>
+    <section class="mb-10">
+      <h2 class="text-2xl text-center mb-12">Prečo používať evidenciu praxe</h2>
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 px-4 md:px-0">
+        <FeatureCard
+          :icon="Laptop"
+          title="Jednoduché rozhranie"
+          description="Používateľsky prívetivé pre študentov aj firmy."
+        />
+        <FeatureCard
+          :icon="Zap"
+          title="Rýchly záznam"
+          description="Zadaj prax za pár sekúnd a maj všetko na jednom mieste."
+        />
+        <FeatureCard
+          :icon="Folder"
+          title="Prehľadné údaje"
+          description="Všetky praxe, potvrdenia a stavy na jednom paneli."
+        />
       </div>
     </section>
   </div>
