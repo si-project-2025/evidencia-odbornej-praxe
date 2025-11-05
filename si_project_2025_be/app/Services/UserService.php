@@ -38,8 +38,8 @@ class UserService
                 'role_id' => Role::where('name', $data['role'])->firstOrFail()->role_id,
                 'address_id' => $addressId, // Priradíme ID adresy (bude null pre ne-študentov)
                 'alt_email' => $data['alt_email'] ?? null,
-                'study_program' => $data['programme'] ?? null,
-                'phone_number' => $data['phone'] ?? null,
+                'study_program' => $data['study_program'] ?? null,
+                'phone_number' => $data['phone_number'] ?? null,
                 'created_at' => Carbon::now(),
             ]);
 

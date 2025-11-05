@@ -11,9 +11,9 @@ export interface RegistrationForm {
   name: string
   surname: string
   email: string
-  alt_email?: string
-  phone?: string
-  programme?: string
+  alt_email: string | null
+  phone_number: string | null
+  study_program: string | null
   address?: Address
   role: Role
 }
