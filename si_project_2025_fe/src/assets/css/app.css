@@ -52,9 +52,6 @@
     @apply flex flex-col items-center gap-6
     rounded-2xl px-12 py-8 border-x-4 border-emerald-500 shadow-md;
   }
-  .card {
-    @apply flex flex-col items-center justify-between border border-t-4 p-4 border-emerald-500 rounded-3xl shadow-md hover:shadow-lg transition-all duration-200 backdrop-blur-sm;
-  }
 }
 
 @layer components {
@@ -62,6 +59,12 @@
     @apply flex flex-row gap-2 justify-center items-center
     font-medium rounded-xl px-4 py-2
     transition duration-500 cursor-pointer;
+  }
+
+  .card {
+    @apply flex flex-col items-center justify-between
+    border-t-4 p-4 border-emerald-500 rounded-3xl shadow-md
+    hover:shadow-lg transition-all duration-200 backdrop-blur-sm;
   }
 
   .nav-link {
