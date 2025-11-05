@@ -61,6 +61,12 @@
     transition duration-500 cursor-pointer;
   }
 
+  .card {
+    @apply flex flex-col items-center justify-between
+    border-t-4 p-4 border-emerald-500 rounded-3xl shadow-md
+    hover:shadow-lg transition-all duration-200 backdrop-blur-sm;
+  }
+
   .nav-link {
     @apply font-semibold text-secondary hover:text-dark;
   }
