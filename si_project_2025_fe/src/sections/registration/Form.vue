@@ -68,7 +68,6 @@
     if (!validateForm()) return
 
     try {
-      console.log(form.role)
       const response = await axios.post('http://localhost:8000/api/register', form)
       registrationSuccess.value = true
       registrationEmail.value = response.data.email
