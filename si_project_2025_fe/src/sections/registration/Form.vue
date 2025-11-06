@@ -13,9 +13,9 @@
     name: '',
     surname: '',
     email: '',
-    alt_email: undefined,
-    phone: undefined,
-    programme: undefined,
+    alt_email: null,
+    phone_number: null,
+    study_program: null,
     role: userStore.user ? 'garant' : 'student',
     address: { street: '', house_number: '', city: '', zip_code: '', country: '' },
   })
@@ -43,9 +43,9 @@
       return false
     }
 
-    if (form.phone && form.phone.trim() !== '') {
+    if (form.phone_number && form.phone_number.trim() !== '') {
       const phonePattern = /^\+?[0-9\s\-()]{7,15}$/
-      if (!phonePattern.test(form.phone!)) {
+      if (!phonePattern.test(form.phone_number!)) {
         phoneError.value = 'Zadajte platný formát čísla'
         return false
       }
@@ -68,7 +68,6 @@
     if (!validateForm()) return
 
     try {
-      console.log(form.role)
       const response = await axios.post('http://localhost:8000/api/register', form)
       registrationSuccess.value = true
       registrationEmail.value = response.data.email
@@ -99,10 +98,17 @@
 
       <FormSection title="Doplnkové údaje (nepovinné)">
         <Input v-model="form.alt_email!" id="alt_email" label="Alternatívny email" type="email" :required="false" />
-        <Input v-model="form.phone!" id="phone" label="Telefón" type="tel" :required="false" :error="phoneError" />
+        <Input
+          v-model="form.phone_number"
+          id="phone"
+          label="Telefón"
+          type="tel"
+          :required="false"
+          :error="phoneError"
+        />
         <Input
           v-if="form.role === 'student'"
-          v-model="form.programme!"
+          v-model="form.study_program"
           id="programme"
           label="Odbor"
           type="text"
