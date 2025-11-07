@@ -9,12 +9,14 @@
   const successMessage = ref('')
   const submitError = ref('')
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   const submitEmail = async () => {
     successMessage.value = ''
     submitError.value = ''
 
     try {
-      const response = await axios.post('http://localhost:8000/api/forgot-password', { email: email.value })
+      const response = await axios.post(`${API_URL}/api/forgot-password`, { email: email.value })
       successMessage.value = response.data.message ?? 'Odkaz na reset hesla bol odoslaný.'
     } catch (err: unknown) {
       submitError.value = axios.isAxiosError(err)

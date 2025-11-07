@@ -16,12 +16,14 @@
   const successMessage = ref('')
   const submitError = ref('')
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   const setPassword = async () => {
     successMessage.value = ''
     submitError.value = ''
 
     try {
-      const response = await axios.post('http://localhost:8000/api/set-password', {
+      const response = await axios.post(`${API_URL}/api/set-password`, {
         token: token.value,
         email: email.value,
         password: password.value,

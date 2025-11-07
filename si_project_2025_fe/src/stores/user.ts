@@ -3,6 +3,8 @@ import type { User } from '@/types/user.ts'
 import axios from 'axios'
 import router from '@/router'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export const useUserStore = defineStore('user', {
   state: () => ({
     user: null as null | User,
@@ -32,7 +34,7 @@ export const useUserStore = defineStore('user', {
     async logout() {
       try {
         await axios.post(
-          'http://localhost:8000/api/logout',
+          `${API_URL}/api/logout`,
           {},
           {
             headers: { Authorization: `Bearer ${this.token}` },
