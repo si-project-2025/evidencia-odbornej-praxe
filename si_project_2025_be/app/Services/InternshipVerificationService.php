@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
 use App\Models\Status;
 use Illuminate\Support\Facades\DB;
@@ -145,17 +146,15 @@ class InternshipVerificationService
             throw new \Exception('Token expiroval.');
         }
 
-        $internship = Internship::with(['company.address', 'user', 'status'])
-            ->where('internships_id', $verificationRecord->internships_id)
-            ->first();
+        $internship = Internship::where('internships_id', $verificationRecord->internships_id)->first();
 
         if (!$internship) {
             throw new \Exception('Prax nenájdená.');
         }
 
         return [
-            'internship' => $internship,
-            'expires_at' => Carbon::parse($verificationRecord->created_at)->addDays(7),
+            'internship' => new InternshipResource($internship),
+            'is_expired' => Carbon::parse($verificationRecord->created_at)->addDays(7)->isPast(),
         ];
     }
 }

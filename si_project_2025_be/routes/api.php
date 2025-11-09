@@ -15,6 +15,8 @@ Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
+Route::get('/internships/get-verification-details',
+    [InternshipVerificationController::class, 'getVerificationDetails']);
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();

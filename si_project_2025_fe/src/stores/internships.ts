@@ -112,12 +112,35 @@ export const useInternshipStore = defineStore('internships', {
           `http://localhost:8000/api/internships/${id}/send-verification`,
           {},
           {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+            headers: { Authorization: `Bearer ${token}` },
+          },
         )
       } catch (error) {
         console.error('Nepodarilo sa odoslať overovací email:', error)
         throw error
+      }
+    },
+    async fetchVerificationDetails(email: string, token: string) {
+      this.loading = true
+      this.error = null
+      this.internshipDetail = null
+
+      try {
+        const response = await axios.get('http://127.0.0.1:8000/api/internships/get-verification-details', {
+          params: { email, token },
+        })
+
+        if (response.data.is_expired) {
+          this.error = 'Odkaz na potvrdenie praxe expiroval'
+          return
+        }
+
+        this.internshipDetail = response.data.internship
+      } catch (error) {
+        console.error('Nepodarilo sa načítať verifikačné detaily:', error)
+        this.error = 'Nepodarilo sa načítať verifikačné detaily.'
+      } finally {
+        this.loading = false
       }
     },
   },
