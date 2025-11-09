@@ -59,7 +59,8 @@ class InternshipVerificationService
      */
     private function sendVerificationEmailToContact(Internship $internship, string $contactEmail, string $token): void
     {
-        $verificationUrl = "http://localhost:5173/verify-internship?token=$token&email=" . urlencode($contactEmail);
+        $frontendUrl = config('app.frontend_url');
+        $verificationUrl = "{$frontendUrl}/verify-internship?token={$token}&email=" . urlencode($contactEmail);
 
         Mail::send('emails.company-verification', [
             'internship' => $internship,

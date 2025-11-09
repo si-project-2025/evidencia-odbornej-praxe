@@ -3,6 +3,8 @@ import axios from 'axios'
 import type { Company, Garant, Internship } from '@/types/internship'
 import type { InternshipForm } from '@/types/form.ts'
 
+const API_URL = import.meta.env.VITE_API_URL
+
 export const useInternshipStore = defineStore('internships', {
   state: () => ({
     internships: [] as Internship[],
@@ -21,7 +23,7 @@ export const useInternshipStore = defineStore('internships', {
       try {
         const token = localStorage.getItem('token')
 
-        const response = await axios.get('http://localhost:8000/api/user/internships', {
+        const response = await axios.get(`${API_URL}/api/user/internships`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -42,7 +44,7 @@ export const useInternshipStore = defineStore('internships', {
       try {
         const token = localStorage.getItem('token')
 
-        const response = await axios.get(`http://127.0.0.1:8000/api/internships/${id}`, {
+        const response = await axios.get(`${API_URL}/api/internships/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -58,8 +60,8 @@ export const useInternshipStore = defineStore('internships', {
     async fetchCompaniesAndGarants() {
       try {
         const [companiesRes, garantsRes] = await Promise.all([
-          axios.get('http://localhost:8000/api/internships/companies'),
-          axios.get('http://localhost:8000/api/internships/garants'),
+          axios.get(`${API_URL}/api/internships/companies`),
+          axios.get(`${API_URL}/api/internships/garants`),
         ])
 
         this.companies = companiesRes.data
@@ -73,7 +75,7 @@ export const useInternshipStore = defineStore('internships', {
       try {
         const token = localStorage.getItem('token')
 
-        const response = await axios.post('http://localhost:8000/api/internships', data, {
+        const response = await axios.post(`${API_URL}/api/internships`, data, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -93,7 +95,7 @@ export const useInternshipStore = defineStore('internships', {
       try {
         const token = localStorage.getItem('token')
 
-        await axios.delete(`http://localhost:8000/api/internships/${id}`, {
+        await axios.delete(`${API_URL}/api/internships/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
 
@@ -109,11 +111,11 @@ export const useInternshipStore = defineStore('internships', {
         const token = localStorage.getItem('token')
 
         await axios.post(
-          `http://localhost:8000/api/internships/${id}/send-verification`,
+          `${API_URL}/api/internships/${id}/send-verification`,
           {},
           {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+            headers: { Authorization: `Bearer ${token}` },
+          },
         )
       } catch (error) {
         console.error('Nepodarilo sa odoslať overovací email:', error)

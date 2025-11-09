@@ -16,6 +16,8 @@
   const successMessage = ref('')
   const submitError = ref('')
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   // Načíta sa token a email z URL
   onMounted(() => {
     token.value = route.query.token as string
@@ -31,7 +33,7 @@
     submitError.value = ''
 
     try {
-      const response = await axios.post('http://localhost:8000/api/reset-password', {
+      const response = await axios.post(`${API_URL}/api/reset-password`, {
         token: token.value,
         email: email.value,
         password: password.value,
