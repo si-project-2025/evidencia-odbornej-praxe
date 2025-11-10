@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { Company, Garant, Internship } from '@/types/internship'
+import type { Company, Garant, Internship, Student } from '@/types/internship'
 import type { InternshipForm } from '@/types/form.ts'
 
 const API_URL = import.meta.env.VITE_API_URL
@@ -11,6 +11,7 @@ export const useInternshipStore = defineStore('internships', {
     internshipDetail: null as Internship | null,
     companies: [] as Company[],
     garants: [] as Garant[],
+    students: [] as Student[],
     loading: false,
     error: null as string | null,
   }),
@@ -68,6 +69,18 @@ export const useInternshipStore = defineStore('internships', {
         this.garants = garantsRes.data
       } catch (error) {
         console.error('Nepodarilo sa načítať firmy alebo garantov:', error)
+      }
+    },
+
+    async fetchStudents() {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`${API_URL}/api/internships/students`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        this.students = response.data
+      } catch (error) {
+        console.error('Nepodarilo sa načítať študentov:', error)
       }
     },
 
