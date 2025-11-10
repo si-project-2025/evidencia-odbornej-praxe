@@ -10,6 +10,7 @@
 
   const userStore = useUserStore()
   const router = useRouter()
+  const API_URL = import.meta.env.VITE_API_URL
 
   const form = reactive<LoginForm>({
     email: '',
@@ -23,7 +24,7 @@
     submitError.value = ''
 
     try {
-      const response = await axios.post('http://localhost:8000/api/login', form)
+      const response = await axios.post(`${API_URL}/api/login`, form)
       userStore.setUser(response.data)
       router.push('/internships')
     } catch (err: unknown) {
