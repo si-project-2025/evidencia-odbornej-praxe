@@ -14,6 +14,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+Route::post('/internships/verify', [InternshipVerificationController::class, 'verifyInternship']);
 
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']);

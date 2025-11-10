@@ -20,11 +20,9 @@ export const useInternshipStore = defineStore('internships', {
 
       try {
         const token = localStorage.getItem('token')
-
         const response = await axios.get('http://localhost:8000/api/user/internships', {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internships = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať praxe:', error)
@@ -41,11 +39,9 @@ export const useInternshipStore = defineStore('internships', {
 
       try {
         const token = localStorage.getItem('token')
-
         const response = await axios.get(`http://127.0.0.1:8000/api/internships/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internshipDetail = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať detail praxe:', error)
@@ -61,7 +57,6 @@ export const useInternshipStore = defineStore('internships', {
           axios.get('http://localhost:8000/api/internships/companies'),
           axios.get('http://localhost:8000/api/internships/garants'),
         ])
-
         this.companies = companiesRes.data
         this.garants = garantsRes.data
       } catch (error) {
@@ -72,11 +67,9 @@ export const useInternshipStore = defineStore('internships', {
     async createInternship(data: InternshipForm) {
       try {
         const token = localStorage.getItem('token')
-
         const response = await axios.post('http://localhost:8000/api/internships', data, {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internships.push(response.data)
         return response.data
       } catch (error) {
@@ -92,11 +85,9 @@ export const useInternshipStore = defineStore('internships', {
     async deleteInternship(id: number) {
       try {
         const token = localStorage.getItem('token')
-
         await axios.delete(`http://localhost:8000/api/internships/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internships = this.internships.filter((i) => i.internships_id !== id)
       } catch (error) {
         console.error('Nepodarilo sa zmazať prax:', error)
@@ -107,19 +98,17 @@ export const useInternshipStore = defineStore('internships', {
     async sendVerificationEmail(id: number) {
       try {
         const token = localStorage.getItem('token')
-
         await axios.post(
           `http://localhost:8000/api/internships/${id}/send-verification`,
           {},
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          },
+          { headers: { Authorization: `Bearer ${token}` } },
         )
       } catch (error) {
         console.error('Nepodarilo sa odoslať overovací email:', error)
         throw error
       }
     },
+
     async fetchVerificationDetails(email: string, token: string) {
       this.loading = true
       this.error = null
@@ -129,16 +118,32 @@ export const useInternshipStore = defineStore('internships', {
         const response = await axios.get('http://127.0.0.1:8000/api/internships/get-verification-details', {
           params: { email, token },
         })
-
         if (response.data.is_expired) {
           this.error = 'Odkaz na potvrdenie praxe expiroval'
           return
         }
-
         this.internshipDetail = response.data.internship
       } catch (error) {
         console.error('Nepodarilo sa načítať verifikačné detaily:', error)
         this.error = 'Nepodarilo sa načítať verifikačné detaily.'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    // NOVÁ AKCIA: Potvrdenie praxe
+    async confirmInternship(email: string, token: string) {
+      try {
+        this.loading = true
+        const response = await axios.post('http://127.0.0.1:8000/api/internships/verify', {
+          email,
+          token,
+        })
+        this.internshipDetail = response.data.internship
+        return response.data.message
+      } catch (error: any) {
+        console.error('Nepodarilo sa potvrdiť prax:', error)
+        throw error
       } finally {
         this.loading = false
       }
