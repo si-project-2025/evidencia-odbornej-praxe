@@ -20,7 +20,13 @@
 <template>
   <div class="w-full">
     <label :for="id" class="font-semibold">{{ label }}</label>
-    <select :id="id" :required="required" class="w-full input mb-1" :value="modelValue" @change="updateValue">
+    <select
+      :id="id"
+      :required="required"
+      class="w-full input mb-1 rounded-lg"
+      :value="modelValue"
+      @change="updateValue"
+    >
       <slot />
     </select>
     <span v-if="error" class="text-red-600 text-sm">{{ error }}</span>

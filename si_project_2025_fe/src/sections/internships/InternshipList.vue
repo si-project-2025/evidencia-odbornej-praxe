@@ -5,8 +5,9 @@
   import InternshipCard from '@/components/InternshipCard.vue'
   import type { Internship } from '@/types/internship.ts'
   import Input from '@/components/form/Input.vue'
-  import BaseButton from '@/components/atoms/BaseButton.vue'
+  import ActionButton from '@/components/atoms/ActionButton.vue'
   import Select from '@/components/form/Select.vue'
+  import { RotateCcw } from 'lucide-vue-next'
 
   const props = defineProps<{
     internships: Internship[]
@@ -102,7 +103,13 @@
         </Select>
 
         <!-- Reset filtrov -->
-        <BaseButton @click="resetFilters" class="text-sm text-emerald-600 hover:underline">Vymazať filtre</BaseButton>
+
+        <div class="flex items-center">
+          <ActionButton @click="resetFilters">
+            <RotateCcw class="w-5" />
+            Vymazať filtre
+          </ActionButton>
+        </div>
       </div>
     </div>
 
