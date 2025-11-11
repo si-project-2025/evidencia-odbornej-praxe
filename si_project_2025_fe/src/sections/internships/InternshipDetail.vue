@@ -1,69 +1,85 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRoute } from 'vue-router'
-import { useRouter } from 'vue-router'
-import { useInternshipStore } from '@/stores/internships'
-import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature, Users } from 'lucide-vue-next'
-import ActionButton from '@/components/atoms/ActionButton.vue'
-import StatusBadge from '@/components/atoms/StatusBadge.vue'
-import DocumentCard from '@/components/DocumentCard.vue'
+  import { ref } from 'vue'
+  import { useRoute } from 'vue-router'
+  import { useRouter } from 'vue-router'
+  import { useInternshipStore } from '@/stores/internships'
+  import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature, Users } from 'lucide-vue-next'
+  import ActionButton from '@/components/atoms/ActionButton.vue'
+  import StatusBadge from '@/components/atoms/StatusBadge.vue'
+  import DocumentCard from '@/components/DocumentCard.vue'
+  import axios from 'axios'
 
-const store = useInternshipStore()
-const route = useRoute()
+  const store = useInternshipStore()
+  const route = useRoute()
 
-const router = useRouter()
-const deleting = ref(false)
-const deleteError = ref('')
+  const router = useRouter()
+  const deleting = ref(false)
+  const deleteError = ref('')
 
-const sending = ref(false)
-const sendError = ref('')
+  const sending = ref(false)
+  const sendError = ref('')
 
-const formatDate = (date: string | null) => {
-  if (!date) return '—'
-  const d = new Date(date)
-  return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
-const deleteInternship = async () => {
-  if (!confirm('Naozaj chcete túto prax zmazať?')) return
-
-  try {
-    deleting.value = true
-    deleteError.value = ''
-
-    await store.deleteInternship(Number(route.params.id))
-
-    alert('Prax bola úspešne zmazaná.')
-    router.push('/internships')
-  } catch {
-    deleteError.value = 'Nepodarilo sa zmazať prax.'
-  } finally {
-    deleting.value = false
-  }
-}
-
-const sendToCompany = async () => {
-  // overiť firmou
-  if (!store.internshipDetail?.contact_persons?.length) {
-    alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
-    return
+  const formatDate = (date: string | null) => {
+    if (!date) return '—'
+    const d = new Date(date)
+    return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
   }
 
-  if (!confirm('Odoslať email na overenie praxe kontaktným osobám?')) return
+  const generateDocument = async () => {
+    const response = await axios.get(`http://localhost:8000/api/pdf/${store.internshipDetail?.internships_id}`, {
+      responseType: 'blob',
+    })
+    const url = window.URL.createObjectURL(new Blob([response.data]))
+    const link = document.createElement('a')
 
-  try {
-    sending.value = true
-    sendError.value = ''
+    link.href = url
+    link.setAttribute('download', 'document.pdf')
+    document.body.appendChild(link)
 
-    await store.sendVerificationEmail(Number(route.params.id))
-
-    alert('Email na overenie bol úspešne odoslaný.')
-  } catch {
-    sendError.value = 'Nepodarilo sa poslať overovací email.'
-  } finally {
-    sending.value = false
+    link.click()
+    link.remove()
   }
-}
+
+  const deleteInternship = async () => {
+    if (!confirm('Naozaj chcete túto prax zmazať?')) return
+
+    try {
+      deleting.value = true
+      deleteError.value = ''
+
+      await store.deleteInternship(Number(route.params.id))
+
+      alert('Prax bola úspešne zmazaná.')
+      router.push('/internships')
+    } catch {
+      deleteError.value = 'Nepodarilo sa zmazať prax.'
+    } finally {
+      deleting.value = false
+    }
+  }
+
+  const sendToCompany = async () => {
+    // overiť firmou
+    if (!store.internshipDetail?.contact_persons?.length) {
+      alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
+      return
+    }
+
+    if (!confirm('Odoslať email na overenie praxe kontaktným osobám?')) return
+
+    try {
+      sending.value = true
+      sendError.value = ''
+
+      await store.sendVerificationEmail(Number(route.params.id))
+
+      alert('Email na overenie bol úspešne odoslaný.')
+    } catch {
+      sendError.value = 'Nepodarilo sa poslať overovací email.'
+    } finally {
+      sending.value = false
+    }
+  }
 </script>
 
 <template>
@@ -220,7 +236,7 @@ const sendToCompany = async () => {
               Pridať dokument
             </ActionButton>
 
-            <ActionButton color="green-light">
+            <ActionButton color="green-light" @click="generateDocument">
               <FileText class="w-4 h-4" />
               Generovať dohodu
             </ActionButton>

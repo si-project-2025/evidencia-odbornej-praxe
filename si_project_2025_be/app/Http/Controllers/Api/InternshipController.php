@@ -7,11 +7,11 @@ use App\Http\Requests\InternshipRequest;
 use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
 use App\Models\Status;
-use Illuminate\Http\Request;
-
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Role;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Http\Request;
 
 
 class InternshipController extends Controller
@@ -32,7 +32,7 @@ class InternshipController extends Controller
 
         $internship = Internship::create($data);
 
-        return response()->json($internship, 201);
+        return response()->json(new InternshipResource($internship), 201);
     }
 
     public function show(string $id)
@@ -50,7 +50,7 @@ class InternshipController extends Controller
 
         $internship->update($data);
 
-        return response()->json($internship);
+        return response()->json(new InternshipResource($internship));
     }
 
     public function destroy(string $id)
@@ -58,7 +58,7 @@ class InternshipController extends Controller
         $internship = Internship::findOrFail($id);
         $internship->delete();
 
-        return response()->json(['message' => 'Internship deleted successfully']);
+        return response()->json(['message' => 'Prax úspešne vymazaná']);
     }
 
     public function getInternshipsByUser(Request $request)
@@ -107,6 +107,13 @@ class InternshipController extends Controller
             ->get();
 
         return response()->json($garants);
+    }
+
+    public function downloadPdf($id)
+    {
+        $internship = new InternshipResource(Internship::findOrFail($id));
+        $pdf = PDF::loadView('pdf.internship', compact('internship'));
+        return $pdf->download('internship.pdf');
     }
 
 }

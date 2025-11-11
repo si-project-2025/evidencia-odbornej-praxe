@@ -2,6 +2,7 @@ import { defineStore } from 'pinia'
 import axios from 'axios'
 import type { Company, Garant, Internship } from '@/types/internship'
 import type { InternshipForm } from '@/types/form.ts'
+import { useUserStore } from '@/stores/user.ts'
 
 export const useInternshipStore = defineStore('internships', {
   state: () => ({
@@ -11,18 +12,21 @@ export const useInternshipStore = defineStore('internships', {
     garants: [] as Garant[],
     loading: false,
     error: null as string | null,
+    userStore: useUserStore(),
   }),
 
   actions: {
+    getAuthHeaders() {
+      return { Authorization: `Bearer ${this.userStore.token}` }
+    },
+
     async fetchInternships() {
       this.loading = true
       this.error = null
 
       try {
-        const token = localStorage.getItem('token')
-
         const response = await axios.get('http://localhost:8000/api/user/internships', {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: this.getAuthHeaders(),
         })
 
         this.internships = response.data
@@ -40,10 +44,8 @@ export const useInternshipStore = defineStore('internships', {
       this.internshipDetail = null
 
       try {
-        const token = localStorage.getItem('token')
-
         const response = await axios.get(`http://127.0.0.1:8000/api/internships/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: this.getAuthHeaders(),
         })
 
         this.internshipDetail = response.data
@@ -71,10 +73,8 @@ export const useInternshipStore = defineStore('internships', {
 
     async createInternship(data: InternshipForm) {
       try {
-        const token = localStorage.getItem('token')
-
         const response = await axios.post('http://localhost:8000/api/internships', data, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: this.getAuthHeaders(),
         })
 
         this.internships.push(response.data)
@@ -91,10 +91,8 @@ export const useInternshipStore = defineStore('internships', {
 
     async deleteInternship(id: number) {
       try {
-        const token = localStorage.getItem('token')
-
         await axios.delete(`http://localhost:8000/api/internships/${id}`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: this.getAuthHeaders(),
         })
 
         this.internships = this.internships.filter((i) => i.internships_id !== id)
@@ -106,14 +104,12 @@ export const useInternshipStore = defineStore('internships', {
 
     async sendVerificationEmail(id: number) {
       try {
-        const token = localStorage.getItem('token')
-
         await axios.post(
           `http://localhost:8000/api/internships/${id}/send-verification`,
           {},
           {
-            headers: { Authorization: `Bearer ${token}` }
-          }
+            headers: this.getAuthHeaders(),
+          },
         )
       } catch (error) {
         console.error('Nepodarilo sa odoslať overovací email:', error)
