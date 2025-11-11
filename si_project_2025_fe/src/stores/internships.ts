@@ -20,14 +20,11 @@ export const useInternshipStore = defineStore('internships', {
     async fetchInternships() {
       this.loading = true
       this.error = null
-
       try {
         const token = localStorage.getItem('token')
-
         const response = await axios.get(`${API_URL}/api/user/internships`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internships = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať praxe:', error)
@@ -41,14 +38,11 @@ export const useInternshipStore = defineStore('internships', {
       this.loading = true
       this.error = null
       this.internshipDetail = null
-
       try {
         const token = localStorage.getItem('token')
-
         const response = await axios.get(`${API_URL}/api/internships/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         })
-
         this.internshipDetail = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať detail praxe:', error)
@@ -58,17 +52,21 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    async fetchCompaniesAndGarants() {
+    async fetchCompanies() {
       try {
-        const [companiesRes, garantsRes] = await Promise.all([
-          axios.get(`${API_URL}/api/internships/companies`),
-          axios.get(`${API_URL}/api/internships/garants`),
-        ])
-
-        this.companies = companiesRes.data
-        this.garants = garantsRes.data
+        const response = await axios.get(`${API_URL}/api/internships/companies`)
+        this.companies = response.data
       } catch (error) {
-        console.error('Nepodarilo sa načítať firmy alebo garantov:', error)
+        console.error('Nepodarilo sa načítať firmy:', error)
+      }
+    },
+
+    async fetchGarants() {
+      try {
+        const response = await axios.get(`${API_URL}/api/internships/garants`)
+        this.garants = response.data
+      } catch (error) {
+        console.error('Nepodarilo sa načítať garantov:', error)
       }
     },
 
