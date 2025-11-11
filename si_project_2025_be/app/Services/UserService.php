@@ -65,7 +65,8 @@ class UserService
 
     private function sendSetPasswordEmail(User $user, string $token): void
     {
-        $resetUrl = 'http://localhost:5173/set-password?token=' . $token . '&email=' . urlencode($user->email);
+        $frontendUrl = config('app.frontend_url');
+        $resetUrl = "{$frontendUrl}/set-password?token={$token}&email=" . urlencode($user->email);
 
         Mail::send('emails.set-initial-password', ['user' => $user, 'url' => $resetUrl], function ($message) use ($user) {
             $message->to($user->email);

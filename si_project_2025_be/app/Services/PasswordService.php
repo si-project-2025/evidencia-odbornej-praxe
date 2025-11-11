@@ -53,8 +53,9 @@ class PasswordService
             ]
         );
 
-        //Link na stránku resetu hesla
-        $resetUrl = "http://localhost:5173/reset-password?token=$token&email=" . urlencode($targetEmail);
+        // Link na stránku resetu hesla
+        $frontendUrl = config('app.frontend_url');
+        $resetUrl = "{$frontendUrl}/reset-password?token={$token}&email=" . urlencode($targetEmail);
 
         // Pošleme email
         try {
@@ -85,7 +86,6 @@ class PasswordService
             throw new \Exception('Platnosť tokenu vypršala.');
         }
 
-
         // Nájdeme používateľa podľa e-mailu alebo alt_email
         $user = User::where('email', $email)
             ->orWhere('alt_email', $email)
@@ -98,7 +98,6 @@ class PasswordService
         // Získame ID role študenta
         $studentRoleId = Role::where('name', 'student')->value('role_id');
 
-
         if ($user->role_id === $studentRoleId) {
             if ($user->alt_email === $email) {
                 throw new \Exception('Študent nemôže obnoviť heslo pomocou alternatívneho e-mailu.');
@@ -107,7 +106,6 @@ class PasswordService
                 throw new \Exception('Študent musí použiť školský e-mail na reset hesla.');
             }
         }
-
 
         // Zmeníme heslo
         $user->update(['password' => Hash::make($password)]);
@@ -118,4 +116,3 @@ class PasswordService
         return true;
     }
 }
-

@@ -27,6 +27,8 @@
   const registrationSuccess = ref(false)
   const registrationEmail = ref('')
 
+  const API_URL = import.meta.env.VITE_API_URL
+
   const validateForm = () => {
     zipError.value = ''
     phoneError.value = ''
@@ -68,7 +70,7 @@
     if (!validateForm()) return
 
     try {
-      const response = await axios.post('http://localhost:8000/api/register', form)
+      const response = await axios.post(`${API_URL}/api/register`, form)
       registrationSuccess.value = true
       registrationEmail.value = response.data.email
     } catch (err: unknown) {
