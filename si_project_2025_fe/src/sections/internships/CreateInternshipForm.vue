@@ -12,8 +12,9 @@
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
 
-  onMounted(() => {
-    internshipStore.fetchCompaniesAndGarants()
+  onMounted(async () => {
+    await internshipStore.fetchCompanies()
+    await internshipStore.fetchGarants()
   })
 
   const form = reactive<InternshipForm>({

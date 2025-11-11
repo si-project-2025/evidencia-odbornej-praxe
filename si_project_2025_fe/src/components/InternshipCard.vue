@@ -1,10 +1,11 @@
 <script setup lang="ts">
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
-  import { Building, CalendarDays, Clock } from 'lucide-vue-next'
+  import { Building, CalendarDays, Clock, User } from 'lucide-vue-next'
   import type { Internship } from '@/types/internship.ts'
 
   defineProps<{
     internship: Internship
+    role: 'student' | 'garant'
   }>()
 
   const formatDate = (date: string | null) => {
@@ -20,11 +21,25 @@
   >
     <RouterLink :to="`/internships/${internship.internships_id}`">
       <!-- Tabuľka -->
-      <div class="grid grid-cols-1 md:grid-cols-13 gap-2 px-8 py-5 items-center text-gray-700 text-sm">
+      <div
+        :class="[
+          'grid grid-cols-1 gap-2 px-8 py-5 items-center text-gray-700 text-sm',
+          role === 'garant' ? 'md:grid-cols-16' : 'md:grid-cols-13',
+        ]"
+      >
         <!-- Firma -->
         <div class="col-span-3 flex items-center gap-2 font-semibold text-gray-900 mb-2 md:mb-0 sm:mb-0">
           <Building class="w-5 h-5 text-emerald-600 shrink-0" />
           <span class="truncate">{{ internship.company?.name || 'Neznáma firma' }}</span>
+        </div>
+        <!-- Študent -->
+        <div v-if="role === 'garant'" class="col-span-3 flex items-center gap-2 font-medium text-gray-900">
+          <User class="w-5 h-5 text-emerald-600 shrink-0" />
+          <span class="truncate">
+            {{
+              internship.student?.name ? `${internship.student.name} ${internship.student.surname}` : 'Neznámy študent'
+            }}
+          </span>
         </div>
 
         <div class="md:col-span-10 grid grid-cols-2 md:grid-cols-10 gap-y-2 text-sm">

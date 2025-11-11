@@ -27,7 +27,7 @@
       :type="type"
       :placeholder="placeholder"
       :required="required"
-      class="w-full input mb-1"
+      class="w-full input mb-1 rounded-lg"
       :value="modelValue"
       @input="updateValue"
     />
