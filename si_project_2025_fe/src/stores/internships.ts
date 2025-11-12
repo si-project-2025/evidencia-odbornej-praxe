@@ -140,7 +140,7 @@ export const useInternshipStore = defineStore('internships', {
       this.internshipDetail = null
 
       try {
-        const response = await axios.get('http://127.0.0.1:8000/api/internships/get-verification-details', {
+        const response = await axios.get(`${API_URL}/api/internships/get-verification-details`, {
           params: { email, token },
         })
         if (response.data.is_expired) {
@@ -156,7 +156,6 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    // NOVÁ AKCIA: Potvrdenie praxe
     async confirmInternship(email: string, token: string) {
       try {
         this.loading = true

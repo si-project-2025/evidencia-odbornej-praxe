@@ -18,6 +18,7 @@ Route::post('/internships/verify', [InternshipVerificationController::class, 've
 
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']);
+
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', function (Request $request) {
         return $request->user();

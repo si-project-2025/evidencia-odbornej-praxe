@@ -22,10 +22,9 @@
     if (!store.internshipDetail) return
     try {
       confirming.value = true
-      const message = await store.confirmInternship(email, token)
-      confirmationMessage.value = message
-    } catch (err: any) {
-      confirmationMessage.value = err.response?.data?.message || 'Nepodarilo sa potvrdiť prax.'
+      confirmationMessage.value = await store.confirmInternship(email, token)
+    } catch {
+      confirmationMessage.value = 'Nepodarilo sa potvrdiť prax.'
     } finally {
       confirming.value = false
     }

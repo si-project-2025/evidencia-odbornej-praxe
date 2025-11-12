@@ -10,64 +10,64 @@
   import DocumentCard from '@/components/DocumentCard.vue'
 
   const userStore = useUserStore()
-  const isAuthenticated = !!userStore.token
+  const isAuthenticated = userStore.user
 
-  const store = useInternshipStore()
+  const internshipStore = useInternshipStore()
   const route = useRoute()
 
-const router = useRouter()
-const deleting = ref(false)
-const deleteError = ref('')
+  const router = useRouter()
+  const deleting = ref(false)
+  const deleteError = ref('')
 
-const sending = ref(false)
-const sendError = ref('')
+  const sending = ref(false)
+  const sendError = ref('')
 
-const formatDate = (date: string | null) => {
-  if (!date) return '—'
-  const d = new Date(date)
-  return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
-}
-
-const deleteInternship = async () => {
-  if (!confirm('Naozaj chcete túto prax zmazať?')) return
-
-  try {
-    deleting.value = true
-    deleteError.value = ''
-
-    await store.deleteInternship(Number(route.params.id))
-
-    alert('Prax bola úspešne zmazaná.')
-    router.push('/internships')
-  } catch {
-    deleteError.value = 'Nepodarilo sa zmazať prax.'
-  } finally {
-    deleting.value = false
-  }
-}
-
-const sendToCompany = async () => {
-  // overiť firmou
-  if (!store.internshipDetail?.contact_persons?.length) {
-    alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
-    return
+  const formatDate = (date: string | null) => {
+    if (!date) return '—'
+    const d = new Date(date)
+    return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
   }
 
-  if (!confirm('Odoslať email na overenie praxe kontaktným osobám?')) return
+  const deleteInternship = async () => {
+    if (!confirm('Naozaj chcete túto prax zmazať?')) return
 
-  try {
-    sending.value = true
-    sendError.value = ''
+    try {
+      deleting.value = true
+      deleteError.value = ''
 
-    await store.sendVerificationEmail(Number(route.params.id))
+      await internshipStore.deleteInternship(Number(route.params.id))
 
-    alert('Email na overenie bol úspešne odoslaný.')
-  } catch {
-    sendError.value = 'Nepodarilo sa poslať overovací email.'
-  } finally {
-    sending.value = false
+      alert('Prax bola úspešne zmazaná.')
+      router.push('/internships')
+    } catch {
+      deleteError.value = 'Nepodarilo sa zmazať prax.'
+    } finally {
+      deleting.value = false
+    }
   }
-}
+
+  const sendToCompany = async () => {
+    // overiť firmou
+    if (!internshipStore.internshipDetail?.contact_persons?.length) {
+      alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
+      return
+    }
+
+    if (!confirm('Odoslať email na overenie praxe kontaktným osobám?')) return
+
+    try {
+      sending.value = true
+      sendError.value = ''
+
+      await internshipStore.sendVerificationEmail(Number(route.params.id))
+
+      alert('Email na overenie bol úspešne odoslaný.')
+    } catch {
+      sendError.value = 'Nepodarilo sa poslať overovací email.'
+    } finally {
+      sending.value = false
+    }
+  }
 </script>
 
 <template>
@@ -79,10 +79,10 @@ const sendToCompany = async () => {
       <div class="flex justify-between items-center">
         <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
           <Building class="w-7 h-7 text-green-600" />
-          {{ store.internshipDetail?.company?.name || 'Neznáma firma' }}
+          {{ internshipStore.internshipDetail?.company?.name || 'Neznáma firma' }}
         </h2>
 
-        <StatusBadge :status="store.internshipDetail?.status" />
+        <StatusBadge :status="internshipStore.internshipDetail?.status" />
       </div>
 
       <!-- Základné info -->
@@ -90,37 +90,37 @@ const sendToCompany = async () => {
         <!-- Semester -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Semester: {{ store.internshipDetail?.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
+          <span>Semester: {{ internshipStore.internshipDetail?.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
         </div>
 
         <!-- Rok -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Rok: {{ store.internshipDetail?.year }}</span>
+          <span>Rok: {{ internshipStore.internshipDetail?.year }}</span>
         </div>
 
         <!-- Počet hodín -->
         <div class="flex items-center gap-2">
           <Clock class="w-4 h-4 text-green-600" />
-          <span>Počet hodín: {{ store.internshipDetail?.hours_total }}</span>
+          <span>Počet hodín: {{ internshipStore.internshipDetail?.hours_total }}</span>
         </div>
 
         <!-- Koniec praxe -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Koniec praxe: {{ formatDate(store.internshipDetail?.end_at ?? '') }}</span>
+          <span>Koniec praxe: {{ formatDate(internshipStore.internshipDetail?.end_at ?? '') }}</span>
         </div>
 
         <!-- Vytvorená -->
         <div class="flex items-center gap-2">
           <Info class="w-4 h-4 text-green-600" />
-          <span>Vytvorená: {{ formatDate(store.internshipDetail?.created_at ?? '') }}</span>
+          <span>Vytvorená: {{ formatDate(internshipStore.internshipDetail?.created_at ?? '') }}</span>
         </div>
 
         <!-- Naposledy upravená -->
         <div class="flex items-center gap-2">
           <Info class="w-4 h-4 text-green-600" />
-          <span>Naposledy upravená: {{ formatDate(store.internshipDetail?.updated_at ?? '') }}</span>
+          <span>Naposledy upravená: {{ formatDate(internshipStore.internshipDetail?.updated_at ?? '') }}</span>
         </div>
       </div>
 
@@ -135,20 +135,20 @@ const sendToCompany = async () => {
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Meno:</strong>
-              {{ store.internshipDetail?.student?.name || 'Neznáme meno' }}
-              {{ store.internshipDetail?.student?.surname || '' }}
+              {{ internshipStore.internshipDetail?.student?.name || 'Neznáme meno' }}
+              {{ internshipStore.internshipDetail?.student?.surname || '' }}
             </p>
             <p>
               <strong>Študijný program:</strong>
-              {{ store.internshipDetail?.student?.study_program || '—' }}
+              {{ internshipStore.internshipDetail?.student?.study_program || '—' }}
             </p>
             <p>
               <strong>Email:</strong>
-              {{ store.internshipDetail?.student?.email || '—' }}
+              {{ internshipStore.internshipDetail?.student?.email || '—' }}
             </p>
-            <p v-if="store.internshipDetail?.student?.phone_number">
+            <p v-if="internshipStore.internshipDetail?.student?.phone_number">
               <strong>Telefón:</strong>
-              {{ store.internshipDetail?.student?.phone_number }}
+              {{ internshipStore.internshipDetail?.student?.phone_number }}
             </p>
           </div>
         </div>
@@ -161,20 +161,20 @@ const sendToCompany = async () => {
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Názov:</strong>
-              {{ store.internshipDetail?.company.name }}
+              {{ internshipStore.internshipDetail?.company.name }}
             </p>
             <p>
               <strong>IČO:</strong>
-              {{ store.internshipDetail?.company.ico }}
+              {{ internshipStore.internshipDetail?.company.ico }}
             </p>
             <p>
               <strong>Adresa:&nbsp;</strong>
-              <span v-if="store.internshipDetail?.company.address">
-                {{ store.internshipDetail.company.address.street }}
-                {{ store.internshipDetail.company.address.house_number }},
-                {{ store.internshipDetail.company.address.zip_code }}
-                {{ store.internshipDetail.company.address.city }},
-                {{ store.internshipDetail.company.address.country }}
+              <span v-if="internshipStore.internshipDetail?.company.address">
+                {{ internshipStore.internshipDetail.company.address.street }}
+                {{ internshipStore.internshipDetail.company.address.house_number }},
+                {{ internshipStore.internshipDetail.company.address.zip_code }}
+                {{ internshipStore.internshipDetail.company.address.city }},
+                {{ internshipStore.internshipDetail.company.address.country }}
               </span>
               <span v-else>—</span>
             </p>
@@ -190,12 +190,12 @@ const sendToCompany = async () => {
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Meno:</strong>
-              {{ store.internshipDetail?.garant?.name || 'Neznáme meno' }}
-              {{ store.internshipDetail?.garant?.surname || '' }}
+              {{ internshipStore.internshipDetail?.garant?.name || 'Neznáme meno' }}
+              {{ internshipStore.internshipDetail?.garant?.surname || '' }}
             </p>
             <p>
               <strong>Kontakt:</strong>
-              {{ store.internshipDetail?.garant?.email || '—' }}
+              {{ internshipStore.internshipDetail?.garant?.email || '—' }}
             </p>
           </div>
         </div>
@@ -210,11 +210,11 @@ const sendToCompany = async () => {
         </h3>
         <div class="text-gray-700 text-sm space-y-3">
           <div
-            v-if="store.internshipDetail?.contact_persons?.length"
+            v-if="internshipStore.internshipDetail?.contact_persons?.length"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pl-7 text-gray-700 text-sm"
           >
             <div
-              v-for="person in store.internshipDetail.contact_persons"
+              v-for="person in internshipStore.internshipDetail.contact_persons"
               :key="person.id"
               class="space-y-1 pb-2 border-b border-gray-100 last:border-0"
             >
@@ -261,10 +261,12 @@ const sendToCompany = async () => {
           </div>
         </div>
 
-        <template v-if="store.internshipDetail?.documents && store.internshipDetail?.documents.length">
+        <template
+          v-if="internshipStore.internshipDetail?.documents && internshipStore.internshipDetail?.documents.length"
+        >
           <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
             <DocumentCard
-              v-for="document in store.internshipDetail.documents"
+              v-for="document in internshipStore.internshipDetail.documents"
               :key="document.document_id"
               :document="document"
             />
@@ -277,7 +279,7 @@ const sendToCompany = async () => {
 
     <!-- Odstránenie a potvrdenie praxe -->
     <div
-      v-if="isAuthenticated"
+      v-if="isAuthenticated && internshipStore.internshipDetail?.status !== 'Potvrdená'"
       class="pt-6 border-t border-gray-200 mt-10 flex flex-col sm:flex-row sm:items-center justify-between"
     >
       <p class="text-sm text-gray-500 mb-3 sm:mb-0">

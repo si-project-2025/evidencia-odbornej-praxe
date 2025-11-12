@@ -105,8 +105,9 @@ class InternshipVerificationService
             throw new \Exception('Prax už bola overená.');
         }
 
-        // Zmeň status na "Potvrdená" – použijeme priamo ID = 2
-        $internship->update(['status_id' => 2]);
+        $statusId = Status::where('type', 'Potvrdená')->value('status_id');
+        $internship->fill(['status_id' => $statusId])->save();
+        $internship->load('status');
 
         DB::table('internship_verification_tokens')
             ->where('email', $email)
@@ -115,7 +116,7 @@ class InternshipVerificationService
 
         return [
             'message' => 'Prax bola úspešne overená.',
-            'internship' => $internship
+            'internship' => new InternshipResource($internship)
         ];
     }
 

@@ -22,7 +22,13 @@ class InternshipVerificationController extends Controller
     public function sendVerificationEmail(string $internshipId)
     {
         try {
-            $internship = Internship::findOrFail($internshipId);
+            $internship = Internship::with(['status'])->findOrFail($internshipId);
+
+            if ($internship->status->type === 'Potvrdená') {
+                return response()->json([
+                    'message' => 'Prax už bola potvrdená.'
+                ], 500);
+            }
 
             $success = $this->verificationService->sendVerificationEmail($internship);
 
