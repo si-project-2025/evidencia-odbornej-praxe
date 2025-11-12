@@ -23,6 +23,15 @@ export interface Garant {
   email: string
 }
 
+export interface Student {
+  users_id: number
+  name: string
+  surname: string
+  email: string
+  study_program?: string | null
+  phone_number?: string | null
+}
+
 export interface Document {
   document_id: number
   type: string
@@ -44,6 +53,7 @@ export interface Internship {
   company: Company
   status: Status
   garant: Garant
+  student: Student
   documents?: Document[]
   contact_persons?: ContactPerson[]
 }

@@ -28,6 +28,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
+    Route::get('/internships/students', [InternshipController::class, 'getStudents']);
 
     Route::apiResource('internships', InternshipController::class);
     Route::apiResource('internships.contact-persons', ContactPersonController::class)
