@@ -40,6 +40,15 @@ class InternshipResource extends JsonResource
                 'surname' => $this->garant->surname,
             ],
 
+            'student' => [
+                'users_id' => $this->student->users_id,
+                'email' => $this->student->email,
+                'name' => $this->student->name,
+                'surname' => $this->student->surname,
+                'study_program' => $this->student->study_program,
+                'phone_number' => $this->student->phone_number,
+            ],
+
             'contact_persons' => $this->contactPersons->map(function ($person) {
                 return [
                     'id' => $person->id,

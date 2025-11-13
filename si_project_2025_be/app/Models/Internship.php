@@ -33,8 +33,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Internship extends Model
 {
-	protected $table = 'internships';
-	protected $primaryKey = 'internships_id';
+    protected $table = 'internships';
+    protected $primaryKey = 'internships_id';
 
     protected $casts = [
         'hours_total' => 'int',
@@ -57,26 +57,29 @@ class Internship extends Model
         'garant_id',
     ];
 
-	public function company()
-	{
-		return $this->belongsTo(Company::class, 'company_id', 'company_id');
-	}
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
+    }
 
-	public function status()
-	{
-		return $this->belongsTo(Status::class, 'status_id', 'status_id');
-	}
+    public function status()
+    {
+        return $this->belongsTo(Status::class, 'status_id', 'status_id');
+    }
 
-	public function user()
-	{
-		return $this->belongsTo(User::class, 'users_id', 'users_id');
-	}
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'users_id');
+    }
 
     public function garant()
     {
         return $this->belongsTo(User::class, 'garant_id', 'users_id');
     }
-
+    public function student()
+    {
+        return $this->belongsTo(User::class, 'users_id', 'users_id');
+    }
     public function documents()
     {
         return $this->hasMany(Document::class, 'internships_id', 'internships_id');

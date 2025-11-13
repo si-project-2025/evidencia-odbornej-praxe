@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { Company, Garant, Internship } from '@/types/internship'
+import type { Company, Garant, Internship, Student } from '@/types/internship'
 import type { InternshipForm } from '@/types/form.ts'
 import { useUserStore } from '@/stores/user.ts'
 
@@ -12,6 +12,7 @@ export const useInternshipStore = defineStore('internships', {
     internshipDetail: null as Internship | null,
     companies: [] as Company[],
     garants: [] as Garant[],
+    students: [] as Student[],
     loading: false,
     error: null as string | null,
     userStore: useUserStore(),
@@ -59,17 +60,33 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    async fetchCompaniesAndGarants() {
+    async fetchCompanies() {
       try {
-        const [companiesRes, garantsRes] = await Promise.all([
-          axios.get(`${API_URL}/api/internships/companies`),
-          axios.get(`${API_URL}/api/internships/garants`),
-        ])
-
-        this.companies = companiesRes.data
-        this.garants = garantsRes.data
+        const response = await axios.get(`${API_URL}/api/internships/companies`)
+        this.companies = response.data
       } catch (error) {
-        console.error('Nepodarilo sa načítať firmy alebo garantov:', error)
+        console.error('Nepodarilo sa načítať firmy:', error)
+      }
+    },
+
+    async fetchGarants() {
+      try {
+        const response = await axios.get(`${API_URL}/api/internships/garants`)
+        this.garants = response.data
+      } catch (error) {
+        console.error('Nepodarilo sa načítať garantov:', error)
+      }
+    },
+
+    async fetchStudents() {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get(`${API_URL}/api/internships/students`, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        this.students = response.data
+      } catch (error) {
+        console.error('Nepodarilo sa načítať študentov:', error)
       }
     },
 
@@ -116,6 +133,45 @@ export const useInternshipStore = defineStore('internships', {
       } catch (error) {
         console.error('Nepodarilo sa odoslať overovací email:', error)
         throw error
+      }
+    },
+
+    async fetchVerificationDetails(email: string, token: string) {
+      this.loading = true
+      this.error = null
+      this.internshipDetail = null
+
+      try {
+        const response = await axios.get(`${API_URL}/api/internships/get-verification-details`, {
+          params: { email, token },
+        })
+        if (response.data.is_expired) {
+          this.error = 'Odkaz na potvrdenie praxe expiroval'
+          return
+        }
+        this.internshipDetail = response.data.internship
+      } catch (error) {
+        console.error('Nepodarilo sa načítať verifikačné detaily:', error)
+        this.error = 'Nepodarilo sa načítať verifikačné detaily.'
+      } finally {
+        this.loading = false
+      }
+    },
+
+    async confirmInternship(email: string, token: string) {
+      try {
+        this.loading = true
+        const response = await axios.post(`${API_URL}/api/internships/verify`, {
+          email,
+          token,
+        })
+        this.internshipDetail = response.data.internship
+        return response.data.message
+      } catch (error) {
+        console.error('Nepodarilo sa potvrdiť prax:', error)
+        throw error
+      } finally {
+        this.loading = false
       }
     },
   },

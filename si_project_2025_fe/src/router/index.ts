@@ -8,8 +8,9 @@ import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 import InternshipsPage from '@/pages/InternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
-import { useUserStore } from '@/stores/user.ts'
 import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
+
+import { useUserStore } from '@/stores/user.ts'
 
 const routes = [
   {

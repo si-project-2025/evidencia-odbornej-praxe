@@ -14,6 +14,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
+Route::post('/internships/verify', [InternshipVerificationController::class, 'verifyInternship']);
 
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']);
@@ -28,6 +29,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
+    Route::get('/internships/students', [InternshipController::class, 'getStudents']);
     Route::get('/pdf/{id}', [InternshipController::class, 'downloadPdf']);
 
     Route::apiResource('internships', InternshipController::class);
@@ -37,4 +39,3 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/internships/{internship}/send-verification',
         [InternshipVerificationController::class, 'sendVerificationEmail']);
 });
-

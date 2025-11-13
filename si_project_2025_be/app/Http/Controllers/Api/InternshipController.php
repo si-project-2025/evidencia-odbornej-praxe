@@ -74,7 +74,9 @@ class InternshipController extends Controller
             $query->where('users_id', $user->users_id);
         }
 
-        $internships = $query->get();
+        $internships = $query
+            ->with(['company.address', 'garant', 'student', 'status'])
+            ->get();
 
         return response()->json(InternshipResource::collection($internships));
     }
@@ -108,6 +110,24 @@ class InternshipController extends Controller
 
         return response()->json($garants);
     }
+
+    // v InternshipController.php
+    public function getStudents()
+    {
+        $studentRoleId = Role::where('name', 'student')->value('role_id');
+
+        if (!$studentRoleId) {
+            return response()->json([]);
+        }
+
+        $students = User::where('role_id', $studentRoleId)
+            ->select('users_id', 'name', 'surname', 'email')
+            ->orderBy('surname')
+            ->get();
+
+        return response()->json($students);
+    }
+
 
     public function downloadPdf($id)
     {

@@ -77,7 +77,6 @@ class InternshipVerificationService
      */
     public function verifyInternship(string $email, string $token): array
     {
-        // Nájdi záznam v tabuľke
         $verificationRecord = DB::table('internship_verification_tokens')
             ->where('email', $email)
             ->first();
@@ -86,17 +85,14 @@ class InternshipVerificationService
             throw new \Exception('Token nenájdený alebo už bol použitý.');
         }
 
-        // Overenie tokenu
         if (!Hash::check($token, $verificationRecord->token)) {
             throw new \Exception('Neplatný token.');
         }
 
-        // Kontrola expirácie (7 dní)
         if (Carbon::parse($verificationRecord->created_at)->addDays(7)->isPast()) {
-            throw new \Exception('Token expiroval. Požiadajte o nový verifikačný email.');
+            throw new \Exception('Token expiroval.');
         }
 
-        // Načítaj prax
         $internship = Internship::with(['company', 'status'])
             ->where('internships_id', $verificationRecord->internships_id)
             ->first();
@@ -105,16 +101,14 @@ class InternshipVerificationService
             throw new \Exception('Prax nenájdená.');
         }
 
-        // Over, či už nie je potvrdená
         if ($internship->status->type == 'Potvrdená') {
             throw new \Exception('Prax už bola overená.');
         }
 
-        // Zmeň status na "Potvrdená"
-        $statusId = Status::where('name', 'Potvrdená')->value('id');
-        $internship->update(['status_id' => $statusId]);
+        $statusId = Status::where('type', 'Potvrdená')->value('status_id');
+        $internship->fill(['status_id' => $statusId])->save();
+        $internship->load('status');
 
-        // Vymaž token (jednorazové použitie)
         DB::table('internship_verification_tokens')
             ->where('email', $email)
             ->where('internships_id', $verificationRecord->internships_id)
@@ -122,9 +116,10 @@ class InternshipVerificationService
 
         return [
             'message' => 'Prax bola úspešne overená.',
-            'internship' => $internship
+            'internship' => new InternshipResource($internship)
         ];
     }
+
 
     /**
      * Získaj detaily praxe pred overením (pre zobrazenie na frontende)
