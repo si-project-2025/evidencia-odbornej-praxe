@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\InternshipStatusNotificationService;
 
 
 class InternshipController extends Controller
@@ -44,8 +45,9 @@ class InternshipController extends Controller
     public function update(InternshipRequest $request, string $id)
     {
         $internship = Internship::findOrFail($id);
-
         $data = $request->validated();
+
+        $oldStatus = $internship->status?->type;
 
         if (isset($data['status'])) {
             $data['status_id'] = Status::where('type', $data['status'])->value('status_id');
@@ -55,6 +57,16 @@ class InternshipController extends Controller
         $data['updated_at'] = now();
 
         $internship->update($data);
+        $internship->load('status');
+
+        $user = $request->user();
+        $isGarant = $user && $user->role && $user->role->name === 'garant';
+
+        // Ak garant zmenil stav, pošleme e-maily
+        if ($isGarant && $oldStatus !== $internship->status?->type) {
+            app(InternshipStatusNotificationService::class)
+                ->sendStatusChangedEmails($internship);
+        }
 
         return response()->json($internship);
     }
