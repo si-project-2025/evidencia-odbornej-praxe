@@ -9,6 +9,8 @@ import InternshipsPage from '@/pages/InternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
 import InternshipEditPage from '@/pages/InternshipEditPage.vue'
+import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
+
 import { useUserStore } from '@/stores/user.ts'
 
 const routes = [
@@ -65,6 +67,11 @@ const routes = [
     name: 'EditInternship',
     component: InternshipEditPage,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/verify-internship',
+    name: 'InternshipConfirmationPage',
+    component: InternshipConfirmationPage,
   },
 ]
 

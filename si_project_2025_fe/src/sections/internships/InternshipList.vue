@@ -5,8 +5,10 @@
   import InternshipCard from '@/components/InternshipCard.vue'
   import type { Internship } from '@/types/internship.ts'
   import Input from '@/components/form/Input.vue'
-  import BaseButton from '@/components/atoms/BaseButton.vue'
+  import ActionButton from '@/components/atoms/ActionButton.vue'
   import Select from '@/components/form/Select.vue'
+  import { RotateCcw } from 'lucide-vue-next'
+  import Export from '@/components/Export.vue'
 
   const props = defineProps<{
     internships: Internship[]
@@ -64,7 +66,7 @@
   <div class="space-y-4">
     <!--Filtre-->
     <div v-if="role === 'garant'" class="bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200">
-      <div class="grid grid-cols-1 md:grid-cols-6 gap-4">
+      <div class="flex flex-col md:flex-row gap-4">
         <!-- Firma -->
         <Select v-model="searchCompany" class="mt-2">
           <option value="">Všetky firmy</option>
@@ -102,7 +104,15 @@
         </Select>
 
         <!-- Reset filtrov -->
-        <BaseButton @click="resetFilters" class="text-sm text-emerald-600 hover:underline">Vymazať filtre</BaseButton>
+
+        <div class="flex flex-row gap-2 items-center">
+          <ActionButton @click="resetFilters">
+            <RotateCcw class="w-5" />
+            Reset
+          </ActionButton>
+
+          <Export :internships="filteredInternships" />
+        </div>
       </div>
     </div>
 
