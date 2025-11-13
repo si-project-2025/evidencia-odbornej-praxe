@@ -8,7 +8,7 @@
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentCard from '@/components/DocumentCard.vue'
-  import axios from "axios";
+  import axios from 'axios'
 
   const userStore = useUserStore()
   const isAuthenticated = userStore.user
@@ -68,21 +68,6 @@
     } finally {
       sending.value = false
     }
-  }
-
-  const generateDocument = async () => {
-    const response = await axios.get(`http://localhost:8000/api/pdf/${internshipStore.internshipDetail?.internships_id}`, {
-      responseType: 'blob',
-    })
-    const url = window.URL.createObjectURL(new Blob([response.data]))
-    const link = document.createElement('a')
-
-    link.href = url
-    link.setAttribute('download', 'document.pdf')
-    document.body.appendChild(link)
-
-    link.click()
-    link.remove()
   }
 </script>
 
@@ -270,7 +255,7 @@
               Pridať dokument
             </ActionButton>
 
-            <ActionButton color="green-light" @click="generateDocument">
+            <ActionButton color="green-light" @click="internshipStore.generateDocument">
               <FileText class="w-4 h-4" />
               Generovať dohodu
             </ActionButton>

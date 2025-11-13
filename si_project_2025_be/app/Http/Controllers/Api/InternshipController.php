@@ -111,7 +111,6 @@ class InternshipController extends Controller
         return response()->json($garants);
     }
 
-    // v InternshipController.php
     public function getStudents()
     {
         $studentRoleId = Role::where('name', 'student')->value('role_id');
@@ -127,13 +126,4 @@ class InternshipController extends Controller
 
         return response()->json($students);
     }
-
-
-    public function downloadPdf($id)
-    {
-        $internship = new InternshipResource(Internship::findOrFail($id));
-        $pdf = PDF::loadView('pdf.internship', compact('internship'));
-        return $pdf->download('internship.pdf');
-    }
-
 }

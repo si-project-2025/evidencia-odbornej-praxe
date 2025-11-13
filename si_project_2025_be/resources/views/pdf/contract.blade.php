@@ -10,16 +10,16 @@
         body {
             text-align: justify;
             font-family: 'Times New Roman';
-            font-size: 12pt
+            font-size: 12pt;
         }
 
         p {
-            margin: 3pt 0pt 0pt
+            margin: 3pt 0pt 0pt;
         }
 
         li {
             margin-top: 3pt;
-            margin-bottom: 0pt
+            margin-bottom: 0pt;
         }
 
         .Footer {

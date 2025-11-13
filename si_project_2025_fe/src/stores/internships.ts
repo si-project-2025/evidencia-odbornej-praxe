@@ -80,9 +80,8 @@ export const useInternshipStore = defineStore('internships', {
 
     async fetchStudents() {
       try {
-        const token = localStorage.getItem('token')
         const response = await axios.get(`${API_URL}/api/internships/students`, {
-          headers: { Authorization: `Bearer ${token}` },
+          headers: this.getAuthHeaders(),
         })
         this.students = response.data
       } catch (error) {
@@ -121,6 +120,22 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
+    async generateDocument() {
+      const response = await axios.get(`${API_URL}/api/internships/${this.internshipDetail?.internships_id}/contract`, {
+        responseType: 'blob',
+      })
+
+      const url = window.URL.createObjectURL(new Blob([response.data]))
+      const link = document.createElement('a')
+
+      link.href = url
+      link.setAttribute('download', 'document.pdf')
+      document.body.appendChild(link)
+
+      link.click()
+      link.remove()
+    },
+
     async sendVerificationEmail(id: number) {
       try {
         await axios.post(
@@ -145,10 +160,12 @@ export const useInternshipStore = defineStore('internships', {
         const response = await axios.get(`${API_URL}/api/internships/get-verification-details`, {
           params: { email, token },
         })
+
         if (response.data.is_expired) {
           this.error = 'Odkaz na potvrdenie praxe expiroval'
           return
         }
+
         this.internshipDetail = response.data.internship
       } catch (error) {
         console.error('Nepodarilo sa načítať verifikačné detaily:', error)
@@ -161,11 +178,13 @@ export const useInternshipStore = defineStore('internships', {
     async confirmInternship(email: string, token: string) {
       try {
         this.loading = true
+
         const response = await axios.post(`${API_URL}/api/internships/verify`, {
           email,
           token,
         })
         this.internshipDetail = response.data.internship
+
         return response.data.message
       } catch (error) {
         console.error('Nepodarilo sa potvrdiť prax:', error)
