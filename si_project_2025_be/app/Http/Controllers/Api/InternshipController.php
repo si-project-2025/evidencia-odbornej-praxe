@@ -46,6 +46,12 @@ class InternshipController extends Controller
         $internship = Internship::findOrFail($id);
 
         $data = $request->validated();
+
+        if (isset($data['status'])) {
+            $data['status_id'] = Status::where('type', $data['status'])->value('status_id');
+        }
+        unset($data['status']);
+
         $data['updated_at'] = now();
 
         $internship->update($data);

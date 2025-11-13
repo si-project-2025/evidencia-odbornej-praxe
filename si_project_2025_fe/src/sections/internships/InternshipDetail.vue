@@ -3,10 +3,25 @@
   import { useRoute } from 'vue-router'
   import { useRouter } from 'vue-router'
   import { useInternshipStore } from '@/stores/internships'
-  import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature, Users } from 'lucide-vue-next'
+  import {
+    Building,
+    Calendar,
+    Clock,
+    User,
+    Info,
+    FileText,
+    Plus,
+    Trash2,
+    Signature,
+    Users,
+    Save,
+  } from 'lucide-vue-next'
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentCard from '@/components/DocumentCard.vue'
+  import { useUserStore } from '@/stores/user'
+
+  const userStore = useUserStore()
 
   const store = useInternshipStore()
   const route = useRoute()
@@ -288,6 +303,10 @@
           {{ deleting ? 'Mazanie...' : 'Zmazať prax' }}
         </ActionButton>
         <p v-if="deleteError" class="text-red-600 text-sm mt-2">{{ deleteError }}</p>
+        <ActionButton :href="`/internships/${route.params.id}/edit`" v-if="userStore.user?.role === 'garant'">
+          <Save class="w-4 h-4" />
+          Upraviť prax
+        </ActionButton>
       </div>
     </div>
   </div>

@@ -8,6 +8,7 @@ import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 import InternshipsPage from '@/pages/InternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
+import InternshipEditPage from '@/pages/InternshipEditPage.vue'
 import { useUserStore } from '@/stores/user.ts'
 
 const routes = [
@@ -57,6 +58,12 @@ const routes = [
     path: '/internships/create',
     name: 'InternshipCreate',
     component: InternshipCreatePage,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/internships/:id/edit',
+    name: 'EditInternship',
+    component: InternshipEditPage,
     meta: { requiresAuth: true },
   },
 ]
