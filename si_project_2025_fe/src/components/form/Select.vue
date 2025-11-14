@@ -24,6 +24,10 @@
       :id="id"
       :required="required"
       class="w-full input mb-1 rounded-lg"
+      :class="{
+        'text-gray-400': modelValue === '' || modelValue === null,
+        'text-gray-900': modelValue !== '' && modelValue !== null,
+      }"
       :value="modelValue"
       @change="updateValue"
     >

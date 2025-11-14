@@ -10,6 +10,7 @@
   import { useUserStore } from '@/stores/user'
   import type { InternshipForm } from '@/types/form'
   import type { Internship } from '@/types/internship'
+  import { useStatusStore } from '@/stores/statuses'
 
   const props = defineProps<{
     internship: Internship | null
@@ -34,7 +35,10 @@
   const successMessage = ref('')
   const loading = ref(false)
 
+  const statusStore = useStatusStore()
   onMounted(async () => {
+    await statusStore.fetchStatuses()
+
     if (props.internship) {
       const internship = props.internship
       form.company_id = internship.company?.company_id || 0
@@ -48,25 +52,11 @@
     }
   })
 
-  // Logika úpravy stavov pre garanta
   const availableStatuses = computed(() => {
     if (userStore.user?.role === 'garant') {
-      switch (form.status) {
-        case 'Potvrdená':
-          return ['Potvrdená', 'Schválená', 'Neschválená']
-        case 'Schválená':
-          return ['Schválená', 'Obhájená', 'Neobhájená']
-        case 'Neschválená':
-          return ['Neschválená', 'Schválená']
-        case 'Neobhájená':
-          return ['Neobhájená', 'Obhájená']
-        case 'Obhájená':
-          return [form.status]
-        default:
-          return [form.status]
-      }
+      return statusStore.allowedStatusesForGarant(form.status)
     }
-    return ['Vytvorená', 'Potvrdená', 'Schválená', 'Neschválená', 'Obhájená', 'Neobhájená', 'Zamietnutá']
+    return statusStore.statuses.map((s) => s.type)
   })
 
   const submit = async () => {

@@ -21,8 +21,12 @@
         return 'bg-amber-100 text-amber-700'
       case 'Obhájená':
         return 'bg-emerald-100 text-emerald-700'
-      default:
+      case 'Zamietnutá':
+      case 'Neschválená':
+      case 'Neobhájená':
         return 'bg-rose-100 text-rose-700'
+      default:
+        return 'bg-gray-300 text-gray-700'
     }
   })
 </script>

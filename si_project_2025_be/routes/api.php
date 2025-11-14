@@ -8,6 +8,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InternshipVerificationController;
+use App\Models\Status;
 
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
@@ -37,4 +38,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/internships/{internship}/send-verification',
         [InternshipVerificationController::class, 'sendVerificationEmail']);
+
+    Route::get('/statuses', function () {
+        return Status::select('status_id', 'type')->get();
+    });
 });

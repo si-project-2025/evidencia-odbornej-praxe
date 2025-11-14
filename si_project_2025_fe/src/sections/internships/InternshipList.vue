@@ -2,6 +2,7 @@
   import { computed, ref, onMounted } from 'vue'
   import { useUserStore } from '@/stores/user'
   import { useInternshipStore } from '@/stores/internships'
+  import { useStatusStore } from '@/stores/statuses'
   import InternshipCard from '@/components/InternshipCard.vue'
   import type { Internship } from '@/types/internship.ts'
   import Input from '@/components/form/Input.vue'
@@ -18,10 +19,12 @@
   const role = computed(() => (userStore.user?.role === 'garant' ? 'garant' : 'student'))
 
   const internshipStore = useInternshipStore()
+  const statusStore = useStatusStore()
 
   onMounted(async () => {
     await internshipStore.fetchCompanies()
     await internshipStore.fetchStudents()
+    await statusStore.fetchStatuses()
   })
 
   //filtre
@@ -69,38 +72,42 @@
       <div class="flex flex-col md:flex-row gap-4">
         <!-- Firma -->
         <Select v-model="searchCompany" class="mt-2">
-          <option value="">Všetky firmy</option>
-          <option v-for="company in internshipStore.companies" :key="company.company_id" :value="company.name">
+          <option value="" class="text-gray-400">Všetky firmy</option>
+          <option
+            v-for="company in internshipStore.companies"
+            :key="company.company_id"
+            :value="company.name"
+            class="text-gray-900"
+          >
             {{ company.name }}
           </option>
         </Select>
         <!-- Študent -->
         <Select v-model="searchName" class="mt-2">
-          <option value="">Všetci študenti</option>
+          <option value="" class="text-gray-400">Všetci študenti</option>
           <option
             v-for="student in internshipStore.students"
             :key="student.users_id"
             :value="`${student.name} ${student.surname}`"
+            class="text-gray-900"
           >
             {{ student.name }} {{ student.surname }}
           </option>
         </Select>
         <!-- Semester -->
         <Select v-model="selectedSemester" class="mt-2">
-          <option value="">Všetky semestre</option>
-          <option value="Z">Zimný</option>
-          <option value="L">Letný</option>
+          <option value="" class="text-gray-400">Všetky semestre</option>
+          <option value="Z" class="text-gray-900">Zimný</option>
+          <option value="L" class="text-gray-900">Letný</option>
         </Select>
         <!-- Rok -->
         <Input v-model="selectedYear" type="number" placeholder="Rok" class="mt-2" />
         <!-- Stav -->
         <Select v-model="selectedStatus" class="mt-2">
-          <option value="">Všetky stavy</option>
-          <option value="Vytvorená">Vytvorená</option>
-          <option value="Potvrdená">Potvrdená</option>
-          <option value="Zamietnutá">Zamietnutá</option>
-          <option value="Schválená">Schválená</option>
-          <option value="Obhájená">Obhájená</option>
+          <option value="" class="text-gray-400">Všetky stavy</option>
+          <option v-for="s in statusStore.statuses" :key="s.status_id" :value="s.type" class="text-gray-900">
+            {{ s.type }}
+          </option>
         </Select>
 
         <!-- Reset filtrov -->

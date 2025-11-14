@@ -19,6 +19,8 @@ class StatusSeeder extends Seeder
             'Zamietnutá',
             'Schválená',
             'Obhájená',
+            'Neschválená',
+            'Neobhájená'
         ];
 
         foreach ($statuses as $index => $type) {
