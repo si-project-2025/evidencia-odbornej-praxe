@@ -34,16 +34,16 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', fn(Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // CRUD
-    Route::apiResource('internships', InternshipController::class);
-    Route::apiResource('internships.contact-persons', ContactPersonController::class)
-        ->parameters(['contact-persons' => 'contactPerson']);
-
     // User-specific and helper endpoints
     Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
     Route::get('/internships/students', [InternshipController::class, 'getStudents']);
+
+    // CRUD
+    Route::apiResource('internships', InternshipController::class);
+    Route::apiResource('internships.contact-persons', ContactPersonController::class)
+        ->parameters(['contact-persons' => 'contactPerson']);
 
     // Internship verification
     Route::post('/internships/{internship}/send-verification',

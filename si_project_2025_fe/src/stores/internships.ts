@@ -62,7 +62,10 @@ export const useInternshipStore = defineStore('internships', {
 
     async fetchCompanies() {
       try {
-        const response = await axios.get(`${API_URL}/api/internships/companies`)
+        const response = await axios.get(`${API_URL}/api/internships/companies`, {
+          headers: this.getAuthHeaders(),
+        })
+
         this.companies = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať firmy:', error)
@@ -71,7 +74,10 @@ export const useInternshipStore = defineStore('internships', {
 
     async fetchGarants() {
       try {
-        const response = await axios.get(`${API_URL}/api/internships/garants`)
+        const response = await axios.get(`${API_URL}/api/internships/garants`, {
+          headers: this.getAuthHeaders(),
+        })
+
         this.garants = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať garantov:', error)
@@ -83,6 +89,7 @@ export const useInternshipStore = defineStore('internships', {
         const response = await axios.get(`${API_URL}/api/internships/students`, {
           headers: this.getAuthHeaders(),
         })
+
         this.students = response.data
       } catch (error) {
         console.error('Nepodarilo sa načítať študentov:', error)
