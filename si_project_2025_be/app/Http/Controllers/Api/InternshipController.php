@@ -59,11 +59,9 @@ class InternshipController extends Controller
         $internship->update($data);
         $internship->load('status');
 
-        $user = $request->user();
-        $isGarant = $user && $user->role && $user->role->name === 'garant';
 
-        // Ak garant zmenil stav, pošleme e-maily
-        if ($isGarant && $oldStatus !== $internship->status?->type) {
+        // Ak sa zmenil stav, pošleme e-maily
+        if ($oldStatus !== $internship->status?->type) {
             app(InternshipStatusNotificationService::class)
                 ->sendStatusChangedEmails($internship);
         }

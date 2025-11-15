@@ -40,6 +40,6 @@ Route::middleware('auth:sanctum')->group(function () {
         [InternshipVerificationController::class, 'sendVerificationEmail']);
 
     Route::get('/statuses', function () {
-        return Status::select('status_id', 'type')->get();
+        return Status::select( 'type')->get();
     });
 });
