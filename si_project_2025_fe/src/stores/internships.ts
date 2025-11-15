@@ -143,6 +143,49 @@ export const useInternshipStore = defineStore('internships', {
       link.remove()
     },
 
+    async uploadDocument(internshipId: number, file: File, type?: string) {
+      try {
+        const formData = new FormData()
+        formData.append('file', file)
+        if (type) formData.append('type', type)
+
+        const response = await axios.post(`${API_URL}/api/internships/${internshipId}/documents`, formData, {
+          headers: {
+            ...this.getAuthHeaders(),
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+
+        if (!response.data.created_at) {
+          response.data.created_at = new Date().toISOString()
+        }
+
+        if (this.internshipDetail?.internships_id === internshipId) {
+          this.internshipDetail.documents?.push(response.data)
+        }
+
+        return response.data
+      } catch (error) {
+        console.error('Nepodarilo sa nahrať dokument:', error)
+        throw error
+      }
+    },
+
+    async deleteDocument(internshipId: number, documentId: number) {
+      try {
+        await axios.delete(`${API_URL}/api/internships/${internshipId}/documents/${documentId}`, {
+          headers: this.getAuthHeaders(),
+        })
+
+        if (this.internshipDetail?.documents) {
+          this.internshipDetail.documents = this.internshipDetail.documents.filter((d) => d.document_id !== documentId)
+        }
+      } catch (error) {
+        console.error('Nepodarilo sa odstrániť dokument:', error)
+        throw error
+      }
+    },
+
     async sendVerificationEmail(id: number) {
       try {
         await axios.post(

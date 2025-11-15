@@ -8,7 +8,6 @@
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentCard from '@/components/DocumentCard.vue'
-  import axios from 'axios'
 
   const userStore = useUserStore()
   const isAuthenticated = userStore.user
@@ -29,6 +28,7 @@
     return d.toLocaleDateString('sk-SK', { day: '2-digit', month: '2-digit', year: 'numeric' })
   }
 
+  // odstránenie praxe
   const deleteInternship = async () => {
     if (!confirm('Naozaj chcete túto prax zmazať?')) return
 
@@ -47,6 +47,7 @@
     }
   }
 
+  // odoslanie na verifikáciu firme
   const sendToCompany = async () => {
     // overiť firmou
     if (!internshipStore.internshipDetail?.contact_persons?.length) {
@@ -68,6 +69,29 @@
     } finally {
       sending.value = false
     }
+  }
+
+  const fileInput = ref<HTMLInputElement | null>(null)
+
+  const chooseFile = () => {
+    fileInput.value?.click()
+  }
+
+  const handleFileChange = async (e: Event) => {
+    const target = e.target as HTMLInputElement
+    if (!target.files?.length) return
+
+    const file = target.files?.[0]
+    if (!file) return // ✨ toto opraví problém
+
+    try {
+      await internshipStore.uploadDocument(Number(route.params.id), file)
+      alert('Dokument bol nahratý')
+    } catch (err) {
+      console.error(err)
+      alert('Chyba pri nahrávaní dokumentu')
+    }
+    target.value = '' // reset inputu
   }
 </script>
 
@@ -153,6 +177,7 @@
             </p>
           </div>
         </div>
+
         <!-- Firma -->
         <div>
           <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2 mb-2">
@@ -250,10 +275,12 @@
 
           <!-- Tlačidlá -->
           <div class="flex flex-wrap justify-start md:justify-end gap-3">
-            <ActionButton>
+            <ActionButton @click="chooseFile">
               <Plus class="w-4 h-4" />
               Pridať dokument
             </ActionButton>
+
+            <input ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
 
             <ActionButton color="green-light" @click="internshipStore.generateDocument">
               <FileText class="w-4 h-4" />
