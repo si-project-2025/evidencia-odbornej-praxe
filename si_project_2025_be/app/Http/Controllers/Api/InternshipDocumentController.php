@@ -16,29 +16,36 @@ class InternshipDocumentController extends Controller
     {
         $internship = Internship::with('documents')->findOrFail($internshipId);
 
-        $internship->documents->each(function ($doc) {
-            $doc->file_url = Storage::disk('public')->url($doc->file_name);
+        $documents = $internship->documents->map(function ($doc) use ($internshipId) {
+            $doc->download_url = route('documents.download', [
+                'internshipId' => $internshipId,
+                'documentId'   => $doc->document_id,
+            ]);
+            return $doc;
         });
 
-        return response()->json($internship->documents);
+        return response()->json($documents);
     }
 
     public function store(Request $request, $internshipId)
     {
         $request->validate([
-            'file' => 'required|file|max:5120',   // 5 MB
+            'file' => 'required|file|max:5120',
             'type' => 'nullable|string|max:50',
         ]);
 
         $internship = Internship::findOrFail($internshipId);
 
         $file = $request->file('file');
+
         $originalName = $file->getClientOriginalName();
+
+        $newFileName = auth()->id() . '_' . $originalName;
 
         $path = $file->storeAs(
             'internship-documents/' . $internshipId,
-            $originalName,
-            'public'
+            $newFileName,
+            'local'
         );
 
         $document = $internship->documents()->create([
@@ -46,8 +53,6 @@ class InternshipDocumentController extends Controller
             'file_name'   => $path,
             'is_verified' => false,
         ]);
-
-        $document->file_url = Storage::disk('public')->url($document->file_name);
 
         return response()->json($document, 201);
     }
@@ -58,13 +63,33 @@ class InternshipDocumentController extends Controller
             ->where('document_id', $documentId)
             ->firstOrFail();
 
-        if (Storage::disk('public')->exists($document->file_name)) {
-            Storage::disk('public')->delete($document->file_name);
+        if (Storage::disk('local')->exists($document->file_name)) {
+            Storage::disk('local')->delete($document->file_name);
         }
 
         $document->delete();
 
         return response()->json(['message' => 'Dokument bol odstránený.']);
+    }
+
+    public function download($id, $documentId)
+    {
+        $internship = Internship::findOrFail($id);
+
+        // over, že prihlásený user má prístup
+        if (auth()->id() !== $internship->users_id && auth()->id() !== $internship->garant_id) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        $document = Document::where('internships_id', $id)
+            ->where('document_id', $documentId)
+            ->firstOrFail();
+
+        if (!Storage::disk('local')->exists($document->file_name)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+
+        return Storage::disk('local')->download($document->file_name);
     }
 
     public function generateContractPdf($id)

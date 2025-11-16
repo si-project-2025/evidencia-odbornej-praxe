@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import axios from 'axios'
-import type { Company, Garant, Internship, Student } from '@/types/internship'
+import type { Company, Garant, Internship, Student, Document } from '@/types/internship'
 import type { InternshipForm } from '@/types/form.ts'
 import { useUserStore } from '@/stores/user.ts'
 
@@ -128,19 +128,53 @@ export const useInternshipStore = defineStore('internships', {
     },
 
     async generateDocument() {
-      const response = await axios.get(`${API_URL}/api/internships/${this.internshipDetail?.internships_id}/contract`, {
-        responseType: 'blob',
-      })
+      try {
+        const response = await axios.get(
+          `${API_URL}/api/internships/${this.internshipDetail?.internships_id}/contract`,
+          {
+            headers: this.getAuthHeaders(),
+            responseType: 'blob',
+          },
+        )
 
-      const url = window.URL.createObjectURL(new Blob([response.data]))
-      const link = document.createElement('a')
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
 
-      link.href = url
-      link.setAttribute('download', 'document.pdf')
-      document.body.appendChild(link)
+        link.href = url
+        link.setAttribute('download', 'document.pdf')
+        document.body.appendChild(link)
 
-      link.click()
-      link.remove()
+        link.click()
+        link.remove()
+      } catch (error) {
+        console.error('Nepodarilo sa stiahnuť dokument:', error)
+        throw error
+      }
+    },
+
+    async downloadDocument(file: Document) {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/internships/${this.internshipDetail?.internships_id}/documents/${file.document_id}/download`,
+          {
+            headers: this.getAuthHeaders(),
+            responseType: 'blob',
+          },
+        )
+
+        const url = window.URL.createObjectURL(new Blob([response.data]))
+        const link = document.createElement('a')
+
+        link.href = url
+        link.setAttribute('download', file.file_name.split('/').pop() ?? 'document.pdf')
+        document.body.appendChild(link)
+
+        link.click()
+        link.remove()
+      } catch (error) {
+        console.error('Nepodarilo sa stiahnuť dokument:', error)
+        throw error
+      }
     },
 
     async uploadDocument(internshipId: number, file: File, type?: string) {

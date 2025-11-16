@@ -53,6 +53,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
         Route::post('/documents', [InternshipDocumentController::class, 'store']);
         Route::delete('/documents/{documentId}', [InternshipDocumentController::class, 'destroy']);
+        Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });
 });

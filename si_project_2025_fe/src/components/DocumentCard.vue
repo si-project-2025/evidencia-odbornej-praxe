@@ -10,13 +10,7 @@
   const internshipStore = useInternshipStore()
 
   const downloadFile = () => {
-    const filePath = props.document.file_name
-    if (!filePath) return alert('Dokument nemá platnú cestu.')
-
-    const url = `${import.meta.env.VITE_API_URL}/storage/${filePath}`
-
-    // otvorí v novej karte
-    window.open(url, '_blank')
+    internshipStore.downloadDocument(props.document)
   }
 
   const deleteFile = async () => {
@@ -38,7 +32,7 @@
       <FileText class="h-6 text-emerald-600" />
       <div class="flex flex-col overflow-hidden">
         <span class="font-semibold text-gray-800 truncate">
-          {{ document.file_name.split('/').pop() }}
+          {{ document.file_name?.split('/').pop()?.replace(/^\d+_/, '') ?? '' }}
         </span>
 
         <span class="text-xs text-gray-500 truncate">{{ document.type }}</span>
