@@ -56,7 +56,7 @@
     if (userStore.user?.role === 'garant') {
       return statusStore.allowedStatusesForGarant(form.status)
     }
-    return statusStore.statuses.map((s) => s.type)
+    return statusStore.statuses
   })
 
   const submit = async () => {

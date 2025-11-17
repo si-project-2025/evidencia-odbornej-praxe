@@ -105,8 +105,8 @@
         <!-- Stav -->
         <Select v-model="selectedStatus" class="mt-2">
           <option value="" class="text-gray-400">Všetky stavy</option>
-          <option v-for="s in statusStore.statuses" :key="s.status_id" :value="s.type" class="text-gray-900">
-            {{ s.type }}
+          <option v-for="status in statusStore.statuses" :key="status" :value="status" class="text-gray-900">
+            {{ status }}
           </option>
         </Select>
 
