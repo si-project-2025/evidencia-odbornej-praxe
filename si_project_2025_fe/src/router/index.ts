@@ -11,6 +11,7 @@ import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
 import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
 
 import { useUserStore } from '@/stores/user.ts'
+
 const routes = [
   {
     path: '/',

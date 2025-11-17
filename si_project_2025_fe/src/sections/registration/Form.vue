@@ -119,7 +119,9 @@
       </FormSection>
     </div>
 
-    <BaseButton type="submit" class="w-[80%]">Registrovať sa</BaseButton>
+    <BaseButton type="submit" class="w-[80%]">
+      {{ userStore.user ? 'Pridať garanta' : 'Registrovať sa' }}
+    </BaseButton>
     <p v-if="submitError" class="text-red-600">{{ submitError }}</p>
   </form>
 
