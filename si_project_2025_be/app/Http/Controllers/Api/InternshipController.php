@@ -10,6 +10,7 @@ use App\Models\Status;
 use App\Models\Company;
 use App\Models\User;
 use App\Models\Role;
+use App\Services\InternshipStatusNotificationService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
@@ -44,11 +45,26 @@ class InternshipController extends Controller
     public function update(InternshipRequest $request, string $id)
     {
         $internship = Internship::findOrFail($id);
-
         $data = $request->validated();
+
+        $oldStatus = $internship->status?->type;
+
+        if (isset($data['status'])) {
+            $data['status_id'] = Status::where('type', $data['status'])->value('status_id');
+        }
+        unset($data['status']);
+
         $data['updated_at'] = now();
 
         $internship->update($data);
+        $internship->load('status');
+
+
+        // Ak sa zmenil stav, pošleme e-maily
+        if ($oldStatus !== $internship->status?->type) {
+            app(InternshipStatusNotificationService::class)
+                ->sendStatusChangedEmails($internship);
+        }
 
         return response()->json(new InternshipResource($internship));
     }

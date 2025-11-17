@@ -4,12 +4,12 @@
   import axios from 'axios'
   import Input from '@/components/form/Input.vue'
   import BaseButton from '@/components/atoms/BaseButton.vue'
-  import { RouterLink } from 'vue-router'
+  import { RouterLink, useRoute, useRouter } from 'vue-router'
   import { useUserStore } from '@/stores/user.ts'
-  import { useRouter } from 'vue-router'
 
   const userStore = useUserStore()
   const router = useRouter()
+  const route = useRoute()
   const API_URL = import.meta.env.VITE_API_URL
 
   const form = reactive<LoginForm>({
@@ -26,7 +26,14 @@
     try {
       const response = await axios.post(`${API_URL}/api/login`, form)
       userStore.setUser(response.data)
-      router.push('/internships')
+
+      const redirectTo = route.query.redirect as string | undefined
+
+      if (redirectTo) {
+        router.push(redirectTo)
+      } else {
+        router.push('/internships')
+      }
     } catch (err: unknown) {
       submitError.value = axios.isAxiosError(err)
         ? (err.response?.data?.message ?? 'Pri prihlasovaní nastala chyba.')

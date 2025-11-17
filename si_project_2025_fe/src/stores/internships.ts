@@ -127,6 +127,24 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
+    async updateInternship(id: number, data: InternshipForm) {
+      try {
+        const response = await axios.put(`${API_URL}/api/internships/${id}`, data, {
+          headers: this.getAuthHeaders()
+        })
+
+        this.internshipDetail = response.data
+        this.internships = this.internships.map((internship) =>
+          internship.internships_id === id ? response.data : internship,
+        )
+
+        return response.data
+      } catch (error) {
+        console.error('Nepodarilo sa upraviť prax:', error)
+        throw error
+      }
+    },
+
     async generateDocument() {
       try {
         const response = await axios.get(

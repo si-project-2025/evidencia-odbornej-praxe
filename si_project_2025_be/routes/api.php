@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\ResetPasswordController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InternshipVerificationController;
+use App\Models\Status;
 
 // ----------------------------
 // Public routes
@@ -39,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
     Route::get('/internships/students', [InternshipController::class, 'getStudents']);
+    Route::get('/statuses', function () { return Status::select( 'type')->get(); });
 
     // CRUD
     Route::apiResource('internships', InternshipController::class);
@@ -49,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/internships/{internship}/send-verification',
         [InternshipVerificationController::class, 'sendVerificationEmail']);
 
+    // Document-related actions
     Route::prefix('internships/{id}')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
         Route::post('/documents', [InternshipDocumentController::class, 'store']);

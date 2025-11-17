@@ -8,6 +8,7 @@ import SetPasswordPage from '@/pages/SetPasswordPage.vue'
 import InternshipsPage from '@/pages/InternshipsPage.vue'
 import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
+import InternshipEditPage from '@/pages/InternshipEditPage.vue'
 import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
 
 import { useUserStore } from '@/stores/user.ts'
@@ -62,6 +63,12 @@ const routes = [
     meta: { requiresAuth: true },
   },
   {
+    path: '/internships/:id/edit',
+    name: 'EditInternship',
+    component: InternshipEditPage,
+    meta: { requiresAuth: true },
+  },
+  {
     path: '/verify-internship',
     name: 'InternshipConfirmationPage',
     component: InternshipConfirmationPage,
@@ -73,11 +80,33 @@ const router = createRouter({
   routes,
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   userStore.loadUser()
   const isAuthenticated = !!userStore.token
   const isGarant = userStore.user?.role === 'garant'
+
+  // pre emailové odkazy o zmene stavu praxe
+  const expectedEmail = to.query.email as string | undefined
+  const redirect = to.query.redirect as string | undefined
+  const isStatusChangeLink = expectedEmail && redirect && redirect.startsWith('/internships/')
+
+  if (isStatusChangeLink && userStore.user) {
+    const currentEmail = userStore.user.email
+    const altEmail = userStore.user.alt_email
+
+    if (currentEmail !== expectedEmail && altEmail !== expectedEmail) {
+      await userStore.logout()
+
+      return next({
+        name: 'Login',
+        query: {
+          redirect,
+          email: expectedEmail,
+        },
+      })
+    }
+  }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     return next({ name: 'Login' })

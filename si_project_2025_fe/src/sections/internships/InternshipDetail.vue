@@ -1,16 +1,33 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, computed } from 'vue'
   import { useRoute } from 'vue-router'
   import { useRouter } from 'vue-router'
   import { useUserStore } from '@/stores/user.ts'
   import { useInternshipStore } from '@/stores/internships'
-  import { Building, Calendar, Clock, User, Info, FileText, Plus, Trash2, Signature, Users } from 'lucide-vue-next'
+  import {
+    Building,
+    Calendar,
+    Clock,
+    User,
+    Info,
+    FileText,
+    Plus,
+    Trash2,
+    Signature,
+    Users,
+    Pencil,
+  } from 'lucide-vue-next'
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentCard from '@/components/DocumentCard.vue'
 
   const userStore = useUserStore()
   const isAuthenticated = userStore.user
+
+  const role = computed(() => userStore.user?.role ?? null)
+
+  const isStudent = computed(() => role.value === 'student')
+  const isGarant = computed(() => role.value === 'garant')
 
   const internshipStore = useInternshipStore()
   const route = useRoute()
@@ -305,26 +322,33 @@
       </div>
     </div>
 
-    <!-- Odstránenie a potvrdenie praxe -->
-    <div
-      v-if="isAuthenticated && internshipStore.internshipDetail?.status !== 'Potvrdená'"
-      class="pt-6 border-t border-gray-200 mt-10 flex flex-col sm:flex-row sm:items-center justify-between"
-    >
-      <p class="text-sm text-gray-500 mb-3 sm:mb-0">
-        Ak bola prax vytvorená omylom alebo už nie je aktuálna, môžete ju odstrániť z evidencie.
-      </p>
-
+    <!-- Buttony -->
+    <div class="pt-6 border-t border-gray-200 mt-10 flex flex-col sm:flex-row sm:items-center items-end sm:justify-end">
       <div class="flex flex-row gap-2">
-        <ActionButton color="yellow" @click="sendToCompany">
+        <ActionButton
+          v-if="isAuthenticated && isStudent && internshipStore.internshipDetail?.status == 'Vytvorená'"
+          color="yellow"
+          @click="sendToCompany"
+        >
           <Signature class="w-4 h-4" />
           Overiť firmou
         </ActionButton>
 
-        <ActionButton color="red" @click="deleteInternship" :disabled="deleting">
+        <ActionButton
+          v-if="isAuthenticated && (isGarant || isStudent) && internshipStore.internshipDetail?.status == 'Vytvorená'"
+          color="red"
+          @click="deleteInternship"
+          :disabled="deleting"
+        >
           <Trash2 class="w-4 h-4" />
           {{ deleting ? 'Mazanie...' : 'Zmazať prax' }}
         </ActionButton>
         <p v-if="deleteError" class="text-red-600 text-sm mt-2">{{ deleteError }}</p>
+
+        <ActionButton :href="`/internships/${route.params.id}/edit`" v-if="isGarant">
+          <Pencil class="w-4 h-4" />
+          Upraviť prax
+        </ActionButton>
       </div>
     </div>
   </div>
