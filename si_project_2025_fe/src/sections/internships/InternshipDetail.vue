@@ -292,12 +292,12 @@
 
           <!-- Tlačidlá -->
           <div class="flex flex-wrap justify-start md:justify-end gap-3">
-            <ActionButton @click="chooseFile">
+            <ActionButton v-if="!isGarant" @click="chooseFile">
               <Plus class="w-4 h-4" />
               Pridať dokument
             </ActionButton>
 
-            <input ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
+            <input v-if="!isGarant" ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
 
             <ActionButton color="green-light" @click="internshipStore.generateDocument">
               <FileText class="w-4 h-4" />
