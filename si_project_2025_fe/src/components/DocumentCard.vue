@@ -1,25 +1,25 @@
 <script setup lang="ts">
   import { FileText, Trash2, Download } from 'lucide-vue-next'
   import type { Document } from '@/types/internship'
-  import { useInternshipStore } from '@/stores/internships'
+  import { useDocumentStore } from '@/stores/documents.ts'
+  import { useUserStore } from '@/stores/user.ts'
+  import { computed } from 'vue'
 
   const props = defineProps<{
     document: Document
   }>()
 
-  const internshipStore = useInternshipStore()
+  const userStore = useUserStore()
+  const documentStore = useDocumentStore()
 
   const downloadFile = () => {
-    internshipStore.downloadDocument(props.document)
+    documentStore.downloadDocument(props.document)
   }
 
   const deleteFile = async () => {
     if (!confirm('Naozaj chcete zmazať tento dokument?')) return
 
-    await internshipStore.deleteDocument(
-      Number(internshipStore.internshipDetail?.internships_id),
-      props.document.document_id,
-    )
+    await documentStore.deleteDocument(props.document.document_id)
   }
 </script>
 
@@ -55,6 +55,7 @@
 
       <!-- vymazať -->
       <button
+        v-if="userStore.user?.role !== 'garant'"
         @click.stop="deleteFile"
         class="p-2 rounded-lg transition text-red-600 hover:text-red-800 hover:bg-red-100"
         title="Vymazať dokument"

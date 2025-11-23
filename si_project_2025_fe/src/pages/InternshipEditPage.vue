@@ -4,9 +4,14 @@
   import { useRoute } from 'vue-router'
   import { useInternshipStore } from '@/stores/internships'
   import { onMounted, ref } from 'vue'
+  import { useCompaniesStore } from '@/stores/companies.ts'
+  import { useLookupStore } from '@/stores/lookup.ts'
 
   const route = useRoute()
   const internshipStore = useInternshipStore()
+  const companiesStore = useCompaniesStore()
+  const lookupStore = useLookupStore()
+
   const isLoading = ref(true)
   const errorMessage = ref('')
 
@@ -14,9 +19,9 @@
     try {
       const id = Number(route.params.id)
       await Promise.all([
-        internshipStore.fetchCompanies(),
-        internshipStore.fetchGarants(),
-        internshipStore.fetchStudents(),
+        companiesStore.fetchCompanies(),
+        lookupStore.fetchGarants(),
+        lookupStore.fetchStudents(),
         internshipStore.fetchInternshipDetail(id),
       ])
     } catch (e) {

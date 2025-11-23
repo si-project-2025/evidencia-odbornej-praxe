@@ -8,13 +8,17 @@
   import { useUserStore } from '@/stores/user'
   import { useInternshipStore } from '@/stores/internships'
   import type { InternshipForm } from '@/types/form'
+  import { useCompaniesStore } from '@/stores/companies.ts'
+  import { useLookupStore } from '@/stores/lookup.ts'
 
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
+  const companiesStore = useCompaniesStore()
+  const lookupStore = useLookupStore()
 
   onMounted(async () => {
-    await internshipStore.fetchCompanies()
-    await internshipStore.fetchGarants()
+    await companiesStore.fetchCompanies()
+    await lookupStore.fetchGarants()
   })
 
   const form = reactive<InternshipForm>({
@@ -60,9 +64,9 @@
       <div class="space-y-4">
         <!-- Firma -->
         <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!internshipStore.companies.length">Načítavam firmy...</option>
+          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
           <option value="0" disabled v-else>Vyberte firmu</option>
-          <option v-for="company in internshipStore.companies" :key="company.company_id" :value="company.company_id">
+          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
             {{ company.name }}
           </option>
         </Select>
@@ -78,9 +82,9 @@
 
         <!-- Garant -->
         <Select v-model.number="form.garant_id" id="garant_id" label="Garant praxe*">
-          <option disabled value="0" v-if="!internshipStore.garants.length">Načítavam garantov...</option>
+          <option disabled value="0" v-if="!lookupStore.garants.length">Načítavam garantov...</option>
           <option value="0" disabled v-else>Vyberte garanta</option>
-          <option v-for="garant in internshipStore.garants" :key="garant.users_id" :value="garant.users_id">
+          <option v-for="garant in lookupStore.garants" :key="garant.users_id" :value="garant.users_id">
             {{ garant.name }} {{ garant.surname }}
           </option>
         </Select>
