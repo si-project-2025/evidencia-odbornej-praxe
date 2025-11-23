@@ -1,7 +1,6 @@
 <script setup lang="ts">
   import { computed, ref, onMounted } from 'vue'
   import { useUserStore } from '@/stores/user'
-  import { useInternshipStore } from '@/stores/internships'
   import { useStatusStore } from '@/stores/statuses'
   import InternshipCard from '@/components/InternshipCard.vue'
   import type { Internship } from '@/types/internship.ts'
@@ -10,6 +9,8 @@
   import Select from '@/components/form/Select.vue'
   import { RotateCcw } from 'lucide-vue-next'
   import Export from '@/components/Export.vue'
+  import { useCompaniesStore } from '@/stores/companies.ts'
+  import { useLookupStore } from '@/stores/lookup.ts'
 
   const props = defineProps<{
     internships: Internship[]
@@ -18,12 +19,13 @@
   const userStore = useUserStore()
   const role = computed(() => (userStore.user?.role === 'garant' ? 'garant' : 'student'))
 
-  const internshipStore = useInternshipStore()
+  const companiesStore = useCompaniesStore()
+  const lookupStore = useLookupStore()
   const statusStore = useStatusStore()
 
   onMounted(async () => {
-    await internshipStore.fetchCompanies()
-    await internshipStore.fetchStudents()
+    await companiesStore.fetchCompanies()
+    await lookupStore.fetchStudents()
     await statusStore.fetchStatuses()
   })
 
@@ -74,7 +76,7 @@
         <Select v-model="searchCompany" class="mt-2">
           <option value="" class="text-gray-400">Všetky firmy</option>
           <option
-            v-for="company in internshipStore.companies"
+            v-for="company in companiesStore.companies"
             :key="company.company_id"
             :value="company.name"
             class="text-gray-900"
@@ -86,7 +88,7 @@
         <Select v-model="searchName" class="mt-2">
           <option value="" class="text-gray-400">Všetci študenti</option>
           <option
-            v-for="student in internshipStore.students"
+            v-for="student in lookupStore.students"
             :key="student.users_id"
             :value="`${student.name} ${student.surname}`"
             class="text-gray-900"

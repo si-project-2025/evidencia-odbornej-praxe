@@ -11,13 +11,18 @@
   import type { InternshipForm } from '@/types/form'
   import type { Internship } from '@/types/internship'
   import { useStatusStore } from '@/stores/statuses'
+  import { useCompaniesStore } from '@/stores/companies.ts'
+  import { useLookupStore } from '@/stores/lookup.ts'
 
   const props = defineProps<{
     internship: Internship | null
   }>()
 
   const internshipStore = useInternshipStore()
+  const companiesStore = useCompaniesStore()
+  const lookupStore = useLookupStore()
   const userStore = useUserStore()
+
   const route = useRoute()
 
   const form = reactive<InternshipForm>({
@@ -88,18 +93,18 @@
       <div class="space-y-4">
         <!-- Firma -->
         <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!internshipStore.companies.length">Načítavam firmy...</option>
+          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
           <option value="0" disabled v-else>Vyberte firmu</option>
-          <option v-for="company in internshipStore.companies" :key="company.company_id" :value="company.company_id">
+          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
             {{ company.name }}
           </option>
         </Select>
 
         <!-- Študent -->
         <Select v-model.number="form.users_id" id="users_id" label="Študent*">
-          <option disabled value="0" v-if="!internshipStore.students.length">Načítavam študentov...</option>
+          <option disabled value="0" v-if="!lookupStore.students.length">Načítavam študentov...</option>
           <option value="0" disabled v-else>Vyberte študenta</option>
-          <option v-for="student in internshipStore.students" :key="student.users_id" :value="student.users_id">
+          <option v-for="student in lookupStore.students" :key="student.users_id" :value="student.users_id">
             {{ student.name }} {{ student.surname }}
           </option>
         </Select>
@@ -115,9 +120,9 @@
 
         <!-- Garant -->
         <Select v-model.number="form.garant_id" id="garant_id" label="Garant praxe*">
-          <option disabled value="0" v-if="!internshipStore.garants.length">Načítavam garantov...</option>
+          <option disabled value="0" v-if="!lookupStore.garants.length">Načítavam garantov...</option>
           <option value="0" disabled v-else>Vyberte garanta</option>
-          <option v-for="garant in internshipStore.garants" :key="garant.users_id" :value="garant.users_id">
+          <option v-for="garant in lookupStore.garants" :key="garant.users_id" :value="garant.users_id">
             {{ garant.name }} {{ garant.surname }}
           </option>
         </Select>
