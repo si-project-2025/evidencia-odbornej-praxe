@@ -159,5 +159,27 @@ export const useInternshipStore = defineStore('internships', {
         this.loading = false
       }
     },
+
+    async rejectInternship(email: string, token: string) {
+      try {
+        this.loading = true
+
+        const response = await axios.post(`${API_URL}/api/internships/reject`, {
+          email,
+          token,
+        })
+
+        if (this.internshipDetail) {
+          this.internshipDetail.status = response.data.internship.status
+        }
+
+        return response.data.message
+      } catch (error) {
+        console.error('Nepodarilo sa zamietnuť prax:', error)
+        throw error
+      } finally {
+        this.loading = false
+      }
+    },
   },
 })

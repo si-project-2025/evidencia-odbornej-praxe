@@ -97,4 +97,27 @@ class InternshipVerificationController extends Controller
             ], 400);
         }
     }
+
+    /**
+     * Zamietnuť prax pomocou tokenu
+     */
+    public function rejectInternship(Request $request)
+    {
+        $request->validate([
+            'email' => 'required|string',
+            'token' => 'required|string',
+        ]);
+
+        try {
+            $result = $this->verificationService->rejectInternship(
+                $request->email,
+                $request->token
+            );
+
+            return response()->json($result);
+        } catch (\Exception $e) {
+            return response()->json(['message' => $e->getMessage()], 400);
+        }
+    }
+
 }

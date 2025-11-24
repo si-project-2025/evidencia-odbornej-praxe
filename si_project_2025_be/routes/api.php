@@ -22,6 +22,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 Route::post('/internships/verify', [InternshipVerificationController::class, 'verifyInternship']);
+Route::post('/internships/reject', [InternshipVerificationController::class, 'rejectInternship']);
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']
 );

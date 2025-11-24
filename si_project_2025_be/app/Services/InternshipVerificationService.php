@@ -153,4 +153,55 @@ class InternshipVerificationService
             'is_expired' => Carbon::parse($verificationRecord->created_at)->addDays(7)->isPast(),
         ];
     }
+
+    /**
+     * Zamietne prax pomocou tokenu
+     */
+    public function rejectInternship(string $email, string $token): array
+    {
+        $verificationRecord = DB::table('internship_verification_tokens')
+            ->where('email', $email)
+            ->first();
+
+        if (!$verificationRecord) {
+            throw new \Exception('Token nenájdený alebo už bol použitý.');
+        }
+
+        if (!Hash::check($token, $verificationRecord->token)) {
+            throw new \Exception('Neplatný token.');
+        }
+
+        if (Carbon::parse($verificationRecord->created_at)->addDays(7)->isPast()) {
+            throw new \Exception('Token expiroval.');
+        }
+
+        $internship = Internship::with('status')
+            ->where('internships_id', $verificationRecord->internships_id)
+            ->first();
+
+        if (!$internship) {
+            throw new \Exception('Prax nenájdená.');
+        }
+
+        if ($internship->status->type == 'Potvrdená') {
+            throw new \Exception('Prax už bola potvrdená a nemôže byť zamietnutá.');
+        }
+
+        $statusId = Status::where('type', 'Zamietnutá')->value('status_id');
+        $internship->status_id = $statusId;
+        $internship->save();
+        $internship->load('status');
+
+        DB::table('internship_verification_tokens')
+            ->where('email', $email)
+            ->where('internships_id', $verificationRecord->internships_id)
+            ->delete();
+
+        return [
+            'message' => 'Prax bola úspešne zamietnutá.',
+            'internship' => new InternshipResource($internship)
+        ];
+    }
+
+
 }
