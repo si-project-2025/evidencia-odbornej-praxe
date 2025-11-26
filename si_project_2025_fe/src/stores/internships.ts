@@ -134,8 +134,8 @@ export const useInternshipStore = defineStore('internships', {
 
         this.internshipDetail = response.data.internship
       } catch (error) {
-        console.error('Nepodarilo sa načítať verifikačné detaily:', error)
-        this.error = 'Nepodarilo sa načítať verifikačné detaily.'
+        console.error('Nepodarilo sa načítať verifikačné detaily', error)
+        this.error = 'Platnosť relácie vypršala.'
       } finally {
         this.loading = false
       }
