@@ -41,7 +41,6 @@ class InternshipVerificationController extends Controller
             return response()->json([
                 'message' => 'Email na overenie bol úspešne odoslaný.'
             ]);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
@@ -65,7 +64,6 @@ class InternshipVerificationController extends Controller
             $details = $this->verificationService->getVerificationDetails($email, $token);
 
             return response()->json($details);
-
         } catch (\Exception $e) {
             return response()->json([
                 'message' => $e->getMessage()
@@ -74,44 +72,23 @@ class InternshipVerificationController extends Controller
     }
 
     /**
-     * Overiť prax pomocou tokenu
+     * Potvrdiť alebo zamietnuť prax pomocou tokenu
+     * Ak je action = 'confirm', prax sa potvrdí
+     * Ak je action = 'reject', prax sa zamietne
      */
-    public function verifyInternship(Request $request)
+    public function handleInternshipAction(Request $request)
     {
         $request->validate([
             'email' => 'required|string',
             'token' => 'required|string',
+            'action' => 'required|string|in:confirm,reject',
         ]);
 
         try {
-            $result = $this->verificationService->verifyInternship(
+            $result = $this->verificationService->handleInternshipAction(
                 $request->email,
-                $request->token
-            );
-
-            return response()->json($result);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'message' => $e->getMessage()
-            ], 400);
-        }
-    }
-
-    /**
-     * Zamietnuť prax pomocou tokenu
-     */
-    public function rejectInternship(Request $request)
-    {
-        $request->validate([
-            'email' => 'required|string',
-            'token' => 'required|string',
-        ]);
-
-        try {
-            $result = $this->verificationService->rejectInternship(
-                $request->email,
-                $request->token
+                $request->token,
+                $request->action
             );
 
             return response()->json($result);
@@ -119,5 +96,4 @@ class InternshipVerificationController extends Controller
             return response()->json(['message' => $e->getMessage()], 400);
         }
     }
-
 }

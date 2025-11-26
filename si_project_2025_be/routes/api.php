@@ -21,8 +21,7 @@ Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
-Route::post('/internships/verify', [InternshipVerificationController::class, 'verifyInternship']);
-Route::post('/internships/reject', [InternshipVerificationController::class, 'rejectInternship']);
+Route::post('/internships/action', [InternshipVerificationController::class, 'handleInternshipAction']);
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']
 );
@@ -49,9 +48,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters(['contact-persons' => 'contactPerson']);
 
     // Internship verification
-    Route::post('/internships/{internship}/send-verification',
-        [InternshipVerificationController::class, 'sendVerificationEmail']);
+    Route::post('/internships/{internship}/send-verification', [InternshipVerificationController::class, 'sendVerificationEmail']);
 
+});
     // Document-related actions
     Route::prefix('internships/{id}')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
@@ -60,4 +59,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });
-});

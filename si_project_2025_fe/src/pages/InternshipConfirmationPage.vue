@@ -5,15 +5,11 @@
   import BaseButton from '@/components/atoms/BaseButton.vue'
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import { useInternshipStore } from '@/stores/internships.ts'
-  import { Trash2 } from 'lucide-vue-next'
 
   const store = useInternshipStore()
   const route = useRoute()
 
   const confirmationMessage = ref<string | null>(null)
-  const confirming = ref(false)
-  const rejecting = ref(false)
-  const rejectError = ref('')
 
   const email = route.query.email as string
   const token = route.query.token as string
@@ -22,30 +18,17 @@
     store.fetchVerificationDetails(email, token)
   })
 
-  const confirmInternship = async () => {
-    if (!store.internshipDetail) return
-    try {
-      confirming.value = true
-      confirmationMessage.value = await store.confirmInternship(email, token)
-    } catch {
-      confirmationMessage.value = 'Nepodarilo sa potvrdiť prax.'
-    } finally {
-      confirming.value = false
-    }
-  }
-
-  const rejectInternship = async () => {
-    if (!confirm('Naozaj chcete zamietnuť túto prax?')) return
+  /**
+   * Jedna funkcia na potvrdenie alebo zamietnutie praxe
+   */
+  const handleInternshipAction = async (action: 'confirm' | 'reject') => {
+    if (action === 'reject' && !confirm('Naozaj chcete zamietnuť túto prax?')) return
 
     try {
-      rejecting.value = true
-      rejectError.value = ''
-
-      confirmationMessage.value = await store.rejectInternship(email, token)
+      confirmationMessage.value = await store.handleInternshipAction(email, token, action)
     } catch {
-      rejectError.value = 'Nepodarilo sa zamietnuť prax.'
-    } finally {
-      rejecting.value = false
+      confirmationMessage.value =
+        action === 'confirm' ? 'Nepodarilo sa potvrdiť prax.' : 'Nepodarilo sa zamietnuť prax.'
     }
   }
 </script>
@@ -62,20 +45,9 @@
       <InternshipDetail v-if="store.internshipDetail" :internship="store.internshipDetail" />
 
       <div v-if="store.internshipDetail && !confirmationMessage" class="mt-6 flex flex-col gap-3">
-        <!-- Confirm -->
-        <BaseButton variant="primary" :disabled="confirming" @click="confirmInternship">
-          {{ confirming ? 'Potvrdzovanie...' : 'Potvrdiť prax' }}
-        </BaseButton>
+        <BaseButton variant="primary" @click="handleInternshipAction('confirm')">Potvrdiť prax</BaseButton>
 
-        <!-- Reject -->
-        <ActionButton color="red" @click="rejectInternship" :disabled="rejecting">
-          <Trash2 class="w-4 h-4" />
-          {{ rejecting ? 'Zamietanie...' : 'Zamietnuť prax' }}
-        </ActionButton>
-
-        <p v-if="rejectError" class="text-red-600 text-sm mt-2">
-          {{ rejectError }}
-        </p>
+        <ActionButton color="red" @click="handleInternshipAction('reject')">Zamietnuť prax</ActionButton>
       </div>
 
       <div v-if="confirmationMessage" class="mt-6 text-green-700 font-semibold text-center">
