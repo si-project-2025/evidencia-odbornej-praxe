@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InternshipVerificationController;
 use App\Models\Status;
+use App\Http\Controllers\Api\ExternalInternshipController;
 
 // ----------------------------
 // Public routes
@@ -21,11 +22,21 @@ Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
-Route::post('/internships/verify', [InternshipVerificationController::class, 'verifyInternship']);
+Route::post('/internships/action', [InternshipVerificationController::class, 'handleInternshipAction']);
 Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']
 );
 
+// ----------------------------
+// External system routes
+// ----------------------------
+Route::prefix('external')
+    ->middleware(['client:internship:defend'])
+    ->group(function () {
+        Route::patch('/internships/{internship}/defend',
+            [ExternalInternshipController::class, 'defend']
+        )->name('api.external.internships.defend');
+    });
 // ----------------------------
 // Authenticated routes
 // ----------------------------
@@ -48,9 +59,9 @@ Route::middleware('auth:sanctum')->group(function () {
         ->parameters(['contact-persons' => 'contactPerson']);
 
     // Internship verification
-    Route::post('/internships/{internship}/send-verification',
-        [InternshipVerificationController::class, 'sendVerificationEmail']);
+    Route::post('/internships/{internship}/send-verification', [InternshipVerificationController::class, 'sendVerificationEmail']);
 
+});
     // Document-related actions
     Route::prefix('internships/{id}')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
@@ -59,4 +70,3 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });
-});

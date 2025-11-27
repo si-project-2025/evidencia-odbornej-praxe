@@ -134,26 +134,23 @@ export const useInternshipStore = defineStore('internships', {
 
         this.internshipDetail = response.data.internship
       } catch (error) {
-        console.error('Nepodarilo sa načítať verifikačné detaily:', error)
-        this.error = 'Nepodarilo sa načítať verifikačné detaily.'
+        console.error('Nepodarilo sa načítať verifikačné detaily', error)
+        this.error = 'Platnosť relácie vypršala.'
       } finally {
         this.loading = false
       }
     },
 
-    async confirmInternship(email: string, token: string) {
+    async handleInternshipAction(email: string, token: string, action: 'confirm' | 'reject') {
       try {
         this.loading = true
-
-        const response = await axios.post(`${API_URL}/api/internships/verify`, {
-          email,
-          token,
-        })
-        this.internshipDetail = response.data.internship
-
+        const response = await axios.post(`${API_URL}/api/internships/action`, { email, token, action })
+        if (this.internshipDetail) {
+          this.internshipDetail.status = response.data.internship.status
+        }
         return response.data.message
       } catch (error) {
-        console.error('Nepodarilo sa potvrdiť prax:', error)
+        console.error(`Nepodarilo sa ${action === 'confirm' ? 'potvrdiť' : 'zamietnuť'} prax:`, error)
         throw error
       } finally {
         this.loading = false
