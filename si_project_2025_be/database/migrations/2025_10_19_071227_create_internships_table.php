@@ -16,6 +16,7 @@ return new class extends Migration
             $table->enum('semester', ['Z', 'L']);
             $table->integer('hours_total');
             $table->integer('year');
+            $table->timestamp('start_at');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();
             $table->timestamp('end_at')->nullable();

@@ -16,6 +16,7 @@ class InternshipResource extends JsonResource
             'year' => $this->year,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'start_at' => $this->start_at,
             'end_at' => $this->end_at,
 
             'company' => [

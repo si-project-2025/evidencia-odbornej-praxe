@@ -19,18 +19,23 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $year
  * @property Carbon $created_at
  * @property Carbon $updated_at
+ * @property Carbon|null $start_at
  * @property Carbon|null $end_at
  * @property int $users_id
  * @property int $company_id
  * @property int $status_id
+ * @property int $garant_id
  *
  * @property Company $company
  * @property Status $status
  * @property User $user
+ * @property User $garant
  * @property Collection|Document[] $documents
+ * @property Collection|ContactPerson[] $contactPersons
  *
  * @package App\Models
  */
+
 class Internship extends Model
 {
     protected $table = 'internships';
@@ -39,6 +44,7 @@ class Internship extends Model
     protected $casts = [
         'hours_total' => 'int',
         'year' => 'int',
+        'start_at' => 'datetime',
         'end_at' => 'datetime',
         'users_id' => 'int',
         'company_id' => 'int',
@@ -50,6 +56,7 @@ class Internship extends Model
         'semester',
         'hours_total',
         'year',
+        'start_at',
         'end_at',
         'users_id',
         'company_id',

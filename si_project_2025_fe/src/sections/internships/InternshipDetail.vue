@@ -37,16 +37,10 @@
           <span>Semester: {{ internshipStore.internshipDetail?.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
         </div>
 
-        <!-- Rok -->
+        <!-- Začiatok praxe -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Rok: {{ internshipStore.internshipDetail?.year }}</span>
-        </div>
-
-        <!-- Počet hodín -->
-        <div class="flex items-center gap-2">
-          <Clock class="w-4 h-4 text-green-600" />
-          <span>Počet hodín: {{ internshipStore.internshipDetail?.hours_total }}</span>
+          <span>Začiatok praxe: {{ formatDate(internshipStore.internshipDetail?.start_at ?? '') }}</span>
         </div>
 
         <!-- Koniec praxe -->
@@ -55,10 +49,16 @@
           <span>Koniec praxe: {{ formatDate(internshipStore.internshipDetail?.end_at ?? '') }}</span>
         </div>
 
+        <!-- Rok -->
+        <div class="flex items-center gap-2">
+          <Calendar class="w-4 h-4 text-green-600" />
+          <span>Rok: {{ internshipStore.internshipDetail?.year }}</span>
+        </div>
+
         <!-- Vytvorená -->
         <div class="flex items-center gap-2">
           <Info class="w-4 h-4 text-green-600" />
-          <span>Vytvorená: {{ formatDate(internshipStore.internshipDetail?.created_at ?? '') }}</span>
+          <span>Pridaná: {{ formatDate(internshipStore.internshipDetail?.created_at ?? '') }}</span>
         </div>
 
         <!-- Naposledy upravená -->
