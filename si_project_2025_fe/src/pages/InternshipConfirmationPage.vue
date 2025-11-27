@@ -2,9 +2,9 @@
   import { onMounted, ref } from 'vue'
   import { useRoute } from 'vue-router'
   import InternshipDetail from '@/sections/internships/InternshipDetail.vue'
-  import BaseButton from '@/components/atoms/BaseButton.vue'
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import { useInternshipStore } from '@/stores/internships.ts'
+  import { Check, X } from 'lucide-vue-next'
 
   const store = useInternshipStore()
   const route = useRoute()
@@ -18,9 +18,6 @@
     store.fetchVerificationDetails(email, token)
   })
 
-  /**
-   * Jedna funkcia na potvrdenie alebo zamietnutie praxe
-   */
   const handleInternshipAction = async (action: 'confirm' | 'reject') => {
     if (action === 'reject' && !confirm('Naozaj chcete zamietnuť túto prax?')) return
 
@@ -44,10 +41,15 @@
 
       <InternshipDetail v-if="store.internshipDetail" :internship="store.internshipDetail" />
 
-      <div v-if="store.internshipDetail && !confirmationMessage" class="mt-6 flex flex-col gap-3">
-        <BaseButton variant="primary" @click="handleInternshipAction('confirm')">Potvrdiť prax</BaseButton>
-
-        <ActionButton color="red" @click="handleInternshipAction('reject')">Zamietnuť prax</ActionButton>
+      <div v-if="store.internshipDetail && !confirmationMessage" class="flex flex-row gap-3">
+        <ActionButton variant="primary" @click="handleInternshipAction('confirm')">
+          <Check class="w-4 h-4" />
+          Potvrdiť prax
+        </ActionButton>
+        <ActionButton color="red" @click="handleInternshipAction('reject')">
+          <X class="w-4 h-4" />
+          Zamietnuť prax
+        </ActionButton>
       </div>
 
       <div v-if="confirmationMessage" class="mt-6 text-green-700 font-semibold text-center">

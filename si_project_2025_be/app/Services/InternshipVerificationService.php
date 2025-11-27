@@ -110,58 +110,68 @@ class InternshipVerificationService
      */
     public function handleInternshipAction(string $email, string $token, string $action): array
     {
-        $verificationRecord = DB::table('internship_verification_tokens')
+        $verification = DB::table('internship_verification_tokens')
             ->where('email', $email)
             ->first();
 
-        if (!$verificationRecord) {
+        if (!$verification) {
             throw new \Exception('Token nenájdený alebo už bol použitý.');
         }
 
-        if (!Hash::check($token, $verificationRecord->token)) {
+        if (!Hash::check($token, $verification->token)) {
             throw new \Exception('Neplatný token.');
         }
 
-        if (Carbon::parse($verificationRecord->created_at)->addDays(7)->isPast()) {
+        if (Carbon::parse($verification->created_at)->addDays(7)->isPast()) {
             throw new \Exception('Token expiroval.');
         }
 
         $internship = Internship::with('status')
-            ->where('internships_id', $verificationRecord->internships_id)
+            ->where('internships_id', $verification->internships_id)
             ->first();
 
         if (!$internship) {
             throw new \Exception('Prax nenájdená.');
         }
 
-        if ($action === 'confirm') {
-            if ($internship->status->type == 'Potvrdená') {
-                throw new \Exception('Prax už bola overená.');
-            }
-            $statusId = Status::where('type', 'Potvrdená')->value('status_id');
-            $internship->status_id = $statusId;
-            $message = 'Prax bola úspešne overená.';
-        } else { // reject
-            if ($internship->status->type == 'Potvrdená') {
-                throw new \Exception('Prax už bola potvrdená a nemôže byť zamietnutá.');
-            }
-            $statusId = Status::where('type', 'Zamietnutá')->value('status_id');
-            $internship->status_id = $statusId;
-            $message = 'Prax bola úspešne zamietnutá.';
-        }
+        $this->updateInternshipStatus($internship, $action);
 
-        $internship->save();
-        $internship->load('status');
-
-        // Odstránime token po akcii
         DB::table('internship_verification_tokens')
             ->where('email', $email)
-            ->where('internships_id', $verificationRecord->internships_id)
+            ->where('internships_id', $verification->internships_id)
             ->delete();
 
         return [
-            'message' => $message,
+            'message' => $this->actionMessage($action),
             'internship' => new InternshipResource($internship)
         ];
+    }
+
+    private function updateInternshipStatus(Internship $internship, string $action): void
+    {
+        $current = $internship->status->type;
+
+        if ($action === 'confirm') {
+            if ($current === 'Potvrdená') {
+                throw new \Exception('Prax už bola overená.');
+            }
+            $type = 'Potvrdená';
+
+        } else {
+            if ($current === 'Potvrdená') {
+                throw new \Exception('Prax už bola potvrdená a nemôže byť zamietnutá.');
+            }
+            $type = 'Zamietnutá';
+        }
+
+        $internship->status_id = Status::where('type', $type)->value('status_id');
+        $internship->save();
+    }
+
+    private function actionMessage(string $action): string
+    {
+        return $action === 'confirm'
+            ? 'Prax bola úspešne overená.'
+            : 'Prax bola úspešne zamietnutá.';
     }
 }
