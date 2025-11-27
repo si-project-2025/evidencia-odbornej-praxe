@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\InternshipVerificationController;
 use App\Models\Status;
+use App\Http\Controllers\Api\ExternalInternshipController;
 
 // ----------------------------
 // Public routes
@@ -26,6 +27,16 @@ Route::get('/internships/get-verification-details',
     [InternshipVerificationController::class, 'getVerificationDetails']
 );
 
+// ----------------------------
+// External system routes
+// ----------------------------
+Route::prefix('external')
+    ->middleware(['client:internship:defend'])
+    ->group(function () {
+        Route::patch('/internships/{internship}/defend',
+            [ExternalInternshipController::class, 'defend']
+        )->name('api.external.internships.defend');
+    });
 // ----------------------------
 // Authenticated routes
 // ----------------------------
