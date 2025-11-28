@@ -49,11 +49,12 @@ Route::middleware('auth:sanctum')->group(function () {
     // User-specific and helper endpoints
     Route::get('/user/internships', [InternshipController::class, 'getInternshipsByUser']);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
+    Route::post('/internships/companies', [\App\Http\Controllers\Api\CompanyController::class, 'store']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
     Route::get('/internships/students', [InternshipController::class, 'getStudents']);
     Route::get('/statuses', function () { return Status::select( 'type')->get(); });
 
-    // CRUD
+    // CRUD (internships + contact persons)
     Route::apiResource('internships', InternshipController::class);
     Route::apiResource('internships.contact-persons', ContactPersonController::class)
         ->parameters(['contact-persons' => 'contactPerson']);

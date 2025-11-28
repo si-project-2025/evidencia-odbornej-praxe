@@ -11,10 +11,14 @@
   import { useCompaniesStore } from '@/stores/companies.ts'
   import { useLookupStore } from '@/stores/lookup.ts'
 
+  import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
   const companiesStore = useCompaniesStore()
   const lookupStore = useLookupStore()
+
+  const showCompanyModal = ref(false)
 
   onMounted(async () => {
     await companiesStore.fetchCompanies()
@@ -35,6 +39,17 @@
   const errorMessage = ref('')
   const successMessage = ref('')
   const loading = ref(false)
+
+  const onCompanyChange = () => {
+    if (form.company_id === -1) {
+      showCompanyModal.value = true
+    }
+  }
+
+  const handleCompanyCreated = (newCompanyId: number) => {
+    form.company_id = newCompanyId
+    showCompanyModal.value = false
+  }
 
   const submit = async () => {
     errorMessage.value = ''
@@ -63,9 +78,14 @@
     <FormSection title="Základné informácie o praxi">
       <div class="space-y-4">
         <!-- Firma -->
-        <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
-          <option value="0" disabled v-else>Vyberte firmu</option>
+        <Select v-model.number="form.company_id" id="company_id" label="Firma*" @change="onCompanyChange">
+          <!-- Pridať firmu NAVRCHU -->
+          <option value="-1">+ Pridať novú firmu</option>
+
+          <!-- Default placeholder -->
+          <option value="0" disabled selected>Vyberte firmu</option>
+
+          <!-- Firmy -->
           <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
             {{ company.name }}
           </option>
@@ -130,4 +150,7 @@
     <h3 class="text-lg font-semibold text-green-700 mb-1">Prax bola úspešne vytvorená!</h3>
     <p class="text-gray-700 text-sm">Vaša prax bola uložená do systému.</p>
   </div>
+
+  <!-- MODAL -->
+  <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
 </template>
