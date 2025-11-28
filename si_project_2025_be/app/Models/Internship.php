@@ -15,7 +15,6 @@ use Illuminate\Database\Eloquent\Model;
  *
  * @property int $internships_id
  * @property string $semester
- * @property int $hours_total
  * @property int $year
  * @property Carbon $created_at
  * @property Carbon $updated_at
@@ -42,7 +41,6 @@ class Internship extends Model
     protected $primaryKey = 'internships_id';
 
     protected $casts = [
-        'hours_total' => 'int',
         'year' => 'int',
         'start_at' => 'datetime',
         'end_at' => 'datetime',
@@ -54,7 +52,6 @@ class Internship extends Model
 
     protected $fillable = [
         'semester',
-        'hours_total',
         'year',
         'start_at',
         'end_at',

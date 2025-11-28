@@ -27,7 +27,6 @@
     semester: 'Z',
     year: new Date().getFullYear(),
     start_at: '',
-    hours_total: 0,
     end_at: '',
     status: 'Vytvorená',
     garant_id: 0,

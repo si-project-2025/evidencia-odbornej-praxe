@@ -29,7 +29,6 @@ class InternshipController extends Controller
         $data['status_id'] = Status::where('type', 'Vytvorená')->value('status_id');
         $data['start_at'] = $data['start_at'] ? $data['start_at'] . ' 00:00:00' : null;
         $data['end_at'] = $data['end_at'] ? $data['end_at'] . ' 00:00:00' : null;
-        $data['hours_total'] = $data['hours_total'] ?? 0;
         $data['created_at'] = now();
         $data['updated_at'] = now();
 
@@ -59,8 +58,6 @@ class InternshipController extends Controller
         if (isset($data['end_at'])) {
             $data['end_at'] = $data['end_at'] ? $data['end_at'] . ' 00:00:00' : null;
         }
-
-        $data['hours_total'] = $data['hours_total'] ?? $internship->hours_total ?? 0;
 
         // Status pri update
         if (isset($data['status'])) {

@@ -23,7 +23,6 @@ export interface InternshipForm {
   company_id: number
   semester: 'Z' | 'L'
   year: number
-  hours_total?: number
   start_at?: string
   end_at?: string
   status: Status

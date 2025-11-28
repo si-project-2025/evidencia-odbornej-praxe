@@ -17,7 +17,6 @@ class InternshipRequest extends FormRequest
     {
         return [
             'semester' => ['required', Rule::enum(SemesterEnum::class)],
-            'hours_total' => 'required|integer',
             'start_at' => 'required|date_format:Y-m-d',
             'end_at' => 'nullable|date_format:Y-m-d',
             'year' => 'required|integer',
@@ -33,9 +32,6 @@ class InternshipRequest extends FormRequest
         return [
             'semester.required' => 'Semester je povinný.',
             'semester.enum' => 'Zvolená hodnota semestra nie je platná.',
-
-            'hours_total.required' => 'Počet hodín je povinný.',
-            'hours_total.integer' => 'Počet hodín musí byť celé číslo.',
 
             'start_at.required' => 'Dátum začiatku praxe je povinný.',
             'start_at.date_format' => 'Dátum začiatku musí byť vo formáte RRRR-MM-DD.',

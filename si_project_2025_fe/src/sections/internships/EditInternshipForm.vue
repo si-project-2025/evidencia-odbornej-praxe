@@ -30,7 +30,6 @@
     users_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
-    hours_total: 0,
     start_at: '',
     end_at: '',
     status: 'Vytvorená',
@@ -51,7 +50,6 @@
       form.users_id = internship.student?.users_id || 0
       form.semester = internship.semester
       form.year = internship.year
-      form.hours_total = internship.hours_total
       form.start_at = internship.start_at?.split('T')[0] || ''
       form.end_at = internship.end_at?.split('T')[0] || ''
       form.status = internship.status || 'Vytvorená'
