@@ -28,3 +28,9 @@ export interface InternshipForm {
   status: Status
   garant_id: number
 }
+
+export interface CompanyForm {
+  name: string
+  ico: string
+  address: Address
+}

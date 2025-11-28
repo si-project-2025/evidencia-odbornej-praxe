@@ -13,11 +13,13 @@
   const form = reactive({
     name: '',
     ico: '',
-    country: '',
-    city: '',
-    zip_code: '',
-    street: '',
-    house_number: '',
+    address: {
+      street: '',
+      house_number: '',
+      city: '',
+      zip_code: '',
+      country: '',
+    },
   })
 
   const submit = async () => {
@@ -30,13 +32,9 @@
     } catch (e: unknown) {
       console.error('Error pri vytváraní firmy:', e)
 
-      if (typeof e === 'object' && e !== null && 'response' in e) {
-        const err = e as { response?: { data?: { error?: string } } }
-
-        if (err.response?.data?.error) {
-          errorMessage.value = err.response.data.error
-          return
-        }
+      if (e instanceof Error) {
+        errorMessage.value = e.message
+        return
       }
 
       errorMessage.value = 'Nepodarilo sa vytvoriť firmu.'
@@ -54,11 +52,11 @@
       <Input v-model="form.name" label="Názov firmy*" />
       <Input v-model="form.ico" label="IČO*" />
 
-      <Input v-model="form.country" label="Krajina*" />
-      <Input v-model="form.city" label="Mesto*" />
-      <Input v-model="form.zip_code" label="PSČ*" />
-      <Input v-model="form.street" label="Ulica*" />
-      <Input v-model="form.house_number" label="Číslo domu*" />
+      <Input v-model="form.address.country" label="Krajina*" />
+      <Input v-model="form.address.city" label="Mesto*" />
+      <Input v-model="form.address.zip_code" label="PSČ*" />
+      <Input v-model="form.address.street" label="Ulica*" />
+      <Input v-model="form.address.house_number" label="Číslo domu*" />
 
       <p v-if="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</p>
 
