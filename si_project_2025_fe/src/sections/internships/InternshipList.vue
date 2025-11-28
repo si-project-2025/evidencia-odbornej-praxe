@@ -31,13 +31,14 @@
     await statusStore.fetchStatuses()
   })
 
-  type SortableField = 'company' | 'student' | 'semester' | 'year' | 'hours_total' | 'end_at' | 'status'
+  type SortableField = 'company' | 'student' | 'semester' | 'year' | 'start_at' | 'end_at' | 'status'
+
   const sortExtractors: Record<SortableField, (i: Internship) => string | number | null> = {
     company: (i) => i.company?.name ?? '',
     student: (i) => `${i.student?.name ?? ''} ${i.student?.surname ?? ''}`.trim(),
     semester: (i) => i.semester,
     year: (i) => i.year,
-    hours_total: (i) => i.hours_total,
+    start_at: (i) => i.start_at,
     end_at: (i) => i.end_at,
     status: (i) => i.status,
   }
@@ -264,14 +265,14 @@
       </div>
       <div
         class="col-span-2 cursor-pointer flex items-center justify-start"
-        @click="toggleSort('hours_total')"
+        @click="toggleSort('start_at')"
         :class="{
-          'text-emerald-600 font-bold': sortField === 'hours_total',
-          'text-gray-500': sortField !== 'hours_total',
+          'text-emerald-600 font-bold': sortField === 'start_at',
+          'text-gray-500': sortField !== 'start_at',
         }"
       >
-        Hodiny
-        <span v-if="sortField === 'hours_total'">
+        Začiatok praxe
+        <span v-if="sortField === 'start_at'">
           <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
           <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
         </span>
@@ -317,7 +318,6 @@
         <option v-if="role === 'garant'" value="student">Študent</option>
         <option value="semester">Semester</option>
         <option value="year">Rok</option>
-        <option value="hours_total">Hodiny</option>
         <option value="end_at">Koniec praxe</option>
         <option value="status">Stav</option>
       </Select>

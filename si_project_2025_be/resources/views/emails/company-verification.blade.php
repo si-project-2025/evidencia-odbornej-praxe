@@ -36,7 +36,7 @@
         <div style="background-color: #f3f4f6; padding: 15px; border-radius: 5px; margin: 20px 0;">
             <strong>Firma:</strong> {{ $internship->company->name }}<br>
             <strong>Obdobie:</strong> {{ $internship->semester === 'Z' ? 'Zimný' : 'Letný' }} semester {{ $internship->year }}<br>
-            <strong>Počet hodín:</strong> {{ $internship->hours_total }}<br>
+            <strong>Začiatok praxe:</strong> {{ $internship->start_at ? $internship->start_at->format('d.m.Y') : '—' }}<br>
             <strong>Koniec praxe:</strong> {{ $internship->end_at ? $internship->end_at->format('d.m.Y') : '—' }}
         </div>
 

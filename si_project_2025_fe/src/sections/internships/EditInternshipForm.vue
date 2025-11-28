@@ -30,7 +30,7 @@
     users_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
-    hours_total: 0,
+    start_at: '',
     end_at: '',
     status: 'Vytvorená',
     garant_id: 0,
@@ -50,7 +50,7 @@
       form.users_id = internship.student?.users_id || 0
       form.semester = internship.semester
       form.year = internship.year
-      form.hours_total = internship.hours_total
+      form.start_at = internship.start_at?.split('T')[0] || ''
       form.end_at = internship.end_at?.split('T')[0] || ''
       form.status = internship.status || 'Vytvorená'
       form.garant_id = internship.garant?.users_id || 0
@@ -127,13 +127,14 @@
           </option>
         </Select>
 
-        <!-- Počet hodín -->
+        <!-- Dátum začiatku -->
         <Input
-          :model-value="form.hours_total ?? 0"
-          @update:model-value="(val) => (form.hours_total = val ?? 0)"
-          id="hours_total"
-          label="Počet hodín"
-          type="number"
+          :model-value="form.start_at ?? ''"
+          @update:model-value="(val) => (form.start_at = val ?? '')"
+          id="start_at"
+          label="Dátum začiatku*"
+          type="date"
+          required
         />
 
         <!-- Dátum ukončenia -->
@@ -143,6 +144,7 @@
           id="end_at"
           label="Dátum ukončenia"
           type="date"
+          :required="false"
         />
 
         <!-- Stav -->
