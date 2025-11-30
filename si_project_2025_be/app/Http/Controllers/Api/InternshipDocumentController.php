@@ -72,6 +72,18 @@ class InternshipDocumentController extends Controller
         return response()->json(['message' => 'Dokument bol odstránený.']);
     }
 
+    public function verifyDocument($internshipId, $documentId)
+    {
+        $document = Document::where('internships_id', $internshipId)
+            ->where('document_id', $documentId)
+            ->firstOrFail();
+        
+        $document->is_verified = true;
+        $document->save();
+
+        return response()->json(['message' => 'Dokument bol potvrdený.']);
+    }
+
     public function download($id, $documentId)
     {
         $internship = Internship::findOrFail($id);

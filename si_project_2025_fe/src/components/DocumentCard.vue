@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { FileText, Trash2, Download } from 'lucide-vue-next'
+  import { FileText, Trash2, Download, Signature } from 'lucide-vue-next'
   import type { Document } from '@/types/internship'
   import { useDocumentStore } from '@/stores/documents.ts'
   import { useUserStore } from '@/stores/user.ts'
@@ -12,8 +12,22 @@
   const userStore = useUserStore()
   const documentStore = useDocumentStore()
 
+  const showVerify = computed(() => {
+    return (
+      !props.document.is_verified &&
+      ((userStore.user?.role === 'garant' && props.document.type === 'Zmluva') ||
+        (!userStore.user && props.document.type === 'Výkaz'))
+    )
+  })
+
   const downloadFile = () => {
     documentStore.downloadDocument(props.document)
+  }
+
+  const verifyFile = async () => {
+    if (!confirm('Naozaj chcete potvrdiť tento dokument?')) return
+
+    await documentStore.verifyDocument(props.document.document_id)
   }
 
   const deleteFile = async () => {
@@ -44,6 +58,15 @@
 
     <!-- actions -->
     <div class="flex items-center gap-3 ml-3">
+      <button
+        v-if="showVerify"
+        @click.stop="verifyFile"
+        class="p-2 rounded-lg transition text-blue-400 hover:text-blue-600 hover:bg-blue-100"
+        title="Overiť dokument"
+      >
+        <Signature class="h-5 w-5" />
+      </button>
+
       <!-- stiahnuť -->
       <button
         @click.stop="downloadFile"
@@ -55,7 +78,7 @@
 
       <!-- vymazať -->
       <button
-        v-if="userStore.user?.role !== 'garant'"
+        v-if="userStore.user?.role === 'student'"
         @click.stop="deleteFile"
         class="p-2 rounded-lg transition text-red-600 hover:text-red-800 hover:bg-red-100"
         title="Vymazať dokument"
