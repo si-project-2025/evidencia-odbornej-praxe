@@ -19,7 +19,6 @@
 
   const isAuthenticated = userStore.user
   const isStudent = computed(() => userStore.user?.role === 'student')
-  const isGarant = computed(() => userStore.user?.role === 'garant')
 
   const deleteInternship = async () => {
     if (!confirm('Naozaj chcete túto prax zmazať?')) return
@@ -68,7 +67,7 @@
   <div class="pt-6 border-t border-gray-200 mt-10 flex flex-col sm:flex-row sm:items-center items-end sm:justify-end">
     <div class="flex flex-row gap-2">
       <ActionButton
-        v-if="isAuthenticated && isStudent && internshipStore.internshipDetail?.status == 'Vytvorená'"
+        v-if="isStudent && internshipStore.internshipDetail?.status == 'Vytvorená'"
         color="yellow"
         @click="sendToCompany"
       >
@@ -77,7 +76,7 @@
       </ActionButton>
 
       <ActionButton
-        v-if="isAuthenticated && (isGarant || isStudent) && internshipStore.internshipDetail?.status == 'Vytvorená'"
+        v-if="isAuthenticated && internshipStore.internshipDetail?.status === 'Vytvorená'"
         color="red"
         @click="deleteInternship"
         :disabled="deleting"
@@ -87,7 +86,7 @@
       </ActionButton>
       <p v-if="deleteError" class="text-red-600 text-sm mt-2">{{ deleteError }}</p>
 
-      <ActionButton :href="`/internships/${route.params.id}/edit`" v-if="isGarant">
+      <ActionButton :href="`/internships/${route.params.id}/edit`" v-if="isAuthenticated">
         <Pencil class="w-4 h-4" />
         Upraviť prax
       </ActionButton>

@@ -40,6 +40,8 @@
   const successMessage = ref('')
   const loading = ref(false)
 
+  const isGarant = computed(() => userStore.user?.role === 'garant')
+
   const statusStore = useStatusStore()
   onMounted(async () => {
     await statusStore.fetchStatuses()
@@ -148,7 +150,7 @@
         />
 
         <!-- Stav -->
-        <Select v-model="form.status" id="status" label="Stav praxe">
+        <Select v-model="form.status" id="status" label="Stav praxe" v-if="isGarant">
           <option v-for="status in availableStatuses" :key="status" :value="status">{{ status }}</option>
         </Select>
       </div>
