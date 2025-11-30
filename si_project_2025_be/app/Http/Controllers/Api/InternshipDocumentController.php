@@ -37,9 +37,15 @@ class InternshipDocumentController extends Controller
         $internship = Internship::findOrFail($internshipId);
 
         $file = $request->file('file');
+        $type = $request->input('type', 'Dokument');
+
+        if ($internship->documents()->where('type', $type)->exists()) {
+            return response()->json([
+                'message' => "Dokument typu '{$type}' už existuje.",
+            ], 409);
+        }
 
         $originalName = $file->getClientOriginalName();
-
         $newFileName = auth()->id() . '_' . $originalName;
 
         $path = $file->storeAs(
@@ -77,7 +83,7 @@ class InternshipDocumentController extends Controller
         $document = Document::where('internships_id', $internshipId)
             ->where('document_id', $documentId)
             ->firstOrFail();
-        
+
         $document->is_verified = true;
         $document->save();
 
