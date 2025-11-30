@@ -37,6 +37,7 @@ Route::prefix('external')
             [ExternalInternshipController::class, 'defend']
         )->name('api.external.internships.defend');
     });
+
 // ----------------------------
 // Authenticated routes
 // ----------------------------
@@ -68,6 +69,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
         Route::post('/documents', [InternshipDocumentController::class, 'store']);
         Route::delete('/documents/{documentId}', [InternshipDocumentController::class, 'destroy']);
+        Route::delete('/documents/{documentId}/verify', [InternshipDocumentController::class, 'verifyDocument']);
         Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });
