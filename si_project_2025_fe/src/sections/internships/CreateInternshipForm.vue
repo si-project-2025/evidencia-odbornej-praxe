@@ -7,11 +7,13 @@
   import { Save } from 'lucide-vue-next'
   import { useUserStore } from '@/stores/user'
   import { useInternshipStore } from '@/stores/internships'
-  import type { InternshipForm } from '@/types/form'
-  import { useCompaniesStore } from '@/stores/companies.ts'
-  import { useLookupStore } from '@/stores/lookup.ts'
+  import { useCompaniesStore } from '@/stores/companies'
+  import { useLookupStore } from '@/stores/lookup'
 
   import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+  import CompanySelect from '@/components/CompanySelect.vue'
+
+  import type { InternshipForm } from '@/types/form'
 
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
@@ -39,12 +41,6 @@
   const errorMessage = ref('')
   const successMessage = ref('')
   const loading = ref(false)
-
-  const onCompanyChange = () => {
-    if (form.company_id === -1) {
-      showCompanyModal.value = true
-    }
-  }
 
   const handleCompanyCreated = (newCompanyId: number) => {
     form.company_id = newCompanyId
@@ -77,19 +73,13 @@
   <form @submit.prevent="submit" class="space-y-6" v-if="!successMessage">
     <FormSection title="Základné informácie o praxi">
       <div class="space-y-4">
-        <!-- Firma -->
-        <Select v-model.number="form.company_id" id="company_id" label="Firma*" @change="onCompanyChange">
-          <!-- Pridať firmu NAVRCHU -->
-          <option value="-1">+ Pridať novú firmu</option>
-
-          <!-- Default placeholder -->
-          <option value="0" disabled selected>Vyberte firmu</option>
-
-          <!-- Firmy -->
-          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
-            {{ company.name }}
-          </option>
-        </Select>
+        <!-- FULLTEXT DROPDOWN PRE FIRMU -->
+        <CompanySelect
+          v-model="form.company_id"
+          :companies="companiesStore.companies"
+          label="Firma*"
+          @add-company="showCompanyModal = true"
+        />
 
         <!-- Rok -->
         <Input v-model.number="form.year" id="year" label="Rok*" type="number" min="2020" max="2100" />
