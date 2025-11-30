@@ -14,7 +14,6 @@ class InternshipStatusNotificationService
             $internship->load(['student', 'company', 'status', 'contactPersons', 'garant']);
 
             $this->sendEmailToStudent($internship);
-            $this->sendEmailToGarant($internship);
             $this->sendEmailToCompany($internship);
 
             return true;
@@ -32,7 +31,7 @@ class InternshipStatusNotificationService
         return "{$frontendUrl}/login?redirect=" . urlencode($redirect) . "&email=" . urlencode($email);
     }
 
-    private function sendEmailToStudent(Internship $internship): void
+    public function sendEmailToStudent(Internship $internship): void
     {
         $student = $internship->student;
         if (!$student || !$student->email) return;
@@ -53,7 +52,7 @@ class InternshipStatusNotificationService
         });
     }
 
-    private function sendEmailToGarant(Internship $internship): void
+    public function sendEmailToGarant(Internship $internship): void
     {
         $garant = $internship->garant;
         if (!$garant || !$garant->email) return;

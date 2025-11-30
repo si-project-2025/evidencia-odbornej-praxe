@@ -14,6 +14,13 @@ use Carbon\Carbon;
 
 class InternshipVerificationService
 {
+    protected InternshipStatusNotificationService $notificationService;
+
+    public function __construct(InternshipStatusNotificationService $notificationService)
+    {
+        $this->notificationService = $notificationService;
+    }
+
     /**
      * Odošle verifikačný email kontaktným osobám
      */
@@ -166,6 +173,19 @@ class InternshipVerificationService
 
         $internship->status_id = Status::where('type', $type)->value('status_id');
         $internship->save();
+        $internship->refresh();
+
+        $this->sendEmailNotification($type, $internship);
+    }
+
+    private function sendEmailNotification(string $status, Internship $internship): void
+    {
+        $this->notificationService->sendEmailToStudent($internship);
+
+        if ($status === 'Potvrdená') {
+            $this->notificationService->sendEmailToGarant($internship);
+        }
+
     }
 
     private function actionMessage(string $action): string
