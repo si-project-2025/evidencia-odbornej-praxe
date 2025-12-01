@@ -6,11 +6,14 @@
   import ActionButton from '@/components/atoms/ActionButton.vue'
   import DocumentCard from '@/components/DocumentCard.vue'
   import { useDocumentStore } from '@/stores/documents.ts'
+  import ToggleSlider from '@/components/form/ToggleSlider.vue'
+  import { AxiosError } from 'axios'
 
   const userStore = useUserStore()
   const isGarant = computed(() => userStore.user?.role === 'garant')
 
   const fileInput = ref<HTMLInputElement | null>(null)
+  const isAgreement = ref(true)
 
   const internshipStore = useInternshipStore()
   const documentStore = useDocumentStore()
@@ -26,14 +29,21 @@
     const file = target.files?.[0]
     if (!file) return
 
-    try {
-      await documentStore.uploadDocument(file)
-      alert('Dokument bol nahratý')
-    } catch (err) {
-      console.error(err)
-      alert('Chyba pri nahrávaní dokumentu')
-    }
+    await uploadFile(file)
     target.value = ''
+  }
+
+  const uploadFile = async (file: File) => {
+    try {
+      await documentStore.uploadDocument(file, isAgreement.value ? 'Zmluva' : 'Výkaz')
+      alert('Dokument bol nahratý')
+    } catch (err: unknown) {
+      if (err instanceof AxiosError) {
+        alert(err.response?.data?.message)
+      } else {
+        alert('Chyba pri nahrávaní dokumentu')
+      }
+    }
   }
 </script>
 
@@ -48,12 +58,16 @@
 
       <!-- Tlačidlá -->
       <div class="flex flex-wrap justify-start md:justify-end gap-3">
-        <ActionButton v-if="!isGarant" @click="chooseFile">
-          <Plus class="w-4 h-4" />
-          Pridať dokument
-        </ActionButton>
+        <div v-if="!isGarant" class="flex flex-row gap-3">
+          <ToggleSlider v-model="isAgreement" left-label="Zmluva" right-label="Výkaz" />
 
-        <input v-if="!isGarant" ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
+          <ActionButton @click="chooseFile">
+            <Plus class="w-4 h-4" />
+            Pridať dokument
+          </ActionButton>
+
+          <input ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
+        </div>
 
         <ActionButton color="green-light" @click="documentStore.generateDocument">
           <FileText class="w-4 h-4" />

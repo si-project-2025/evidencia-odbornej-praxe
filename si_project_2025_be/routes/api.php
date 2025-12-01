@@ -63,7 +63,6 @@ Route::middleware('auth:sanctum')->group(function () {
     // Internship verification
     Route::post('/internships/{internship}/send-verification', [InternshipVerificationController::class, 'sendVerificationEmail']);
 
-});
     // Document-related actions
     Route::prefix('internships/{id}')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
@@ -73,3 +72,4 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });
+});
