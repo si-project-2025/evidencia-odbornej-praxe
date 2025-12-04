@@ -14,6 +14,9 @@
   import { useCompaniesStore } from '@/stores/companies.ts'
   import { useLookupStore } from '@/stores/lookup.ts'
 
+  import CompanySelect from '@/components/CompanySelect.vue'
+  import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+
   const props = defineProps<{
     internship: Internship | null
   }>()
@@ -22,8 +25,11 @@
   const companiesStore = useCompaniesStore()
   const lookupStore = useLookupStore()
   const userStore = useUserStore()
+  const statusStore = useStatusStore()
 
   const route = useRoute()
+
+  const showCompanyModal = ref(false)
 
   const form = reactive<InternshipForm>({
     company_id: 0,
@@ -42,8 +48,10 @@
 
   const isGarant = computed(() => userStore.user?.role === 'garant')
 
-  const statusStore = useStatusStore()
   onMounted(async () => {
+    await companiesStore.fetchCompanies()
+    await lookupStore.fetchStudents()
+    await lookupStore.fetchGarants()
     await statusStore.fetchStatuses()
 
     if (props.internship) {
@@ -65,6 +73,11 @@
     }
     return statusStore.statuses
   })
+
+  const handleCompanyCreated = (newCompanyId: number) => {
+    form.company_id = newCompanyId
+    showCompanyModal.value = false
+  }
 
   const submit = async () => {
     errorMessage.value = ''
@@ -94,13 +107,12 @@
     <FormSection title="Údaje o praxi">
       <div class="space-y-4">
         <!-- Firma -->
-        <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
-          <option value="0" disabled v-else>Vyberte firmu</option>
-          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
-            {{ company.name }}
-          </option>
-        </Select>
+        <CompanySelect
+          v-model="form.company_id"
+          :companies="companiesStore.companies"
+          label="Firma*"
+          @add-company="showCompanyModal = true"
+        />
 
         <!-- Študent -->
         <Select v-model.number="form.users_id" id="users_id" label="Študent*">
@@ -175,4 +187,7 @@
     <h3 class="text-lg font-semibold text-green-700 mb-1">Zmeny boli úspešne uložené!</h3>
     <p class="text-gray-700 text-sm">Prax bola aktualizovaná v systéme.</p>
   </div>
+
+  <!-- Modal na vytvorenie firmy -->
+  <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
 </template>
