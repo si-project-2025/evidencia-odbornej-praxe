@@ -139,7 +139,7 @@ class InternshipDocumentController extends Controller
 
         // Načíta PDF šablónu
 
-        $templatePath = storage_path('app/templates/dohoda.pdf');
+        $templatePath = resource_path('templates/dohoda.pdf');
 
         $pdf = new Fpdi();
         $pageCount = $pdf->setSourceFile($templatePath);
