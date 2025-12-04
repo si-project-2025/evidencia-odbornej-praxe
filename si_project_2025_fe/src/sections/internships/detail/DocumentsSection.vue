@@ -55,7 +55,7 @@
 
         <input v-if="!isGarant" ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
 
-        <ActionButton color="green-light" @click="documentStore.generateDocument">
+        <ActionButton color="green-light" @click="documentStore.generateDocument()">
           <FileText class="w-4 h-4" />
           Generovať dohodu
         </ActionButton>
