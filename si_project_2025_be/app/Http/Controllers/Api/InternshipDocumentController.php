@@ -152,7 +152,6 @@ class InternshipDocumentController extends Controller
         // Font
         $pdf->AddFont('LiberationSerif', '', 'LiberationSerif-Regular.ttf', true);
         $pdf->SetFont('LiberationSerif','',11);
-        $pdf->SetTextColor(0,0,128);
 
 
         // Firma
