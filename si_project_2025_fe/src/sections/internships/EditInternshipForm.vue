@@ -87,6 +87,18 @@
       errorMessage.value = 'Vyplňte všetky povinné polia.'
       return
     }
+    if (form.end_at) {
+      const start = new Date(String(form.start_at))
+      const end = new Date(String(form.end_at))
+
+      const diffDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+
+      if (diffDays < 30) {
+        errorMessage.value = 'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+        return
+      }
+    }
+
     try {
       loading.value = true
       const id = Number(route.params.id)

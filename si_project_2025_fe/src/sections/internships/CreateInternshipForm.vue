@@ -56,6 +56,18 @@
       return
     }
 
+    if (form.end_at) {
+      const start = new Date(form.start_at)
+      const end = new Date(form.end_at)
+
+      const diffDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+
+      if (diffDays < 30) {
+        errorMessage.value = 'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+        return
+      }
+    }
+
     try {
       loading.value = true
       await internshipStore.createInternship(form)

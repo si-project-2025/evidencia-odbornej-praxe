@@ -58,4 +58,26 @@ class InternshipRequest extends FormRequest
             'garant_id.exists' => 'Zvolený garant neexistuje.',
         ];
     }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (!$this->end_at) {
+                return;
+            }
+
+            $start = strtotime($this->start_at);
+            $end = strtotime($this->end_at);
+
+            $diffDays = ($end - $start) / (60 * 60 * 24);
+
+            if ($diffDays < 30) {
+                $validator->errors()->add(
+                    'end_at',
+                    'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+                );
+            }
+        });
+    }
 }
