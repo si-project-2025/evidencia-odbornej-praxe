@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Internship;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Http\Request;
 
 class ExternalInternshipController extends Controller
 {
@@ -15,6 +16,40 @@ class ExternalInternshipController extends Controller
      * @param Internship $internship
      * @return JsonResponse
      */
+
+    public function index(Request $request): JsonResponse
+    {
+        $validated = $request->validate([
+            'year' => 'nullable|integer|min:2000|max:2100',
+            'semester' => 'nullable|in:Z,L',
+        ]);
+
+        $query = Internship::where('status_id', 4);
+
+        if (isset($validated['year'])) {
+            $query->where('year', $validated['year']);
+        }
+
+        if (isset($validated['semester'])) {
+            $query->where('semester', $validated['semester']);
+        }
+
+        $internships = $query->get(['internships_id', 'year', 'semester']); // ← Zmeň 'id' na 'internships_id'
+
+        Log::info('Externý systém získal zoznam praxí', [
+            'filters' => $validated,
+            'count' => $internships->count(),
+            'oauth_token_id' => $request->attributes->get('oauth_token')?->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Zoznam praxí v stave "Schválená" úspešne načítaný.',
+            'filters' => $validated,
+            'count' => $internships->count(),
+            'data' => $internships,
+        ], 200);
+    }
+
     public function defend(Internship $internship): JsonResponse
     {
         // --- Definícia stavov ---
