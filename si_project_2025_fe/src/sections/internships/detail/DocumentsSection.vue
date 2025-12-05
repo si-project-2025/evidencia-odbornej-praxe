@@ -29,13 +29,8 @@
     const file = target.files[0]
     if (!file) return
 
-    // vypíš veľkosť a typ súboru
-    console.log('Veľkosť súboru:', file.size, 'bajtov ~', (file.size / 1024 / 1024).toFixed(2), 'MB')
-    console.log('Typ súboru:', file.type)
-
-    // kontrola veľkosti (5 MB)
-    if (file.size > 4 * 1024 * 1024) {
-      alert('Súbor je príliš veľký. Maximálna povolená veľkosť je 4 MB.')
+    if (file.size > 2 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna povolená veľkosť je 2 MB.')
       target.value = ''
       return
     }
