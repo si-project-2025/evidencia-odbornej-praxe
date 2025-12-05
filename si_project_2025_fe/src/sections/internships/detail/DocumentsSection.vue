@@ -7,7 +7,7 @@
   import DocumentCard from '@/components/DocumentCard.vue'
   import { useDocumentStore } from '@/stores/documents.ts'
   import ToggleSlider from '@/components/form/ToggleSlider.vue'
-  import { AxiosError } from 'axios'
+  import axios from 'axios'
 
   const userStore = useUserStore()
   const isGarant = computed(() => userStore.user?.role === 'garant')
@@ -26,8 +26,19 @@
     const target = e.target as HTMLInputElement
     if (!target.files?.length) return
 
-    const file = target.files?.[0]
+    const file = target.files[0]
     if (!file) return
+
+    // vypíš veľkosť a typ súboru
+    console.log('Veľkosť súboru:', file.size, 'bajtov ~', (file.size / 1024 / 1024).toFixed(2), 'MB')
+    console.log('Typ súboru:', file.type)
+
+    // kontrola veľkosti (5 MB)
+    if (file.size > 4 * 1024 * 1024) {
+      alert('Súbor je príliš veľký. Maximálna povolená veľkosť je 4 MB.')
+      target.value = ''
+      return
+    }
 
     await uploadFile(file)
     target.value = ''
@@ -38,8 +49,10 @@
       await documentStore.uploadDocument(file, isAgreement.value ? 'Zmluva' : 'Výkaz')
       alert('Dokument bol nahratý')
     } catch (err: unknown) {
-      if (err instanceof AxiosError) {
-        alert(err.response?.data?.message)
+      if (axios.isAxiosError(err)) {
+        console.error('Upload error detail:', err.response?.data)
+        console.error('Server errors:', err.response?.data?.errors)
+        alert(err.response?.data?.message ?? 'Nepodarilo sa nahrať dokument.')
       } else {
         alert('Chyba pri nahrávaní dokumentu')
       }
