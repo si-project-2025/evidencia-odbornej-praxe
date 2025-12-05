@@ -45,8 +45,6 @@
       alert('Dokument bol nahratý')
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.error('Upload error detail:', err.response?.data)
-        console.error('Server errors:', err.response?.data?.errors)
         alert(err.response?.data?.message ?? 'Nepodarilo sa nahrať dokument.')
       } else {
         alert('Chyba pri nahrávaní dokumentu')
