@@ -56,10 +56,10 @@
             <span>{{ internship.year }}</span>
           </div>
 
-          <!-- Počet hodín -->
+          <!-- Začiatok praxe -->
           <div class="col-span-1 md:col-span-2 flex items-center gap-1">
-            <Clock class="w-4 h-4 text-gray-400" />
-            <span>{{ internship.hours_total }} hodín</span>
+            <CalendarDays class="w-4 h-4 text-gray-400" />
+            <span>{{ formatDate(internship.start_at) }}</span>
           </div>
 
           <!-- Koniec -->

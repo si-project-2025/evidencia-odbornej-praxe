@@ -14,6 +14,9 @@
   import { useCompaniesStore } from '@/stores/companies.ts'
   import { useLookupStore } from '@/stores/lookup.ts'
 
+  import CompanySelect from '@/components/CompanySelect.vue'
+  import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+
   const props = defineProps<{
     internship: Internship | null
   }>()
@@ -22,15 +25,18 @@
   const companiesStore = useCompaniesStore()
   const lookupStore = useLookupStore()
   const userStore = useUserStore()
+  const statusStore = useStatusStore()
 
   const route = useRoute()
+
+  const showCompanyModal = ref(false)
 
   const form = reactive<InternshipForm>({
     company_id: 0,
     users_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
-    hours_total: 0,
+    start_at: '',
     end_at: '',
     status: 'Vytvorená',
     garant_id: 0,
@@ -40,8 +46,12 @@
   const successMessage = ref('')
   const loading = ref(false)
 
-  const statusStore = useStatusStore()
+  const isGarant = computed(() => userStore.user?.role === 'garant')
+
   onMounted(async () => {
+    await companiesStore.fetchCompanies()
+    await lookupStore.fetchStudents()
+    await lookupStore.fetchGarants()
     await statusStore.fetchStatuses()
 
     if (props.internship) {
@@ -50,7 +60,7 @@
       form.users_id = internship.student?.users_id || 0
       form.semester = internship.semester
       form.year = internship.year
-      form.hours_total = internship.hours_total
+      form.start_at = internship.start_at?.split('T')[0] || ''
       form.end_at = internship.end_at?.split('T')[0] || ''
       form.status = internship.status || 'Vytvorená'
       form.garant_id = internship.garant?.users_id || 0
@@ -64,6 +74,11 @@
     return statusStore.statuses
   })
 
+  const handleCompanyCreated = (newCompanyId: number) => {
+    form.company_id = newCompanyId
+    showCompanyModal.value = false
+  }
+
   const submit = async () => {
     errorMessage.value = ''
     successMessage.value = ''
@@ -72,6 +87,18 @@
       errorMessage.value = 'Vyplňte všetky povinné polia.'
       return
     }
+    if (form.end_at) {
+      const start = new Date(String(form.start_at))
+      const end = new Date(String(form.end_at))
+
+      const diffDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+
+      if (diffDays < 30) {
+        errorMessage.value = 'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+        return
+      }
+    }
+
     try {
       loading.value = true
       const id = Number(route.params.id)
@@ -92,13 +119,12 @@
     <FormSection title="Údaje o praxi">
       <div class="space-y-4">
         <!-- Firma -->
-        <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
-          <option value="0" disabled v-else>Vyberte firmu</option>
-          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
-            {{ company.name }}
-          </option>
-        </Select>
+        <CompanySelect
+          v-model="form.company_id"
+          :companies="companiesStore.companies"
+          label="Firma*"
+          @add-company="showCompanyModal = true"
+        />
 
         <!-- Študent -->
         <Select v-model.number="form.users_id" id="users_id" label="Študent*">
@@ -127,13 +153,14 @@
           </option>
         </Select>
 
-        <!-- Počet hodín -->
+        <!-- Dátum začiatku -->
         <Input
-          :model-value="form.hours_total ?? 0"
-          @update:model-value="(val) => (form.hours_total = val ?? 0)"
-          id="hours_total"
-          label="Počet hodín"
-          type="number"
+          :model-value="form.start_at ?? ''"
+          @update:model-value="(val) => (form.start_at = val ?? '')"
+          id="start_at"
+          label="Dátum začiatku*"
+          type="date"
+          required
         />
 
         <!-- Dátum ukončenia -->
@@ -143,10 +170,11 @@
           id="end_at"
           label="Dátum ukončenia"
           type="date"
+          :required="false"
         />
 
         <!-- Stav -->
-        <Select v-model="form.status" id="status" label="Stav praxe">
+        <Select v-model="form.status" id="status" label="Stav praxe" v-if="isGarant">
           <option v-for="status in availableStatuses" :key="status" :value="status">{{ status }}</option>
         </Select>
       </div>
@@ -171,4 +199,7 @@
     <h3 class="text-lg font-semibold text-green-700 mb-1">Zmeny boli úspešne uložené!</h3>
     <p class="text-gray-700 text-sm">Prax bola aktualizovaná v systéme.</p>
   </div>
+
+  <!-- Modal na vytvorenie firmy -->
+  <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
 </template>

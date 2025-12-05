@@ -40,17 +40,13 @@
 
       <div v-else class="space-y-4">
         <!-- Štatistiky -->
-        <div v-if="internshipStore.internships.length" class="w-full grid grid-cols-1 sm:grid-cols-3 gap-4 mb-5">
+        <div v-if="internshipStore.internships.length" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 mb-5">
           <!-- Počet praxí -->
           <StatsCard :statistic="internshipStore.internships.length" title="Praxí spolu" />
-          <!-- Hodiny -->
-          <StatsCard
-            :statistic="internshipStore.internships.reduce((sum, internship) => sum + (internship.hours_total || 0), 0)"
-            title="Odpracovaných hodín"
-          />
+          <!-- Najnovšia prax -->
           <StatsCard
             v-if="latestInternship"
-            :statistic="latestInternship ? latestInternship.semester + '-' + latestInternship.year : '-'"
+            :statistic="latestInternship.semester + '-' + latestInternship.year"
             title="Najnovšia prax"
           />
         </div>

@@ -17,8 +17,8 @@ class InternshipRequest extends FormRequest
     {
         return [
             'semester' => ['required', Rule::enum(SemesterEnum::class)],
-            'hours_total' => 'required|integer',
-            'end_at' => 'required|date_format:Y-m-d',
+            'start_at' => 'required|date_format:Y-m-d',
+            'end_at' => 'nullable|date_format:Y-m-d',
             'year' => 'required|integer',
             'users_id' => 'required|integer|exists:users,users_id',
             'company_id' => 'required|integer|exists:companies,company_id',
@@ -33,10 +33,9 @@ class InternshipRequest extends FormRequest
             'semester.required' => 'Semester je povinný.',
             'semester.enum' => 'Zvolená hodnota semestra nie je platná.',
 
-            'hours_total.required' => 'Počet hodín je povinný.',
-            'hours_total.integer' => 'Počet hodín musí byť celé číslo.',
+            'start_at.required' => 'Dátum začiatku praxe je povinný.',
+            'start_at.date_format' => 'Dátum začiatku musí byť vo formáte RRRR-MM-DD.',
 
-            'end_at.required' => 'Dátum ukončenia je povinný.',
             'end_at.date_format' => 'Dátum ukončenia musí byť vo formáte RRRR-MM-DD',
 
             'year.required' => 'Rok je povinný.',
@@ -58,5 +57,27 @@ class InternshipRequest extends FormRequest
             'garant_id.integer' => 'ID garanta musí byť celé číslo.',
             'garant_id.exists' => 'Zvolený garant neexistuje.',
         ];
+    }
+
+    public function withValidator($validator)
+    {
+        $validator->after(function ($validator) {
+
+            if (!$this->end_at) {
+                return;
+            }
+
+            $start = strtotime($this->start_at);
+            $end = strtotime($this->end_at);
+
+            $diffDays = ($end - $start) / (60 * 60 * 24);
+
+            if ($diffDays < 30) {
+                $validator->errors()->add(
+                    'end_at',
+                    'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+                );
+            }
+        });
     }
 }

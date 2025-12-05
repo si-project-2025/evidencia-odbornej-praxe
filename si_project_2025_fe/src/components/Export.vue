@@ -20,7 +20,6 @@
       `${row.student?.name || ''} ${row.student?.surname || ''}`.trim(),
       row.semester || '',
       row.year || '',
-      row.hours_total || '',
       row.end_at ? new Date(row.end_at).toLocaleDateString() : '',
       row.status || '',
     ])

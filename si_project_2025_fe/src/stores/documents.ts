@@ -63,6 +63,21 @@ export const useDocumentStore = defineStore('documents', {
       }
     },
 
+    async verifyDocument(documentId: number) {
+      try {
+        const internshipId = this.internshipDetail!.internships_id!
+
+        await axios.delete(`${API_URL}/api/internships/${internshipId}/documents/${documentId}/verify`, {
+          headers: authHeaders(),
+        })
+
+        await useInternshipStore().fetchInternshipDetail(internshipId)
+      } catch (error) {
+        console.error('Nepodarilo sa odstrániť dokument:', error)
+        throw error
+      }
+    },
+
     async deleteDocument(documentId: number) {
       try {
         const internshipId = this.internshipDetail?.internships_id

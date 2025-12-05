@@ -45,11 +45,11 @@ export interface Internship {
   users_id: number
   internships_id: number
   semester: 'Z' | 'L'
-  hours_total: number
   year: number
+  start_at: string | null
+  end_at: string | null
   created_at: string | null
   updated_at: string | null
-  end_at: string | null
   company: Company
   status: Status
   garant: Garant

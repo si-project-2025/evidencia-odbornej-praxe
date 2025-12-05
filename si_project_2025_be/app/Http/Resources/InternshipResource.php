@@ -12,10 +12,10 @@ class InternshipResource extends JsonResource
             'users_id' => $this->users_id,
             'internships_id' => $this->internships_id,
             'semester' => $this->semester,
-            'hours_total' => $this->hours_total,
             'year' => $this->year,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'start_at' => $this->start_at,
             'end_at' => $this->end_at,
 
             'company' => [

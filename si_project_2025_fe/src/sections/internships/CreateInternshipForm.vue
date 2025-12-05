@@ -7,14 +7,20 @@
   import { Save } from 'lucide-vue-next'
   import { useUserStore } from '@/stores/user'
   import { useInternshipStore } from '@/stores/internships'
+  import { useCompaniesStore } from '@/stores/companies'
+  import { useLookupStore } from '@/stores/lookup'
+
+  import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+  import CompanySelect from '@/components/CompanySelect.vue'
+
   import type { InternshipForm } from '@/types/form'
-  import { useCompaniesStore } from '@/stores/companies.ts'
-  import { useLookupStore } from '@/stores/lookup.ts'
 
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
   const companiesStore = useCompaniesStore()
   const lookupStore = useLookupStore()
+
+  const showCompanyModal = ref(false)
 
   onMounted(async () => {
     await companiesStore.fetchCompanies()
@@ -26,7 +32,7 @@
     company_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
-    hours_total: 0,
+    start_at: '',
     end_at: '',
     status: 'Vytvorená',
     garant_id: 0,
@@ -36,13 +42,30 @@
   const successMessage = ref('')
   const loading = ref(false)
 
+  const handleCompanyCreated = (newCompanyId: number) => {
+    form.company_id = newCompanyId
+    showCompanyModal.value = false
+  }
+
   const submit = async () => {
     errorMessage.value = ''
     successMessage.value = ''
 
-    if (!form.company_id || !form.year || !form.semester || !form.garant_id) {
+    if (!form.company_id || !form.year || !form.semester || !form.garant_id || !form.start_at) {
       errorMessage.value = 'Vyplňte všetky povinné polia.'
       return
+    }
+
+    if (form.end_at) {
+      const start = new Date(form.start_at)
+      const end = new Date(form.end_at)
+
+      const diffDays = (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
+
+      if (diffDays < 30) {
+        errorMessage.value = 'Dátum ukončenia musí byť aspoň 30 dní po začiatku praxe.'
+        return
+      }
     }
 
     try {
@@ -62,14 +85,13 @@
   <form @submit.prevent="submit" class="space-y-6" v-if="!successMessage">
     <FormSection title="Základné informácie o praxi">
       <div class="space-y-4">
-        <!-- Firma -->
-        <Select v-model.number="form.company_id" id="company_id" label="Firma*">
-          <option disabled value="0" v-if="!companiesStore.companies.length">Načítavam firmy...</option>
-          <option value="0" disabled v-else>Vyberte firmu</option>
-          <option v-for="company in companiesStore.companies" :key="company.company_id" :value="company.company_id">
-            {{ company.name }}
-          </option>
-        </Select>
+        <!-- FULLTEXT DROPDOWN PRE FIRMU -->
+        <CompanySelect
+          v-model="form.company_id"
+          :companies="companiesStore.companies"
+          label="Firma*"
+          @add-company="showCompanyModal = true"
+        />
 
         <!-- Rok -->
         <Input v-model.number="form.year" id="year" label="Rok*" type="number" min="2020" max="2100" />
@@ -89,14 +111,14 @@
           </option>
         </Select>
 
-        <!-- Hodiny -->
+        <!-- Dátum začiatku -->
         <Input
-          :model-value="form.hours_total ?? 0"
-          @update:model-value="(val) => (form.hours_total = val ?? 0)"
-          id="hours_total"
-          label="Počet hodín"
-          type="number"
-          placeholder="Zadajte počet hodín"
+          :model-value="form.start_at ?? ''"
+          @update:model-value="(val) => (form.start_at = val ?? '')"
+          id="start_at"
+          label="Dátum začiatku praxe*"
+          type="date"
+          required
         />
 
         <!-- Koniec -->
@@ -106,6 +128,7 @@
           id="end_at"
           label="Dátum ukončenia"
           type="date"
+          :required="false"
         />
       </div>
     </FormSection>
@@ -129,4 +152,7 @@
     <h3 class="text-lg font-semibold text-green-700 mb-1">Prax bola úspešne vytvorená!</h3>
     <p class="text-gray-700 text-sm">Vaša prax bola uložená do systému.</p>
   </div>
+
+  <!-- MODAL -->
+  <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
 </template>
