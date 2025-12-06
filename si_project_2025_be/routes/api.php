@@ -33,6 +33,10 @@ Route::get('/internships/get-verification-details',
 Route::prefix('external')
     ->middleware(['client:internship:defend'])
     ->group(function () {
+        Route::get('/internships',
+            [ExternalInternshipController::class, 'index']
+        )->name('api.external.internships.index');
+
         Route::patch('/internships/{internship}/defend',
             [ExternalInternshipController::class, 'defend']
         )->name('api.external.internships.defend');
