@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Internship;
+use App\Models\Status; // Pridaný import modelu Status
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -24,7 +25,9 @@ class ExternalInternshipController extends Controller
             'semester' => 'nullable|in:Z,L',
         ]);
 
-        $query = Internship::where('status_id', 4);
+        // Dynamické získanie ID pre stav "Schválená"
+        $statusApprovedId = Status::where('type', 'Schválená')->value('id');
+        $query = Internship::where('status_id', $statusApprovedId);
 
         if (isset($validated['year'])) {
             $query->where('year', $validated['year']);
@@ -34,7 +37,7 @@ class ExternalInternshipController extends Controller
             $query->where('semester', $validated['semester']);
         }
 
-        $internships = $query->get(['internships_id', 'year', 'semester']); // ← Zmeň 'id' na 'internships_id'
+        $internships = $query->get(['internships_id', 'year', 'semester']);
 
         Log::info('Externý systém získal zoznam praxí', [
             'filters' => $validated,
@@ -52,12 +55,11 @@ class ExternalInternshipController extends Controller
 
     public function defend(Internship $internship): JsonResponse
     {
-        // --- Definícia stavov ---
-        $statusSchvalena = 4;
-        $statusObhajena = 5;
+        $statusApproved = Status::where('type', 'Schválená')->value('id');
+        $statusDefended = Status::where('type', 'Obhájená')->value('id');
 
         // --- Overenie oprávnenosti zmeny stavu ---
-        if ($internship->status_id !== $statusSchvalena) {
+        if ($internship->status_id !== $statusApproved) {
             Log::warning('Pokus o zmenu stavu praxe, ktorá nie je v stave Schválená', [
                 'internship_id' => $internship->internships_id,
                 'current_status_id' => $internship->status_id,
@@ -72,7 +74,7 @@ class ExternalInternshipController extends Controller
         }
 
         // --- Aktualizácia stavu praxe ---
-        $internship->status_id = $statusObhajena;
+        $internship->status_id = $statusDefended;
         $internship->save();
 
         Log::info('Stav praxe úspešne zmenený na Obhájenú', [
