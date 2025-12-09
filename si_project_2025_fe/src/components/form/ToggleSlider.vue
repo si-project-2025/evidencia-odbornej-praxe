@@ -20,7 +20,7 @@
     @click="toggle"
   >
     <div
-      class="absolute top-0 left-0 h-full w-1/2 rounded-full bg-blue-400 transition-transform duration-200"
+      class="absolute top-0 left-0 h-full w-1/2 rounded-full bg-yellow-700 transition-transform duration-200"
       :class="!modelValue ? 'translate-x-full' : ''"
     ></div>
 
