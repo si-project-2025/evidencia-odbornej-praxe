@@ -112,7 +112,7 @@ class InternshipDocumentController extends Controller
     }
 
     // verzia pre contract.blade.php
-   /* public function generateContractPdf($id)
+    /*public function generateContractPdf($id)
     {
         $internship = new InternshipResource(Internship::findOrFail($id));
         $pdf = PDF::loadView('pdf.contract', compact('internship'));
@@ -156,24 +156,22 @@ class InternshipDocumentController extends Controller
             : null;
 
         // Načíta PDF šablónu
-
-        $templatePath = resource_path('templates/dohoda.pdf');
+        $templatePath = resource_path('templates/dohoda_o_odbornej_praxi.pdf');
 
         $pdf = new Fpdi();
-        $pageCount = $pdf->setSourceFile($templatePath);
+        $pdf->setSourceFile($templatePath);
 
-        // Prvá strana
         $pdf->AddPage();
         $template = $pdf->importPage(1);
         $pdf->useTemplate($template);
 
         // Font
-        $pdf->AddFont('LiberationSerif', '', 'LiberationSerif-Regular.ttf', true);
-        $pdf->SetFont('LiberationSerif','',11);
+        $pdf->AddFont('LiberationSans', '', 'LiberationSans-Regular.ttf', true);
+        $pdf->SetFont('LiberationSans','',10);
 
 
         // Firma
-        $pdf->SetXY(73, 82.8);
+        $pdf->SetXY(65, 71.5);
         $pdf->Write(5,
             $this->cleanJoin([
                 $internship->company->name,
@@ -184,13 +182,13 @@ class InternshipDocumentController extends Controller
         // Kontaktná osoba
         $contact = $internship->contactPersons->first();
         if ($contact) {
-            $pdf->SetXY(60, 87.6);
+            $pdf->SetXY(60, 76.3);
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
 
             //keď bude v databáze aj pozícia kontaktnej osoby tak
             //vymazať predošlé 2 riadky a odkomentovať nasledovné:
            /*
-           $pdf->SetXY(60, 87.6);
+           $pdf->SetXY(65, 76.5);
            $pdf->Write(5,
                 $this->cleanJoin([
                     $contact->name . ' ' . $contact->surname,
@@ -199,65 +197,41 @@ class InternshipDocumentController extends Controller
             );*/
         }
 
-        // Študent
-        $pdf->SetXY(30, 105.5);
-        $pdf->Write(5,
-            $this->cleanJoin([
-                trim($internship->student->name . ' ' . $internship->student->surname),
-                $studentFullAddress
-            ])
-        );
+        // Študent - meno
+        $pdf->SetXY(99, 91.5);
+        $pdf->Write(5, $internship->student->name . ' ' . $internship->student->surname);
+
+        // Študent - adresa
+        $pdf->SetXY(99, 96.2);
+        $pdf->Write(5, $studentFullAddress);
 
         // Študent – kontakt
-        $pdf->SetXY(30, 114.4);
+        $pdf->SetXY(99, 101);
         $pdf->Write(5,
             $this->cleanJoin([
                 $internship->student->email,
                 $internship->student->phone_number
-            ])
+            ],', ')
         );
 
-        // Študijný program
-        $pdf->SetXY(80, 123.7);
-        $pdf->Write(5, $internship->student->study_program);
+        //Začiatok praxe
+        $pdf->SetXY(33, 142.2);
+        $pdf->Write(5, $internship->start_at ? $internship->start_at->format('d.m.Y') : '');
 
         // Koniec praxe
-        $pdf->SetXY(60, 162.8);
+        $pdf->SetXY(75, 142.2);
         $pdf->Write(5, $internship->end_at ? $internship->end_at->format('d.m.Y') : '');
-
-        // Garant
-        $pdf->SetXY(79, 197.5);
-        $pdf->Write(5, $internship->garant->name . ' ' . $internship->garant->surname );
-
-        // Garant – kontakt
-        $pdf->SetXY(47, 202.4);
-        $pdf->Write(5,
-            $this->cleanJoin([
-                $internship->garant->email,
-                $internship->garant->phone_number
-            ])
-        );
-
-        // Garant – meno
-        $pdf->SetXY(101, 217.1);
-        $pdf->Write(5, $internship->garant->name . ' ' . $internship->garant->surname );
-
-        // Študent
-        $pdf->SetXY(72, 222.1);
-        $pdf->Write(5, $internship->student->name . ' ' . $internship->student->surname);
-
-
-        // Druhá strana
-        $pdf->AddPage();
-        //$this->drawGrid($pdf);
-        $template = $pdf->importPage(2);
-        $pdf->useTemplate($template);
 
         // Kontaktná osoba
         if ($contact) {
-            $pdf->SetXY(40, 34.2);
+            $pdf->SetXY(42, 262.1);
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
         }
+
+        // Druhá strana
+        $pdf->AddPage();
+        $template = $pdf->importPage(2);
+        $pdf->useTemplate($template);
 
         return response($pdf->Output('S'), 200)
             ->header('Content-Type', 'application/pdf')
