@@ -9,6 +9,7 @@ use App\Models\Document;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use setasign\Fpdi\Tfpdf\Fpdi;
 
 class InternshipDocumentController extends Controller
 {
@@ -110,10 +111,125 @@ class InternshipDocumentController extends Controller
         return Storage::disk('local')->download($document->file_name);
     }
 
+    private function cleanJoin(array $items, string $separator = ',    ')
+    {
+        $filtered = array_filter($items, function ($value) {
+            return $value !== null && trim($value) !== '';
+        });
+        return implode($separator, $filtered);
+    }
+
     public function generateContractPdf($id)
     {
-        $internship = new InternshipResource(Internship::findOrFail($id));
-        $pdf = PDF::loadView('pdf.contract', compact('internship'));
-        return $pdf->download('dohoda-o-praxi.pdf');
+        $internship = Internship::with([
+            'company.address',
+            'student',
+            'garant',
+            'contactPersons'
+        ])->findOrFail($id);
+
+        $studentAddress = $internship->student->address;
+
+        $studentFullAddress = $studentAddress
+            ? $this->cleanJoin([
+                $studentAddress->street . ' ' . $studentAddress->house_number,
+                $studentAddress->zip_code  . ' ' . $studentAddress->city
+            ], ', ')
+            : null;
+
+        $companyAddress = $internship->company->address;
+
+        $companyFullAddress = $companyAddress
+            ? $this->cleanJoin([
+                $companyAddress->street . ' ' . $companyAddress->house_number,
+                $companyAddress->zip_code  . ' ' . $companyAddress->city
+            ], ', ')
+            : null;
+
+        // Načíta PDF šablónu
+        $templatePath = resource_path('templates/dohoda_o_odbornej_praxi.pdf');
+
+        $pdf = new Fpdi();
+        $pdf->setSourceFile($templatePath);
+
+        $pdf->AddPage();
+        $template = $pdf->importPage(1);
+        $pdf->useTemplate($template);
+
+        // Font
+        $pdf->AddFont('LiberationSans', '', 'LiberationSans-Regular.ttf', true);
+        $pdf->SetFont('LiberationSans','',10);
+
+
+        // Firma
+        $pdf->SetXY(65, 71.5);
+        $pdf->Write(5,
+            $this->cleanJoin([
+                $internship->company->name,
+                $companyFullAddress
+            ])
+        );
+
+        // Kontaktná osoba
+        $contact = $internship->contactPersons->first();
+        if ($contact) {
+            $pdf->SetXY(60, 76.3);
+            $pdf->Write(5, $contact->name . ' ' . $contact->surname);
+
+            //keď bude v databáze aj pozícia kontaktnej osoby tak
+            //vymazať predošlé 2 riadky a odkomentovať nasledovné
+            //prípdane upraviť podľa názvu stĺpca pozície v databáze:
+           /*
+           $pdf->SetXY(65, 76.5);
+           $pdf->Write(5,
+                $this->cleanJoin([
+                    $contact->name . ' ' . $contact->surname,
+                    $contact->position
+                ])
+            );*/
+        }
+
+        // Študent - meno
+        $pdf->SetXY(99, 91.5);
+        $pdf->Write(5, $internship->student->name . ' ' . $internship->student->surname);
+
+        // Študent - adresa
+        $pdf->SetXY(99, 96.2);
+        $pdf->Write(5, $studentFullAddress);
+
+        // Študent – kontakt
+        $pdf->SetXY(99, 101);
+        $pdf->Write(5,
+            $this->cleanJoin([
+                $internship->student->email,
+                $internship->student->phone_number
+            ],', ')
+        );
+
+        //Začiatok praxe
+        $pdf->SetXY(33, 142.2);
+        $pdf->Write(5, $internship->start_at ? $internship->start_at->format('d.m.Y') : '');
+
+        // Koniec praxe
+        $pdf->SetXY(75, 142.2);
+        $pdf->Write(5, $internship->end_at ? $internship->end_at->format('d.m.Y') : '');
+
+        // Kontaktná osoba
+        if ($contact) {
+            $pdf->SetXY(42, 262.1);
+            $pdf->Write(5, $contact->name . ' ' . $contact->surname);
+        }
+
+        // Druhá strana
+        $pdf->AddPage();
+        $template = $pdf->importPage(2);
+        $pdf->useTemplate($template);
+
+        return response($pdf->Output('S'), 200)
+            ->header('Content-Type', 'application/pdf')
+            ->header('Content-Disposition', 'attachment; filename="dohoda-o-praxi.pdf"');
+
     }
+
+
 }
