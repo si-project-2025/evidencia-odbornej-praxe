@@ -111,20 +111,11 @@ class InternshipDocumentController extends Controller
         return Storage::disk('local')->download($document->file_name);
     }
 
-    // verzia pre contract.blade.php
-    /*public function generateContractPdf($id)
-    {
-        $internship = new InternshipResource(Internship::findOrFail($id));
-        $pdf = PDF::loadView('pdf.contract', compact('internship'));
-        return $pdf->download('dohoda-o-praxi.pdf');
-    }*/
-
     private function cleanJoin(array $items, string $separator = ',    ')
     {
         $filtered = array_filter($items, function ($value) {
             return $value !== null && trim($value) !== '';
         });
-
         return implode($separator, $filtered);
     }
 
@@ -186,7 +177,8 @@ class InternshipDocumentController extends Controller
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
 
             //keď bude v databáze aj pozícia kontaktnej osoby tak
-            //vymazať predošlé 2 riadky a odkomentovať nasledovné:
+            //vymazať predošlé 2 riadky a odkomentovať nasledovné
+            //prípdane upraviť podľa názvu stĺpca pozície v databáze:
            /*
            $pdf->SetXY(65, 76.5);
            $pdf->Write(5,
