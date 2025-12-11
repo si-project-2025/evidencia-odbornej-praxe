@@ -3,17 +3,23 @@
   import Select from '@/components/form/Select.vue'
   import { ArrowUp, ArrowDown } from 'lucide-vue-next'
   import type { Internship } from '@/types/internship'
+  import { onMounted } from 'vue'
 
   const props = defineProps<{
     internships: Internship[]
     role: string
   }>()
 
+  onMounted(() => {
+    sortField.value = 'created_at'
+    sortDirection.value = 'desc'
+  })
+
   const emit = defineEmits<{
     (e: 'update', sorted: Internship[]): void
   }>()
 
-  type SortableField = 'company' | 'student' | 'semester' | 'year' | 'start_at' | 'end_at' | 'status'
+  type SortableField = 'company' | 'student' | 'semester' | 'year' | 'start_at' | 'end_at' | 'status' | 'created_at'
 
   const sortField = ref<SortableField | null>(null)
   const sortDirection = ref<'asc' | 'desc' | null>(null)
@@ -26,6 +32,7 @@
     start_at: (i) => i.start_at,
     end_at: (i) => i.end_at,
     status: (i) => i.status,
+    created_at: (i) => i.created_at,
   }
 
   const toggleSort = (field: SortableField) => {
@@ -68,6 +75,26 @@
   })
 
   watch(sortedList, (val) => emit('update', val), { immediate: true })
+
+  type Column = {
+    field: SortableField
+    label: string
+    span: number
+    show: boolean
+    extraClass?: string
+  }
+
+  const columns: Column[] = [
+    { field: 'company', label: 'Firma', span: 3, show: true },
+    { field: 'student', label: 'Študent', span: 3, show: props.role === 'garant' },
+    { field: 'semester', label: 'Semester', span: 2, show: true },
+    { field: 'year', label: 'Rok', span: 2, show: true },
+    { field: 'start_at', label: 'Začiatok praxe', span: 2, show: true },
+    { field: 'end_at', label: 'Koniec praxe', span: 2, show: true },
+    { field: 'status', label: 'Stav', span: 2, show: true, extraClass: 'justify-end mr-5' },
+  ]
+
+  const visibleColumns = computed(() => columns.filter((c) => c.show))
 </script>
 
 <template>
@@ -78,107 +105,26 @@
     ]"
   >
     <div
-      class="col-span-3 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('company')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'company',
-        'text-gray-500': sortField !== 'company',
-      }"
+      v-for="col in visibleColumns"
+      :key="col.field"
+      class="cursor-pointer flex items-center"
+      :class="[
+        `col-span-${col.span}`,
+        col.extraClass || '',
+        sortField === col.field ? 'text-emerald-600 font-bold' : 'text-gray-500',
+      ]"
+      @click="toggleSort(col.field)"
     >
-      Firma
-      <span v-if="sortField === 'company'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      v-if="role === 'garant'"
-      class="col-span-3 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('student')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'student',
-        'text-gray-500': sortField !== 'student',
-      }"
-    >
-      Študent
-      <span v-if="sortField === 'student'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      class="col-span-2 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('semester')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'semester',
-        'text-gray-500': sortField !== 'semester',
-      }"
-    >
-      Semester
-      <span v-if="sortField === 'semester'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      class="col-span-2 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('year')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'year',
-        'text-gray-500': sortField !== 'year',
-      }"
-    >
-      Rok
-      <span v-if="sortField === 'year'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      class="col-span-2 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('start_at')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'start_at',
-        'text-gray-500': sortField !== 'start_at',
-      }"
-    >
-      Začiatok praxe
-      <span v-if="sortField === 'start_at'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      class="col-span-2 cursor-pointer flex items-center justify-start"
-      @click="toggleSort('end_at')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'end_at',
-        'text-gray-500': sortField !== 'end_at',
-      }"
-    >
-      Koniec praxe
-      <span v-if="sortField === 'end_at'">
-        <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
-      </span>
-    </div>
-    <div
-      class="col-span-2 cursor-pointer flex items-center justify-end mr-5"
-      @click="toggleSort('status')"
-      :class="{
-        'text-emerald-600 font-bold': sortField === 'status',
-        'text-gray-500': sortField !== 'status',
-      }"
-    >
-      Stav
-      <span v-if="sortField === 'status'">
+      {{ col.label }}
+
+      <span v-if="sortField === col.field">
         <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
         <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
       </span>
     </div>
   </div>
 
-  <div class="md:hidden px-4 py-3 border-b border-gray-200 flex items-center justify-start">
+  <div class="md:hidden px-4 py-3 border-b border-gray-200 flex items-center justify-between gap-1">
     <Select
       class="flex-1"
       :model-value="sortField ?? ''"

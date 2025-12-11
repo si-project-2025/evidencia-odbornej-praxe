@@ -31,14 +31,12 @@
     await statusStore.fetchStatuses()
   })
 
-  // filters
   const searchName = ref('')
   const searchCompany = ref('')
   const selectedSemester = ref('')
   const selectedYear = ref('')
   const selectedStatus = ref('')
 
-  // filtered list
   const filteredInternships = computed(() => {
     return props.internships.filter((internship) => {
       const matchName =
@@ -71,6 +69,7 @@
       {{ filtersOpen ? 'Skryť filtre' : 'Zobraziť filtre' }}
     </ActionButton>
   </div>
+
   <!--Filtre-->
   <div
     v-if="role === 'garant'"

@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
-  import { Building, CalendarDays, Clock, User } from 'lucide-vue-next'
+  import { Building, CalendarDays, User } from 'lucide-vue-next'
   import type { Internship } from '@/types/internship.ts'
 
   defineProps<{
@@ -51,25 +51,26 @@
           </div>
 
           <!-- Rok -->
-          <div class="col-span-1 md:col-span-2 font-medium text-gray-800">
+          <div class="col-span-1 md:col-span-2 flex items-center gap-1">
             <span class="md:hidden text-gray-500">Rok:&nbsp;</span>
             <span>{{ internship.year }}</span>
           </div>
 
           <!-- Začiatok praxe -->
           <div class="col-span-1 md:col-span-2 flex items-center gap-1">
-            <CalendarDays class="w-4 h-4 text-gray-400" />
+            <span class="md:hidden text-gray-500">Začiatok:&nbsp;</span>
+            <CalendarDays class="hidden md:inline-block w-4 h-4 text-gray-400" />
             <span>{{ formatDate(internship.start_at) }}</span>
           </div>
 
           <!-- Koniec -->
-          <div class="col-span-1 md:col-span-2">
+          <div class="col-span-1 md:col-span-2 flex items-center gap-1">
             <span class="md:hidden text-gray-500">Koniec:&nbsp;</span>
-            <span class="font-medium">{{ formatDate(internship.end_at) }}</span>
+            <span>{{ formatDate(internship.end_at) }}</span>
           </div>
 
           <!-- Stav -->
-          <div class="col-span-2 md:col-span-2 flex justify-start sm:justify-end mt-2 md:mt-0">
+          <div class="col-span-2 md:col-span-2 flex justify-start sm:justify-end mt-2 md:mt-0 items-center gap-1">
             <StatusBadge :status="internship.status" />
           </div>
         </div>
