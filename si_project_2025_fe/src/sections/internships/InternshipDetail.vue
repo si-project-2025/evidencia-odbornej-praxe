@@ -155,11 +155,11 @@
         </h3>
         <div class="text-gray-700 text-sm space-y-3">
           <div
-            v-if="internshipStore.internshipDetail?.contact_persons?.length"
+            v-if="internshipStore.internshipDetail?.contact_person?.length"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pl-7 text-gray-700 text-sm"
           >
             <div
-              v-for="person in internshipStore.internshipDetail.contact_persons"
+              v-for="person in internshipStore.internshipDetail.contact_person"
               :key="person.id"
               class="space-y-1 pb-2 border-b border-gray-100 last:border-0"
             >

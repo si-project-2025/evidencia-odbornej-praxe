@@ -55,5 +55,5 @@ export interface Internship {
   garant: Garant
   student: Student
   documents?: Document[]
-  contact_persons?: ContactPerson[]
+  contact_person?: ContactPerson[]
 }

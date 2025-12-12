@@ -22,21 +22,21 @@ class InternshipVerificationService
     }
 
     /**
-     * Odošle verifikačný email kontaktným osobám
+     * Odošle verifikačný email kontaktnej osobe
      */
     public function sendVerificationEmail(Internship $internship): bool
     {
-        $internship->load(['contactPersons', 'company', 'user']);
 
-        if ($internship->contactPersons->isEmpty()) {
-            throw new \Exception('Pre túto prax nie je zadaná žiadna kontaktná osoba.');
+        $internship->load(['contactPerson', 'company', 'user']);
+        if (!$internship->contactPerson) {
+            throw new \Exception('Pre túto prax nie je priradená kontaktná osoba. Prosím, priraďte ju v nastaveniach praxe.');
         }
 
         try {
-            foreach ($internship->contactPersons as $contactPerson) {
-                $token = $this->createVerificationToken($contactPerson->email, $internship->internships_id);
-                $this->sendVerificationEmailToContact($internship, $contactPerson->email, $token);
-            }
+            $contactPerson = $internship->contactPerson;
+            $token = $this->createVerificationToken($contactPerson->email, $internship->internships_id);
+            $this->sendVerificationEmailToContact($internship, $contactPerson->email, $token);
+
             return true;
         } catch (\Exception $e) {
             Log::error('Nepodarilo sa odoslať verifikačný email: ' . $e->getMessage());
@@ -45,12 +45,13 @@ class InternshipVerificationService
     }
 
     /**
-     * Vytvorí verifikačný token (rovnaký princíp ako password reset)
+     * Vytvorí verifikačný token
      */
     private function createVerificationToken(string $email, int $internshipId): string
     {
         $token = Str::random(64);
 
+        // Ukladáme token k emailu a ID praxe
         DB::table('internship_verification_tokens')->updateOrInsert(
             ['email' => $email, 'internships_id' => $internshipId],
             [
@@ -68,11 +69,13 @@ class InternshipVerificationService
     private function sendVerificationEmailToContact(Internship $internship, string $contactEmail, string $token): void
     {
         $frontendUrl = config('app.frontend_url');
+        // URL obsahuje token a email pre overenie
         $verificationUrl = "{$frontendUrl}/verify-internship?token={$token}&email=" . urlencode($contactEmail);
 
         Mail::send('emails.company-verification', [
             'internship' => $internship,
-            'verificationUrl' => $verificationUrl
+            'verificationUrl' => $verificationUrl,
+            'contactPerson' => $internship->contactPerson // Môžeme poslať aj objekt osoby do šablóny
         ], function ($message) use ($contactEmail) {
             $message->to($contactEmail);
             $message->subject('Overenie praxe študenta');
@@ -80,7 +83,7 @@ class InternshipVerificationService
     }
 
     /**
-     * Získaj detaily praxe pred overením (pre zobrazenie na frontende)
+     * Získaj detaily praxe pred overením
      */
     public function getVerificationDetails(string $email, string $token): array
     {
@@ -100,10 +103,19 @@ class InternshipVerificationService
             throw new \Exception('Token expiroval.');
         }
 
-        $internship = Internship::where('internships_id', $verificationRecord->internships_id)->first();
+        // ZMENA: Načítame prax aj s priradenou kontaktnou osobou
+        $internship = Internship::with(['contactPerson', 'company', 'user'])
+            ->where('internships_id', $verificationRecord->internships_id)
+            ->first();
 
         if (!$internship) {
             throw new \Exception('Prax nenájdená.');
+        }
+
+        // Validácia: Overíme, či email v tokene stále patrí priradenej kontaktnej osobe
+        // Toto zabráni situácii, kedy sa osoba zmenila, ale starý link by stále fungoval
+        if ($internship->contactPerson && $internship->contactPerson->email !== $email) {
+            throw new \Exception('Kontaktná osoba pre túto prax bola zmenená. Tento odkaz už nie je platný.');
         }
 
         return [
@@ -113,7 +125,7 @@ class InternshipVerificationService
     }
 
     /**
-     * Potvrdí alebo zamietne prax podľa akcie
+     * Potvrdí alebo zamietne prax
      */
     public function handleInternshipAction(string $email, string $token, string $action): array
     {
@@ -143,6 +155,7 @@ class InternshipVerificationService
 
         $this->updateInternshipStatus($internship, $action);
 
+        // Po úspešnom overení zmažeme token
         DB::table('internship_verification_tokens')
             ->where('email', $email)
             ->where('internships_id', $verification->internships_id)
@@ -185,7 +198,6 @@ class InternshipVerificationService
         if ($status === 'Potvrdená') {
             $this->notificationService->sendEmailToGarant($internship);
         }
-
     }
 
     private function actionMessage(string $action): string
