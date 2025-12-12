@@ -125,7 +125,7 @@ class InternshipDocumentController extends Controller
             'company.address',
             'student',
             'garant',
-            'contactPersons'
+            'contactPerson'
         ])->findOrFail($id);
 
         $studentAddress = $internship->student->address;
@@ -171,7 +171,7 @@ class InternshipDocumentController extends Controller
         );
 
         // Kontaktná osoba
-        $contact = $internship->contactPersons->first();
+        $contact = $internship->contactPerson;
         if ($contact) {
             $pdf->SetXY(60, 76.3);
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
