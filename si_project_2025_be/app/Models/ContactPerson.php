@@ -16,14 +16,14 @@ class ContactPerson extends Model
         'surname',
         'email',
         'phone',
-        'internships_id',
+        'company_id',
     ];
 
     /**
      * Získa prax, ku ktorej patrí táto kontaktná osoba
      */
-    public function internship()
+    public function company()
     {
-        return $this->belongsTo(Internship::class, 'internships_id', 'internships_id');
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
     }
 }

@@ -48,6 +48,7 @@ class Internship extends Model
         'company_id' => 'int',
         'status_id' => 'int',
         'garant_id' => 'int',
+        'contact_person_id' => 'int',
     ];
 
     protected $fillable = [
@@ -59,6 +60,7 @@ class Internship extends Model
         'company_id',
         'status_id',
         'garant_id',
+        'contact_person_id',
     ];
 
     public function company()
@@ -89,8 +91,8 @@ class Internship extends Model
         return $this->hasMany(Document::class, 'internships_id', 'internships_id');
     }
 
-    public function contactPersons()
+    public function contactPerson()
     {
-        return $this->hasMany(ContactPerson::class, 'internships_id', 'internships_id');
+        return $this->belongsTo(ContactPerson::class, 'contact_person_id', 'id');
     }
 }
