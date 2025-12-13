@@ -19,7 +19,16 @@
     (e: 'update', sorted: Internship[]): void
   }>()
 
-  type SortableField = 'company' | 'student' | 'semester' | 'year' | 'start_at' | 'end_at' | 'status' | 'created_at'
+  type SortableField =
+    | 'company'
+    | 'student'
+    | 'semester'
+    | 'year'
+    | 'start_at'
+    | 'end_at'
+    | 'is_paid'
+    | 'status'
+    | 'created_at'
 
   const sortField = ref<SortableField | null>(null)
   const sortDirection = ref<'asc' | 'desc' | null>(null)
@@ -31,6 +40,7 @@
     year: (i) => i.year,
     start_at: (i) => i.start_at,
     end_at: (i) => i.end_at,
+    is_paid: (i) => (i.is_paid ? 1 : 0),
     status: (i) => i.status,
     created_at: (i) => i.created_at,
   }
@@ -91,7 +101,8 @@
     { field: 'year', label: 'Rok', span: 2, show: true },
     { field: 'start_at', label: 'Začiatok praxe', span: 2, show: true },
     { field: 'end_at', label: 'Koniec praxe', span: 2, show: true },
-    { field: 'status', label: 'Stav', span: 2, show: true, extraClass: 'justify-end mr-5' },
+    { field: 'is_paid', label: 'Typ praxe', span: 1, show: true },
+    { field: 'status', label: 'Stav', span: 1, show: true, extraClass: 'justify-end mr-5' },
   ]
 
   const visibleColumns = computed(() => columns.filter((c) => c.show))
@@ -136,6 +147,7 @@
       <option value="semester">Semester</option>
       <option value="year">Rok</option>
       <option value="end_at">Koniec praxe</option>
+      <option value="is_paid">Typ praxe</option>
       <option value="status">Stav</option>
     </Select>
 

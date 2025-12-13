@@ -13,6 +13,7 @@ class InternshipResource extends JsonResource
             'internships_id' => $this->internships_id,
             'semester' => $this->semester,
             'year' => $this->year,
+            'is_paid' => $this->is_paid,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'start_at' => $this->start_at,

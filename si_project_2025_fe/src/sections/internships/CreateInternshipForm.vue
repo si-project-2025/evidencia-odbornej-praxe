@@ -36,6 +36,7 @@
     end_at: '',
     status: 'Vytvorená',
     garant_id: 0,
+    is_paid: false,
   })
 
   const errorMessage = ref('')
@@ -101,6 +102,31 @@
           <option value="Z">Zimný</option>
           <option value="L">Letný</option>
         </Select>
+
+        <!-- Typ praxe -->
+        <div class="space-y-1">
+          <label for="is_paid" class="block text-sm font-medium text-gray-800">Typ praxe</label>
+
+          <div
+            :class="[
+              'flex items-center justify-between rounded-md border px-4 py-3 cursor-pointer select-none transition-colors',
+              form.is_paid ? 'border-green-400 bg-green-50' : 'border-gray-300 bg-white',
+            ]"
+            @click="form.is_paid = !form.is_paid"
+          >
+            <span class="text-base text-gray-700">
+              Platená prax – prax vykonávaná na základe pracovnej zmluvy, dohody alebo živnosti
+            </span>
+
+            <input
+              id="is_paid"
+              type="checkbox"
+              v-model="form.is_paid"
+              class="h-4 w-4 text-green-600 pointer-events-none"
+              tabindex="-1"
+            />
+          </div>
+        </div>
 
         <!-- Garant -->
         <Select v-model.number="form.garant_id" id="garant_id" label="Garant praxe*">

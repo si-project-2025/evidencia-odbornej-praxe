@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $internships_id
  * @property string $semester
  * @property int $year
+ * @property bool $is_paid
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $start_at
@@ -49,6 +50,7 @@ class Internship extends Model
         'status_id' => 'int',
         'garant_id' => 'int',
         'contact_person_id' => 'int',
+        'is_paid' => 'boolean',
     ];
 
     protected $fillable = [
@@ -61,6 +63,7 @@ class Internship extends Model
         'status_id',
         'garant_id',
         'contact_person_id',
+        'is_paid',
     ];
 
     public function company()
