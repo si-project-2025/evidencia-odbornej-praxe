@@ -22,10 +22,13 @@ Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
-Route::post('/internships/action', [InternshipVerificationController::class, 'handleInternshipAction']);
-Route::get('/internships/get-verification-details',
-    [InternshipVerificationController::class, 'getVerificationDetails']
-);
+Route::prefix('public/internships')->group(function () {
+    Route::post('/action', [InternshipVerificationController::class, 'handleInternshipAction']);
+    Route::get('/get-verification-details', [InternshipVerificationController::class, 'getVerificationDetails']);
+    Route::post('{id}/documents', [InternshipDocumentController::class, 'store']);
+    Route::get('/{id}/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
+    Route::patch('/{id}/documents/{documentId}/verify', [InternshipDocumentController::class, 'verifyDocument']);
+});
 
 // ----------------------------
 // External system routes
@@ -72,7 +75,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/documents', [InternshipDocumentController::class, 'index']);
         Route::post('/documents', [InternshipDocumentController::class, 'store']);
         Route::delete('/documents/{documentId}', [InternshipDocumentController::class, 'destroy']);
-        Route::delete('/documents/{documentId}/verify', [InternshipDocumentController::class, 'verifyDocument']);
+        Route::patch('/documents/{documentId}/verify', [InternshipDocumentController::class, 'verifyDocument']);
         Route::get('/documents/{documentId}/download', [InternshipDocumentController::class, 'download']);
         Route::get('/contract', [InternshipDocumentController::class, 'generateContractPdf']);
     });

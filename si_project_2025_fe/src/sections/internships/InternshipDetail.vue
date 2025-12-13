@@ -1,6 +1,6 @@
 <script setup lang="ts">
   import { useInternshipStore } from '@/stores/internships.ts'
-  import { Building, Calendar, Clock, User, Info, Users } from 'lucide-vue-next'
+  import { Building, Calendar, User, Info, Users } from 'lucide-vue-next'
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentsSection from '@/sections/internships/detail/DocumentsSection.vue'
   import ActionsSection from '@/sections/internships/detail/ActionsSection.vue'

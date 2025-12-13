@@ -1,4 +1,4 @@
-import axios, { type AxiosResponse } from 'axios'
+import axios, { type AxiosRequestConfig, type AxiosResponse } from 'axios'
 import { authHeaders } from '@/stores/helpers/auth.ts'
 
 export function downloadBlob(blob: Blob, filename: string) {
@@ -18,11 +18,16 @@ export function getFileNameFromPath(path: string): string {
   return path.split('/').pop() ?? 'document.pdf'
 }
 
-export async function postFormData<T = any>(url: string, formData: FormData): Promise<AxiosResponse<T>> {
+export async function postFormData<T = unknown>(
+  url: string,
+  formData: FormData,
+  config?: AxiosRequestConfig,
+): Promise<AxiosResponse<T>> {
   return axios.post<T>(url, formData, {
     headers: {
-      ...authHeaders(),
       'Content-Type': 'multipart/form-data',
+      ...(config?.headers ?? {}),
     },
+    ...config,
   })
 }

@@ -7,6 +7,8 @@
 
   const props = defineProps<{
     document: Document
+    email?: string
+    token?: string
   }>()
 
   const userStore = useUserStore()
@@ -20,14 +22,38 @@
     )
   })
 
-  const downloadFile = () => {
-    documentStore.downloadDocument(props.document)
+  const downloadFile = async () => {
+    if (userStore.user) {
+      await documentStore.downloadDocument(props.document)
+      return
+    }
+
+    if (!props.email || !props.token) {
+      return
+    }
+
+    await documentStore.downloadDocument(props.document, {
+      email: props.email,
+      token: props.token,
+    })
   }
 
   const verifyFile = async () => {
     if (!confirm('Naozaj chcete potvrdiť tento dokument?')) return
 
-    await documentStore.verifyDocument(props.document.document_id)
+    if (userStore.user) {
+      await documentStore.verifyDocument(props.document.document_id)
+      return
+    }
+
+    if (!props.email || !props.token) {
+      return
+    }
+
+    await documentStore.verifyDocument(props.document.document_id, {
+      email: props.email,
+      token: props.token,
+    })
   }
 
   const deleteFile = async () => {
