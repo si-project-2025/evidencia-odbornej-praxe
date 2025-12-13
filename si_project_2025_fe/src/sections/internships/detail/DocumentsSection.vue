@@ -8,9 +8,16 @@
   import { useDocumentStore } from '@/stores/documents.ts'
   import ToggleSlider from '@/components/form/ToggleSlider.vue'
   import axios from 'axios'
+  import { useRoute } from 'vue-router'
+
+  const route = useRoute()
 
   const userStore = useUserStore()
+  const isStudent = computed(() => userStore.user?.role === 'student')
   const isGarant = computed(() => userStore.user?.role === 'garant')
+
+  const email = computed(() => route.query.email as string | undefined)
+  const token = computed(() => route.query.token as string | undefined)
 
   const fileInput = ref<HTMLInputElement | null>(null)
   const isAgreement = ref(true)
@@ -41,7 +48,16 @@
 
   const uploadFile = async (file: File) => {
     try {
-      await documentStore.uploadDocument(file, isAgreement.value ? 'Zmluva' : 'Výkaz')
+      if (userStore.user) {
+        await documentStore.uploadDocument(file, isAgreement.value ? 'Zmluva' : 'Výkaz')
+        return
+      }
+
+      if (!email.value || !token.value) {
+        return
+      }
+
+      await documentStore.uploadDocument(file, 'Výkaz', { email: email.value, token: token.value })
       alert('Dokument bol nahratý')
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -63,19 +79,19 @@
       </h3>
 
       <!-- Tlačidlá -->
-      <div class="flex flex-wrap justify-start md:justify-end gap-3">
-        <div v-if="!isGarant" class="flex flex-row gap-3">
-          <ToggleSlider v-model="isAgreement" left-label="Zmluva" right-label="Výkaz" />
+      <div class="flex flex-col md:flex-row justify-start md:justify-end gap-3">
+        <div v-if="!isGarant" class="flex flex-col md:flex-row gap-3">
+          <ToggleSlider v-if="isStudent" v-model="isAgreement" left-label="Zmluva" right-label="Výkaz" />
 
           <ActionButton @click="chooseFile">
             <Plus class="w-4 h-4" />
-            Pridať dokument
+            Pridať {{ isStudent ? 'dokument' : 'výkaz' }}
           </ActionButton>
 
           <input ref="fileInput" type="file" class="hidden" @change="handleFileChange" />
         </div>
 
-        <ActionButton color="green-light" @click="documentStore.generateDocument()">
+        <ActionButton v-if="isStudent || isGarant" color="green-light" @click="documentStore.generateDocument()">
           <FileText class="w-4 h-4" />
           Generovať dohodu
         </ActionButton>
@@ -88,6 +104,8 @@
           v-for="document in internshipStore.internshipDetail.documents"
           :key="document.document_id"
           :document="document"
+          :email="email"
+          :token="token"
         />
       </div>
     </template>
