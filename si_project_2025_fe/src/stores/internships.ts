@@ -90,15 +90,29 @@ export const useInternshipStore = defineStore('internships', {
           headers: authHeaders(),
         })
 
-        this.internshipDetail = response.data
+        const updatedInternship = response.data.data ?? response.data
+
+        this.internshipDetail = updatedInternship
         this.internships = this.internships.map((internship) =>
-          internship.internships_id === id ? response.data : internship,
+          internship.internships_id === id ? updatedInternship : internship,
         )
 
-        return response.data
-      } catch (error) {
-        console.error('Nepodarilo sa upraviť prax:', error)
-        throw error
+        return updatedInternship
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            error.response?.data?.message ||
+            (error.response?.data?.errors ? Object.values(error.response.data.errors).flat()[0] : null) ||
+            'Nepodarilo sa upraviť prax.'
+
+          throw new Error(message)
+        }
+
+        if (error instanceof Error) {
+          throw error
+        }
+
+        throw new Error('Nepodarilo sa upraviť prax.')
       }
     },
 
