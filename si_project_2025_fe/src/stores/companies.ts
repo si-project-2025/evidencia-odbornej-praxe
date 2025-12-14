@@ -26,7 +26,7 @@ export const useCompaniesStore = defineStore('companies', {
 
     async createCompany(data: CompanyForm) {
       try {
-        const response = await axios.post(`${API_URL}/api/internships/companies`, data, {
+        const response = await axios.post(`${API_URL}/api/companies`, data, {
           headers: authHeaders(),
         })
 

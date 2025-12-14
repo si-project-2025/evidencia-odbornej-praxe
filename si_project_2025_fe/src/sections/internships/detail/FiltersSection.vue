@@ -90,7 +90,7 @@
         <option value="" class="text-gray-400">Všetky firmy</option>
         <option
           v-for="company in companiesStore.companies"
-          :key="company.company_id"
+          :key="company.id"
           :value="company.name"
           class="text-gray-900"
         >

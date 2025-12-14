@@ -14,8 +14,10 @@
   import { useCompaniesStore } from '@/stores/companies.ts'
   import { useLookupStore } from '@/stores/lookup.ts'
 
-  import CompanySelect from '@/components/CompanySelect.vue'
+  import ExtendedSelect from '@/components/form/ExtendedSelect.vue'
   import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+  import CreateContactModal from '@/components/modals/CreateContactModal.vue'
+  import { useContactstore } from '@/stores/contacts.ts'
 
   const props = defineProps<{
     internship: Internship | null
@@ -23,6 +25,7 @@
 
   const internshipStore = useInternshipStore()
   const companiesStore = useCompaniesStore()
+  const contactsStore = useContactstore()
   const lookupStore = useLookupStore()
   const userStore = useUserStore()
   const statusStore = useStatusStore()
@@ -30,9 +33,11 @@
   const route = useRoute()
 
   const showCompanyModal = ref(false)
+  const showContactModal = ref(false)
 
   const form = reactive<InternshipForm>({
     company_id: 0,
+    contact_person_id: 0,
     users_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
@@ -50,15 +55,28 @@
 
   const isGarant = computed(() => userStore.user?.role === 'garant')
 
+  const filteredContacts = computed(() => {
+    if (!form.company_id) return contactsStore.contacts
+    return contactsStore.contacts.filter((c) => c.company_id === form.company_id)
+  })
+
+  const availableStatuses = computed(() => {
+    if (userStore.user?.role === 'garant') {
+      return statusStore.allowedStatusesForGarant(form.status)
+    }
+    return statusStore.statuses
+  })
+
   onMounted(async () => {
     await companiesStore.fetchCompanies()
+    await contactsStore.fetchContacts()
     await lookupStore.fetchStudents()
     await lookupStore.fetchGarants()
     await statusStore.fetchStatuses()
 
     if (props.internship) {
       const internship = props.internship
-      form.company_id = internship.company?.company_id || 0
+      form.company_id = internship.company?.id || 0
       form.users_id = internship.student?.users_id || 0
       form.semester = internship.semester
       form.year = internship.year
@@ -70,16 +88,14 @@
     }
   })
 
-  const availableStatuses = computed(() => {
-    if (userStore.user?.role === 'garant') {
-      return statusStore.allowedStatusesForGarant(form.status)
-    }
-    return statusStore.statuses
-  })
-
   const handleCompanyCreated = (newCompanyId: number) => {
     form.company_id = newCompanyId
     showCompanyModal.value = false
+  }
+
+  const handleContactCreated = (newContactId: number) => {
+    form.contact_person_id = newContactId
+    showContactModal.value = false
   }
 
   const submit = async () => {
@@ -132,11 +148,19 @@
     <FormSection title="Údaje o praxi">
       <div class="space-y-4">
         <!-- Firma -->
-        <CompanySelect
+        <ExtendedSelect
           v-model="form.company_id"
-          :companies="companiesStore.companies"
+          :options="companiesStore.companies"
           label="Firma*"
           @add-company="showCompanyModal = true"
+        />
+
+        <!-- Kontaktná osoba -->
+        <ExtendedSelect
+          v-model="form.contact_person_id"
+          :options="filteredContacts"
+          label="Kontaktná osoba (firma)*"
+          @add-option="showContactModal = true"
         />
 
         <!-- Študent -->
@@ -240,4 +264,10 @@
 
   <!-- Modal na vytvorenie firmy -->
   <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
+  <CreateContactModal
+    v-if="showContactModal"
+    @close="showContactModal = false"
+    @created="handleContactCreated"
+    :company_id="form.company_id"
+  />
 </template>

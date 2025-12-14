@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Address;
+use App\Models\Company;
 use App\Models\ContactPerson;
 use App\Models\Internship;
 use Illuminate\Http\Request;
@@ -10,88 +12,37 @@ use Illuminate\Http\Request;
 class ContactPersonController extends Controller
 {
     /**
-     * Získa všetky kontaktné osoby firmy pre danú prax
+     * Získa všetky kontaktné osoby
      */
-    public function index(string $internshipId)
+    public function index()
     {
-        $internship = Internship::findOrFail($internshipId);
-        $contactPersons = $internship->company->contactPersons;
-
-        return response()->json($contactPersons);
+        return ContactPerson::all();
     }
 
-    /**
-     * Uloží novú kontaktnú osobu k firme
-     */
-    public function store(Request $request, string $internshipId)
+    public function store(Request $request)
     {
-        $internship = Internship::findOrFail($internshipId);
-
-        $validatedData = $request->validate([
+        $validated = $request->validate([
             'name' => 'required|string|max:255',
             'surname' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:50',
+            'email' => 'required|string|email|max:191|unique:contact_persons,email',
+            'phone' => 'nullable|string|max:20',
+            'company_id' => 'required|integer|exists:companies,company_id',
+        ], [
+            'email.unique' => 'Kontaktná osoba s týmto emailom už existuje.',
+            'company_id.exists' => 'Vyberte firmu'
         ]);
 
-        $contactPerson = $internship->company->contactPersons()->create($validatedData);
-
-        return response()->json($contactPerson, 201);
-    }
-
-    /**
-     * Zobrazí detail kontaktnej osoby
-     */
-    public function show(string $internshipId, string $id)
-    {
-        $internship = Internship::findOrFail($internshipId);
-        $contactPerson = ContactPerson::findOrFail($id);
-
-        if ($contactPerson->company_id !== $internship->company_id) {
-            return response()->json(['message' => 'Contact person does not belong to this company'], 403);
-        }
-
-        return response()->json($contactPerson);
-    }
-
-    /**
-     * Aktualizuje kontaktnú osobu
-     */
-    public function update(Request $request, string $internshipId, string $id)
-    {
-        $internship = Internship::findOrFail($internshipId);
-        $contactPerson = ContactPerson::findOrFail($id);
-
-        if ($contactPerson->company_id !== $internship->company_id) {
-            return response()->json(['message' => 'Contact person does not belong to this company'], 403);
-        }
-
-        $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:255',
-            'surname' => 'sometimes|required|string|max:255',
-            'email' => 'sometimes|required|email|max:255',
-            'phone' => 'nullable|string|max:50',
+        $contact = ContactPerson::create([
+            'name' => $validated['name'],
+            'surname' => $validated['surname'],
+            'email' => $validated['email'],
+            'phone' => $validated['phone'] ?? null,
+            'company_id' => $validated['company_id']
         ]);
 
-        $contactPerson->update($validatedData);
-
-        return response()->json($contactPerson);
-    }
-
-    /**
-     * Zmaže kontaktnú osobu
-     */
-    public function destroy(string $internshipId, string $id)
-    {
-        $internship = Internship::findOrFail($internshipId);
-        $contactPerson = ContactPerson::findOrFail($id);
-
-        if ($contactPerson->company_id !== $internship->company_id) {
-            return response()->json(['message' => 'Contact person does not belong to this company'], 403);
-        }
-
-        $contactPerson->delete();
-
-        return response()->json(['message' => 'Contact person deleted successfully']);
+        return response()->json([
+            'id' => $contact->id,
+            'message' => 'Kontakt bol úspešne vytvorený',
+        ], 201);
     }
 }

@@ -50,9 +50,7 @@
       <p class="text-gray-500 text-sm">Aktualizujte údaje o praxi a uložte zmeny.</p>
     </div>
 
-    <div
-      class="w-full max-w-3xl bg-white border-l-4 border-r-4 border-emerald-500 rounded-3xl shadow-lg p-8 md:p-10 text-center"
-    >
+    <div class="w-full max-w-3xl bg-white border-l-4 border-r-4 border-emerald-500 rounded-3xl shadow-lg p-8 md:p-10">
       <div v-if="isLoading" class="text-gray-500 text-sm py-8">Načítavam údaje o praxi...</div>
       <div v-else-if="errorMessage" class="text-red-600 text-sm py-8">
         {{ errorMessage }}

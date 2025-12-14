@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Tfpdf\Fpdi;
 
-class InternshipDocumentController extends Controller
+class DocumentController extends Controller
 {
     public function index($internshipId)
     {

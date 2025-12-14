@@ -21,6 +21,7 @@ export interface RegistrationForm {
 export interface InternshipForm {
   users_id: number
   company_id: number
+  contact_person_id: number
   semester: 'Z' | 'L'
   year: number
   start_at?: string
@@ -34,4 +35,12 @@ export interface CompanyForm {
   name: string
   ico: string
   address: Address
+}
+
+export interface ContactForm {
+  name: string
+  surname: string
+  email: string
+  phone?: string
+  company_id: number
 }
