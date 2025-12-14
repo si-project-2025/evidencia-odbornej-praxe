@@ -121,8 +121,6 @@ class InternshipController extends Controller
         return response()->json(InternshipResource::collection($internships));
     }
 
-    //Len dočasné riešenie
-    //Zoznam firiem (pre dropdown vo formulári)
     public function getCompanies()
     {
         $companies = Company::with('address')
@@ -133,8 +131,6 @@ class InternshipController extends Controller
         return response()->json($companies);
     }
 
-
-    // Zoznam garantov (pre dropdown vo formulári)
     public function getGarants()
     {
         $garantRoleId = Role::where('name', 'garant')->value('role_id');

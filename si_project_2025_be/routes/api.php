@@ -56,7 +56,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
 
     // User-specific and helper endpoints
-    Route::apiResource('internships', InternshipController::class);
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
     Route::get('/internships/garants', [InternshipController::class, 'getGarants']);
     Route::get('/internships/students', [InternshipController::class, 'getStudents']);
@@ -66,6 +65,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('contact-persons', [ContactPersonController::class, 'index']);
     Route::post('contact-persons', [ContactPersonController::class, 'store']);
     Route::post('/companies', [CompanyController::class, 'store']);
+
+    Route::apiResource('internships', InternshipController::class);
 
     // Internship verification
     Route::post('/internships/{internship}/send-verification', [InternshipVerificationController::class, 'sendVerificationEmail']);

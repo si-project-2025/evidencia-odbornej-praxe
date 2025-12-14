@@ -20,7 +20,7 @@ class InternshipResource extends JsonResource
             'end_at' => $this->end_at,
 
             'company' => [
-                'company_id' => $this->company->company_id,
+                'id' => $this->company->company_id,
                 'name' => $this->company->name,
                 'ico' => $this->company->ico,
                 'address' => [

@@ -76,7 +76,9 @@
 
     if (props.internship) {
       const internship = props.internship
+      console.log(internship)
       form.company_id = internship.company?.id || 0
+      form.contact_person_id = internship.contact_person?.id || 0
       form.users_id = internship.student?.users_id || 0
       form.semester = internship.semester
       form.year = internship.year
@@ -164,7 +166,7 @@
         />
 
         <!-- Študent -->
-        <Select v-model.number="form.users_id" id="users_id" label="Študent*">
+        <Select v-model.number="form.users_id" id="users_id" label="Študent*" v-if="isGarant">
           <option disabled value="0" v-if="!lookupStore.students.length">Načítavam študentov...</option>
           <option value="0" disabled v-else>Vyberte študenta</option>
           <option v-for="student in lookupStore.students" :key="student.users_id" :value="student.users_id">
