@@ -8,6 +8,8 @@ use App\Models\Internship;
 use App\Models\Document;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Tfpdf\Fpdi;
 
@@ -30,6 +32,8 @@ class InternshipDocumentController extends Controller
 
     public function store(Request $request, $internshipId)
     {
+        $this->checkPermission($request, $internshipId);
+
         $request->validate([
             'file' => 'required|file|max:5120',
             'type' => 'nullable|string|max:50',
@@ -79,8 +83,10 @@ class InternshipDocumentController extends Controller
         return response()->json(['message' => 'Dokument bol odstránený.']);
     }
 
-    public function verifyDocument($internshipId, $documentId)
+    public function verifyDocument(Request $request, $internshipId, $documentId)
     {
+        $this->checkPermission($request, $internshipId);
+
         $document = Document::where('internships_id', $internshipId)
             ->where('document_id', $documentId)
             ->firstOrFail();
@@ -91,14 +97,9 @@ class InternshipDocumentController extends Controller
         return response()->json(['message' => 'Dokument bol potvrdený.']);
     }
 
-    public function download($id, $documentId)
+    public function download(Request $request, $id, $documentId)
     {
-        $internship = Internship::findOrFail($id);
-
-        // over, že prihlásený user má prístup
-        if (auth()->id() !== $internship->users_id && auth()->id() !== $internship->garant_id) {
-            return response()->json(['message' => 'Unauthorized'], 403);
-        }
+        $this->checkPermission($request, $id);
 
         $document = Document::where('internships_id', $id)
             ->where('document_id', $documentId)
@@ -125,7 +126,7 @@ class InternshipDocumentController extends Controller
             'company.address',
             'student',
             'garant',
-            'contactPersons'
+            'contactPerson'
         ])->findOrFail($id);
 
         $studentAddress = $internship->student->address;
@@ -171,7 +172,7 @@ class InternshipDocumentController extends Controller
         );
 
         // Kontaktná osoba
-        $contact = $internship->contactPersons->first();
+        $contact = $internship->contactPerson;
         if ($contact) {
             $pdf->SetXY(60, 76.3);
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
@@ -231,5 +232,31 @@ class InternshipDocumentController extends Controller
 
     }
 
+    private function checkPermission(Request $request, int $id)
+    {
+        $internship = Internship::findOrFail($id);
 
+        if (auth()->check()) {
+            if (auth()->id() !== $internship->users_id && auth()->id() !== $internship->garant_id) {
+                abort(403, 'Unauthorized');
+            }
+        } else {
+            $request->validate([
+                'email' => 'required|email',
+                'token' => 'required|string',
+            ]);
+
+            $verification = DB::table('internship_verification_tokens')
+                ->where('internships_id', $id)
+                ->where('email', $request->email)
+                ->first();
+
+            if (
+                !$verification ||
+                !Hash::check($request->token, $verification->token)
+            ) {
+                abort(403, 'Invalid token');
+            }
+        }
+    }
 }

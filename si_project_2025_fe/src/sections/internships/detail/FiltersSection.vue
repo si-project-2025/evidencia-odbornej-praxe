@@ -36,6 +36,7 @@
   const selectedSemester = ref('')
   const selectedYear = ref('')
   const selectedStatus = ref('')
+  const selectedIsPaid = ref('')
 
   const filteredInternships = computed(() => {
     return props.internships.filter((internship) => {
@@ -48,8 +49,12 @@
         !searchCompany.value || internship.company?.name.toLowerCase().includes(searchCompany.value.toLowerCase())
       const matchSemester = !selectedSemester.value || internship.semester === selectedSemester.value
       const matchYear = !selectedYear.value || internship.year === Number(selectedYear.value)
+      const matchIsPaid =
+        !selectedIsPaid.value ||
+        (selectedIsPaid.value === 'paid' && internship.is_paid) ||
+        (selectedIsPaid.value === 'unpaid' && !internship.is_paid)
       const matchStatus = !selectedStatus.value || internship.status === selectedStatus.value
-      return matchName && matchCompany && matchSemester && matchYear && matchStatus
+      return matchName && matchCompany && matchSemester && matchYear && matchStatus && matchIsPaid
     })
   })
 
@@ -59,6 +64,7 @@
     searchCompany.value = ''
     selectedSemester.value = ''
     selectedYear.value = ''
+    selectedIsPaid.value = ''
     selectedStatus.value = ''
   }
 </script>
@@ -111,6 +117,12 @@
       </Select>
       <!-- Rok -->
       <Input v-model="selectedYear" type="number" placeholder="Rok" class="mt-2" />
+      <!-- Typ praxe -->
+      <Select v-model="selectedIsPaid" class="mt-2">
+        <option value="" class="text-gray-400">Všetky typy praxe</option>
+        <option value="paid" class="text-gray-900">Platená</option>
+        <option value="unpaid" class="text-gray-900">Neplatená</option>
+      </Select>
       <!-- Stav -->
       <Select v-model="selectedStatus" class="mt-2">
         <option value="" class="text-gray-400">Všetky stavy</option>

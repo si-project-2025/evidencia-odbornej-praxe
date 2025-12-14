@@ -41,7 +41,7 @@
   // odoslanie na verifikáciu firme
   const sendToCompany = async () => {
     // overiť firmou
-    if (!internshipStore.internshipDetail?.contact_persons?.length) {
+    if (!internshipStore.internshipDetail?.contact_person?.length) {
       alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
       return
     }

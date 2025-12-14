@@ -46,6 +46,7 @@ export interface Internship {
   internships_id: number
   semester: 'Z' | 'L'
   year: number
+  is_paid: boolean
   start_at: string | null
   end_at: string | null
   created_at: string | null
@@ -55,5 +56,5 @@ export interface Internship {
   garant: Garant
   student: Student
   documents?: Document[]
-  contact_persons?: ContactPerson[]
+  contact_person?: ContactPerson[]
 }
