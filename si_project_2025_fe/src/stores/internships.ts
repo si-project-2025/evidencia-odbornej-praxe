@@ -90,14 +90,12 @@ export const useInternshipStore = defineStore('internships', {
           headers: authHeaders(),
         })
 
-        const updatedInternship = response.data.data ?? response.data
-
-        this.internshipDetail = updatedInternship
+        this.internshipDetail = response.data
         this.internships = this.internships.map((internship) =>
-          internship.internships_id === id ? updatedInternship : internship,
+          internship.internships_id === id ? response.data : internship,
         )
 
-        return updatedInternship
+        return response.data
       } catch (error: unknown) {
         if (axios.isAxiosError(error)) {
           const message =
