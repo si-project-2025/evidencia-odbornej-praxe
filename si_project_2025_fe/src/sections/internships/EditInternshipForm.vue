@@ -46,6 +46,7 @@
   const errorMessage = ref('')
   const successMessage = ref('')
   const loading = ref(false)
+  const originalStatus = ref<string | null>(null)
 
   const isGarant = computed(() => userStore.user?.role === 'garant')
 
@@ -85,6 +86,8 @@
     errorMessage.value = ''
     successMessage.value = ''
 
+    originalStatus.value = props.internship?.status ?? form.status
+
     if (!form.company_id || !form.year || !form.semester || !form.garant_id) {
       errorMessage.value = 'Vyplňte všetky povinné polia.'
       return
@@ -107,8 +110,16 @@
       await internshipStore.updateInternship(id, form)
       successMessage.value = 'Zmeny boli úspešne uložené!'
       await internshipStore.fetchInternshipDetail(id)
-    } catch {
-      errorMessage.value = 'Nepodarilo sa upraviť prax.'
+    } catch (error: unknown) {
+      if (originalStatus.value) {
+        form.status = originalStatus.value
+      }
+
+      if (error instanceof Error) {
+        errorMessage.value = error.message
+      } else {
+        errorMessage.value = 'Nepodarilo sa upraviť prax.'
+      }
     } finally {
       loading.value = false
     }

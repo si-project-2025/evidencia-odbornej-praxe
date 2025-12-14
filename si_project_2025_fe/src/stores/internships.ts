@@ -96,9 +96,21 @@ export const useInternshipStore = defineStore('internships', {
         )
 
         return response.data
-      } catch (error) {
-        console.error('Nepodarilo sa upraviť prax:', error)
-        throw error
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+          const message =
+            error.response?.data?.message ||
+            (error.response?.data?.errors ? Object.values(error.response.data.errors).flat()[0] : null) ||
+            'Nepodarilo sa upraviť prax.'
+
+          throw new Error(message)
+        }
+
+        if (error instanceof Error) {
+          throw error
+        }
+
+        throw new Error('Nepodarilo sa upraviť prax.')
       }
     },
 

@@ -61,6 +61,19 @@ class InternshipController extends Controller
 
         // Status pri update
         if (isset($data['status'])) {
+            if ($data['status'] === 'Schválená') {
+                $contract = $internship->documents()
+                    ->where('type', 'Zmluva')
+                    ->first();
+
+                if (!$contract || !$contract->is_verified) {
+                    return response()->json([
+                        'message' =>
+                            'Nie je možné zmeniť stav praxe na Schválená, kým zmluva nie je nahratá a potvrdená garantom.'
+                    ], 409);
+                }
+            }
+
             $data['status_id'] = Status::where('type', $data['status'])->value('status_id');
         }
         unset($data['status']);
