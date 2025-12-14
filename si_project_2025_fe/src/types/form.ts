@@ -27,6 +27,7 @@ export interface InternshipForm {
   end_at?: string
   status: Status
   garant_id: number
+  is_paid: boolean
 }
 
 export interface CompanyForm {

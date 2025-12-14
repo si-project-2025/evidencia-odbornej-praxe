@@ -16,10 +16,12 @@ return new class extends Migration
             $table->string('phone')->nullable();
 
 
-            $table->unsignedBigInteger('internships_id');
-            $table->foreign('internships_id')
-                ->references('internships_id')
-                ->on('internships')
+            $table->integer('company_id')->index();
+
+            $table->foreign('company_id')
+                ->references('company_id')
+                ->on('companies')
+                ->onUpdate('no action')
                 ->onDelete('cascade');
 
             $table->timestamps();

@@ -137,7 +137,7 @@ export const useInternshipStore = defineStore('internships', {
       this.internshipDetail = null
 
       try {
-        const response = await axios.get(`${API_URL}/api/internships/get-verification-details`, {
+        const response = await axios.get(`${API_URL}/api/public/internships/get-verification-details`, {
           params: { email, token },
         })
 
@@ -158,7 +158,7 @@ export const useInternshipStore = defineStore('internships', {
     async handleInternshipAction(email: string, token: string, action: 'confirm' | 'reject') {
       try {
         this.loading = true
-        const response = await axios.post(`${API_URL}/api/internships/action`, { email, token, action })
+        const response = await axios.post(`${API_URL}/api/public/internships/action`, { email, token, action })
         if (this.internshipDetail) {
           this.internshipDetail.status = response.data.internship.status
         }

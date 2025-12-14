@@ -29,26 +29,33 @@ export const useDocumentStore = defineStore('documents', {
       }
     },
 
-    async downloadDocument(file: Document) {
-      try {
-        const blob = await this.fetchBlob(
-          `${API_URL}/api/internships/${this.internshipDetail?.internships_id}/documents/${file.document_id}/download`,
-        )
-        downloadBlob(blob, getFileNameFromPath(file.file_name))
-      } catch (error) {
-        console.error('Nepodarilo sa stiahnuť dokument:', error)
-        throw error
-      }
+    async downloadDocument(file: Document, publicAccess?: { email: string; token: string }) {
+      const base = publicAccess ? `${API_URL}/api/public/internships` : `${API_URL}/api/internships`
+
+      const params = publicAccess
+        ? `?email=${encodeURIComponent(publicAccess.email)}&token=${encodeURIComponent(publicAccess.token)}`
+        : ''
+
+      const blob = await this.fetchBlob(
+        `${base}/${this.internshipDetail?.internships_id}/documents/${file.document_id}/download${params}`,
+      )
+
+      downloadBlob(blob, getFileNameFromPath(file.file_name))
     },
 
-    async uploadDocument(file: File, type?: string) {
+    async uploadDocument(file: File, type?: string, publicAccess?: { email: string; token: string }) {
       try {
         const formData = new FormData()
         formData.append('file', file)
         if (type) formData.append('type', type)
 
-        const url = `${API_URL}/api/internships/${this.internshipDetail?.internships_id}/documents`
-        const response = await postFormData(url, formData)
+        const base = publicAccess ? `${API_URL}/api/public/internships` : `${API_URL}/api/internships`
+
+        const url = `${base}/${this.internshipDetail?.internships_id}/documents`
+
+        const config = publicAccess ? { params: publicAccess } : { headers: authHeaders() }
+
+        const response = await postFormData<Document>(url, formData, config)
 
         const document = {
           ...response.data,
@@ -63,18 +70,19 @@ export const useDocumentStore = defineStore('documents', {
       }
     },
 
-    async verifyDocument(documentId: number) {
-      try {
-        const internshipId = this.internshipDetail!.internships_id!
+    async verifyDocument(documentId: number, publicAccess?: { email: string; token: string }) {
+      const internshipId = this.internshipDetail!.internships_id!
 
-        await axios.delete(`${API_URL}/api/internships/${internshipId}/documents/${documentId}/verify`, {
-          headers: authHeaders(),
-        })
+      const base = publicAccess ? `${API_URL}/api/public/internships` : `${API_URL}/api/internships`
 
+      const config = publicAccess ? { params: publicAccess } : { headers: authHeaders() }
+
+      await axios.patch(`${base}/${internshipId}/documents/${documentId}/verify`, null, config)
+
+      if (publicAccess) {
+        window.location.reload()
+      } else {
         await useInternshipStore().fetchInternshipDetail(internshipId)
-      } catch (error) {
-        console.error('Nepodarilo sa odstrániť dokument:', error)
-        throw error
       }
     },
 

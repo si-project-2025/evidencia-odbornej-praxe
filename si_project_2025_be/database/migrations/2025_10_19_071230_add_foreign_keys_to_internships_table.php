@@ -15,6 +15,7 @@ return new class extends Migration
             $table->foreign(['company_id'], 'fk_interships_companies1')->references(['company_id'])->on('companies')->onUpdate('no action')->onDelete('no action');
             $table->foreign(['status_id'], 'fk_interships_status1')->references(['status_id'])->on('status')->onUpdate('no action')->onDelete('no action');
             $table->foreign(['users_id'], 'fk_interships_users1')->references(['users_id'])->on('users')->onUpdate('no action')->onDelete('no action');
+            $table->foreign(['contact_person_id'], 'fk_interships_contact_person1')->references(['id'])->on('contact_persons')->onUpdate('no action')->onDelete('set null');
         });
     }
 
@@ -27,6 +28,7 @@ return new class extends Migration
             $table->dropForeign('fk_interships_companies1');
             $table->dropForeign('fk_interships_status1');
             $table->dropForeign('fk_interships_users1');
+            $table->dropForeign('fk_interships_contact_person1');
         });
     }
 };

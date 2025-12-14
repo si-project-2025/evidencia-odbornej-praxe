@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Model;
  * @property int $internships_id
  * @property string $semester
  * @property int $year
+ * @property bool $is_paid
  * @property Carbon $created_at
  * @property Carbon $updated_at
  * @property Carbon|null $start_at
@@ -48,6 +49,8 @@ class Internship extends Model
         'company_id' => 'int',
         'status_id' => 'int',
         'garant_id' => 'int',
+        'contact_person_id' => 'int',
+        'is_paid' => 'boolean',
     ];
 
     protected $fillable = [
@@ -59,6 +62,8 @@ class Internship extends Model
         'company_id',
         'status_id',
         'garant_id',
+        'contact_person_id',
+        'is_paid',
     ];
 
     public function company()
@@ -89,8 +94,8 @@ class Internship extends Model
         return $this->hasMany(Document::class, 'internships_id', 'internships_id');
     }
 
-    public function contactPersons()
+    public function contactPerson()
     {
-        return $this->hasMany(ContactPerson::class, 'internships_id', 'internships_id');
+        return $this->belongsTo(ContactPerson::class, 'contact_person_id', 'id');
     }
 }
