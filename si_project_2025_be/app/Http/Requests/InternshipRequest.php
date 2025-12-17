@@ -22,6 +22,7 @@ class InternshipRequest extends FormRequest
             'year' => 'required|integer',
             'users_id' => 'required|integer|exists:users,users_id',
             'company_id' => 'required|integer|exists:companies,company_id',
+            'contact_person_id' => 'required|integer|exists:contact_persons,id',
             'status' => 'required|string|exists:status,type',
             'garant_id' => 'required|integer|exists:users,users_id',
             'is_paid' => ['required', 'boolean'],

@@ -7,10 +7,11 @@ export interface ContactPerson {
   surname: string
   email: string
   phone: string | null
+  company_id: number
 }
 
 export interface Company {
-  company_id: number
+  id: number
   name: string
   ico: string
   address: Address
@@ -56,5 +57,5 @@ export interface Internship {
   garant: Garant
   student: Student
   documents?: Document[]
-  contact_person?: ContactPerson[]
+  contact_person?: ContactPerson
 }

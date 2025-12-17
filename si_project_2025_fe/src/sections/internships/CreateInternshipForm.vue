@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { onMounted, reactive, ref } from 'vue'
+  import { computed, onMounted, reactive, ref } from 'vue'
   import Input from '@/components/form/Input.vue'
   import BaseButton from '@/components/atoms/BaseButton.vue'
   import FormSection from '@/components/form/FormSection.vue'
@@ -11,25 +11,31 @@
   import { useLookupStore } from '@/stores/lookup'
 
   import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
-  import CompanySelect from '@/components/CompanySelect.vue'
+  import ExtendedSelect from '@/components/form/ExtendedSelect.vue'
 
   import type { InternshipForm } from '@/types/form'
+  import { useContactstore } from '@/stores/contacts.ts'
+  import CreateContactModal from '@/components/modals/CreateContactModal.vue'
 
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
   const companiesStore = useCompaniesStore()
+  const contactsStore = useContactstore()
   const lookupStore = useLookupStore()
 
   const showCompanyModal = ref(false)
+  const showContactModal = ref(false)
 
   onMounted(async () => {
     await companiesStore.fetchCompanies()
+    await contactsStore.fetchContacts()
     await lookupStore.fetchGarants()
   })
 
   const form = reactive<InternshipForm>({
     users_id: userStore.user?.users_id || 0,
     company_id: 0,
+    contact_person_id: 0,
     semester: 'Z',
     year: new Date().getFullYear(),
     start_at: '',
@@ -43,9 +49,19 @@
   const successMessage = ref('')
   const loading = ref(false)
 
+  const filteredContacts = computed(() => {
+    if (!form.company_id) return contactsStore.contacts
+    return contactsStore.contacts.filter((c) => c.company_id === form.company_id)
+  })
+
   const handleCompanyCreated = (newCompanyId: number) => {
     form.company_id = newCompanyId
     showCompanyModal.value = false
+  }
+
+  const handleContactCreated = (newContactId: number) => {
+    form.contact_person_id = newContactId
+    showContactModal.value = false
   }
 
   const submit = async () => {
@@ -86,12 +102,18 @@
   <form @submit.prevent="submit" class="space-y-6" v-if="!successMessage">
     <FormSection title="Základné informácie o praxi">
       <div class="space-y-4">
-        <!-- FULLTEXT DROPDOWN PRE FIRMU -->
-        <CompanySelect
+        <ExtendedSelect
           v-model="form.company_id"
-          :companies="companiesStore.companies"
+          :options="companiesStore.companies"
           label="Firma*"
-          @add-company="showCompanyModal = true"
+          @add-option="showCompanyModal = true"
+        />
+
+        <ExtendedSelect
+          v-model="form.contact_person_id"
+          :options="filteredContacts"
+          label="Kontaktná osoba (firma)*"
+          @add-option="showContactModal = true"
         />
 
         <!-- Rok -->
@@ -181,4 +203,10 @@
 
   <!-- MODAL -->
   <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
+  <CreateContactModal
+    v-if="showContactModal"
+    @close="showContactModal = false"
+    @created="handleContactCreated"
+    :company_id="form.company_id"
+  />
 </template>

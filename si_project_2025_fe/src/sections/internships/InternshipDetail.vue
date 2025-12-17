@@ -4,8 +4,11 @@
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import DocumentsSection from '@/sections/internships/detail/DocumentsSection.vue'
   import ActionsSection from '@/sections/internships/detail/ActionsSection.vue'
+  import { computed } from 'vue'
 
   const internshipStore = useInternshipStore()
+
+  const contactPerson = computed(() => internshipStore.internshipDetail?.contact_person)
 
   const formatDate = (date: string | null) => {
     if (!date) return '—'
@@ -155,25 +158,21 @@
         </h3>
         <div class="text-gray-700 text-sm space-y-3">
           <div
-            v-if="internshipStore.internshipDetail?.contact_person?.length"
+            v-if="contactPerson"
             class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pl-7 text-gray-700 text-sm"
           >
-            <div
-              v-for="person in internshipStore.internshipDetail.contact_person"
-              :key="person.id"
-              class="space-y-1 pb-2 border-b border-gray-100 last:border-0"
-            >
+            <div class="space-y-1 pb-2 border-b border-gray-100 last:border-0">
               <p>
                 <strong>Meno:</strong>
-                {{ person.name }} {{ person.surname }}
+                {{ contactPerson.name }} {{ contactPerson.surname }}
               </p>
               <p>
                 <strong>Email:</strong>
-                {{ person.email }}
+                {{ contactPerson.email }}
               </p>
-              <p v-if="person.phone">
+              <p v-if="contactPerson.phone">
                 <strong>Telefón:</strong>
-                {{ person.phone }}
+                {{ contactPerson.phone }}
               </p>
             </div>
           </div>

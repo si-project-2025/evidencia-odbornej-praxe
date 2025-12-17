@@ -20,7 +20,7 @@ class InternshipResource extends JsonResource
             'end_at' => $this->end_at,
 
             'company' => [
-                'company_id' => $this->company->company_id,
+                'id' => $this->company->company_id,
                 'name' => $this->company->name,
                 'ico' => $this->company->ico,
                 'address' => [
@@ -51,13 +51,11 @@ class InternshipResource extends JsonResource
             ],
 
             'contact_person' => $this->contactPerson ? [
-                [
-                    'id' => $this->contactPerson->id,
-                    'name' => $this->contactPerson->name,
-                    'surname' => $this->contactPerson->surname,
-                    'email' => $this->contactPerson->email,
-                    'phone' => $this->contactPerson->phone,
-                ]
+                'id' => $this->contactPerson->id,
+                'name' => $this->contactPerson->name,
+                'surname' => $this->contactPerson->surname,
+                'email' => $this->contactPerson->email,
+                'phone' => $this->contactPerson->phone,
             ] : [],
 
             'documents' => $this->documents->map(function ($document) {
