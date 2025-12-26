@@ -40,7 +40,6 @@
     year: new Date().getFullYear(),
     start_at: '',
     end_at: '',
-    status: 'Vytvorená',
     garant_id: 0,
     is_paid: false,
   })

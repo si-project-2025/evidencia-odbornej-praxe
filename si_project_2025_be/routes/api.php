@@ -24,7 +24,7 @@ Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLink
 Route::post('/reset-password', [ResetPasswordController::class, 'reset']);
 
 Route::prefix('public/internships')->group(function () {
-    Route::post('/action', [InternshipVerificationController::class, 'handleInternshipAction']);
+    Route::post('/verify', [InternshipVerificationController::class, 'handleInternshipAction']);
     Route::get('/get-verification-details', [InternshipVerificationController::class, 'getVerificationDetails']);
     Route::post('{id}/documents', [DocumentController::class, 'store']);
     Route::get('/{id}/documents/{documentId}/download', [DocumentController::class, 'download']);
@@ -50,17 +50,9 @@ Route::prefix('external')
 // Authenticated routes
 // ----------------------------
 Route::middleware('auth:sanctum')->group(function () {
-
-
-    Route::post('/internships/{id}/approve', [InternshipController::class, 'approveByGarant']);
-    Route::post('/internships/{id}/reject', [InternshipController::class, 'rejectByGarant']);
-
-
-
     // Auth
     Route::get('/user', fn(Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
-
 
     // User-specific and helper endpoints
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
@@ -78,8 +70,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Internship verification
     Route::post('/internships/{internship}/send-verification', [InternshipVerificationController::class, 'sendVerificationEmail']);
 
-    // Document-related actions
+    // Document-related actions and status change
     Route::prefix('internships/{id}')->group(function () {
+        Route::post('/verify', [InternshipController::class, 'verify']);
         Route::get('/documents', [DocumentController::class, 'index']);
         Route::post('/documents', [DocumentController::class, 'store']);
         Route::delete('/documents/{documentId}', [DocumentController::class, 'destroy']);

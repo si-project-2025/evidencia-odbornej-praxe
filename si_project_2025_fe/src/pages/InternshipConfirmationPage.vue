@@ -22,7 +22,7 @@
     if (action === 'reject' && !confirm('Naozaj chcete zamietnuť túto prax?')) return
 
     try {
-      confirmationMessage.value = await store.handleInternshipAction(email, token, action)
+      confirmationMessage.value = await store.verifyInternshipByCompany(email, token, action)
     } catch {
       confirmationMessage.value =
         action === 'confirm' ? 'Nepodarilo sa potvrdiť prax.' : 'Nepodarilo sa zamietnuť prax.'

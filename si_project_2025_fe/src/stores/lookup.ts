@@ -3,9 +3,11 @@ import axios from 'axios'
 import type { Garant, Student } from '@/types/internship'
 import { authHeaders } from '@/stores/helpers/auth.ts'
 import { API_URL } from '@/stores/helpers/env.ts'
+import type { Status } from '@/types/common.ts'
 
 export const useLookupStore = defineStore('lookup', {
   state: () => ({
+    statuses: [] as Status[],
     garants: [] as Garant[],
     students: [] as Student[],
     loading: false,
@@ -13,6 +15,11 @@ export const useLookupStore = defineStore('lookup', {
   }),
 
   actions: {
+    async fetchStatuses() {
+      const response = await axios.get(`${API_URL}/api/statuses`)
+      this.statuses = response.data.map((s: { type: Status }) => s.type)
+    },
+
     async fetchGarants() {
       this.loading = true
       this.error = null

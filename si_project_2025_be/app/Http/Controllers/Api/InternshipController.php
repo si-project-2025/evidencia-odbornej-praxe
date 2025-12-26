@@ -163,80 +163,50 @@ class InternshipController extends Controller
         return response()->json($students);
     }
 
-    public function approveByGarant(Request $request, string $id)
+    public function verify(Request $request, string $id)
     {
+        $request->validate([
+            'decision' => ['required', 'in:approve,reject'],
+        ]);
+
         $user = $request->user();
         $internship = Internship::with(['status', 'documents'])->findOrFail($id);
 
-        // Overenie roly
         if ($user->role->name !== 'garant') {
-            return response()->json(['message' => 'Nemáte oprávnenie schváliť prax.'], 403);
+            return response()->json(['message' => 'Nemáte oprávnenie vykonať túto akciu.'], 403);
         }
 
-        // Overenie, že je to jeho prax
         if ($internship->garant_id !== $user->users_id) {
-            return response()->json(['message' => 'Nemôžete schváliť prax iného garanta.'], 403);
+            return response()->json(['message' => 'Nemôžete spracovať prax iného garanta.'], 403);
         }
 
-        // Stav musí byť Potvrdená
         if ($internship->status->type !== 'Potvrdená') {
             return response()->json(['message' => 'Prax nie je v stave Potvrdená.'], 409);
         }
 
-        // Overenie zmluvy (rovnaká logika ako v update)
-        $contract = $internship->documents()
-            ->where('type', 'Zmluva')
-            ->first();
+        if ($request->decision === 'approve') {
+            $contract = $internship->documents()
+                ->where('type', 'Zmluva')
+                ->first();
 
-        if (!$contract || !$contract->is_verified) {
-            return response()->json([
-                'message' => 'Nie je možné schváliť prax, kým zmluva nie je nahratá a potvrdená garantom.'
-            ], 409);
+            if (!$contract || !$contract->is_verified) {
+                return response()->json([
+                    'message' => 'Nie je možné schváliť prax, kým zmluva nie je nahratá a potvrdená garantom.'
+                ], 409);
+            }
+
+            $statusType = 'Schválená';
+        } else {
+            $statusType = 'Zamietnutá';
         }
 
-        // Zmena statusu
-        $internship->status_id = Status::where('type', 'Schválená')->value('status_id');
-        $internship->updated_at = now();
-        $internship->save();
+        $internship->update([
+            'status_id' => Status::where('type', $statusType)->value('status_id'),
+        ]);
 
-        // Email notifikácie
         app(InternshipStatusNotificationService::class)
             ->sendStatusChangedEmails($internship);
 
         return response()->json(new InternshipResource($internship));
     }
-
-    public function rejectByGarant(Request $request, string $id)
-    {
-        $user = $request->user();
-        $internship = Internship::with(['status'])->findOrFail($id);
-
-        // Overenie roly
-        if ($user->role->name !== 'garant') {
-            return response()->json(['message' => 'Nemáte oprávnenie zamietnuť prax.'], 403);
-        }
-
-        // Overenie, že je to jeho prax
-        if ($internship->garant_id !== $user->users_id) {
-            return response()->json(['message' => 'Nemôžete zamietnuť prax iného garanta.'], 403);
-        }
-
-        // Stav musí byť Potvrdená
-        if ($internship->status->type !== 'Potvrdená') {
-            return response()->json(['message' => 'Prax nie je v stave Potvrdená.'], 409);
-        }
-
-        // Zmena statusu
-        $internship->status_id = Status::where('type', 'Zamietnutá')->value('status_id');
-        $internship->updated_at = now();
-        $internship->save();
-
-        // Email notifikácie
-        app(InternshipStatusNotificationService::class)
-            ->sendStatusChangedEmails($internship);
-
-        return response()->json(new InternshipResource($internship));
-    }
-
-
 }

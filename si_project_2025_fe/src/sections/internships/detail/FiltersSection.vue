@@ -7,7 +7,6 @@
   import { RotateCcw } from 'lucide-vue-next'
   import { useCompaniesStore } from '@/stores/companies'
   import { useLookupStore } from '@/stores/lookup'
-  import { useStatusStore } from '@/stores/statuses'
   import type { Internship } from '@/types/internship'
 
   const props = defineProps<{
@@ -23,12 +22,11 @@
 
   const companiesStore = useCompaniesStore()
   const lookupStore = useLookupStore()
-  const statusStore = useStatusStore()
 
   onMounted(async () => {
     await companiesStore.fetchCompanies()
     await lookupStore.fetchStudents()
-    await statusStore.fetchStatuses()
+    await lookupStore.fetchStatuses()
   })
 
   const searchName = ref('')
@@ -126,7 +124,7 @@
       <!-- Stav -->
       <Select v-model="selectedStatus" class="mt-2">
         <option value="" class="text-gray-400">Všetky stavy</option>
-        <option v-for="status in statusStore.statuses" :key="status" :value="status" class="text-gray-900">
+        <option v-for="status in lookupStore.statuses" :key="status" :value="status" class="text-gray-900">
           {{ status }}
         </option>
       </Select>

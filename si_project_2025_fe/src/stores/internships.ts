@@ -153,10 +153,10 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    async handleInternshipAction(email: string, token: string, action: 'confirm' | 'reject') {
+    async verifyInternshipByCompany(email: string, token: string, action: 'confirm' | 'reject') {
       try {
         this.loading = true
-        const response = await axios.post(`${API_URL}/api/public/internships/action`, { email, token, action })
+        const response = await axios.post(`${API_URL}/api/public/internships/verify`, { email, token, action })
         if (this.internshipDetail) {
           this.internshipDetail.status = response.data.internship.status
         }
@@ -168,41 +168,21 @@ export const useInternshipStore = defineStore('internships', {
         this.loading = false
       }
     },
-    //Schvalenie garantom
-    async approveInternship(id: number) {
+
+    async verifyInternshipByGarant(id: number, isApprove: boolean) {
       try {
-        const response = await axios.post(`${API_URL}/api/internships/${id}/approve`, {}, { headers: authHeaders() })
+        const response = await axios.post(
+          `${API_URL}/api/internships/${id}/verify`,
+          { decision: isApprove ? 'approve' : 'reject' },
+          { headers: authHeaders() },
+        )
 
         this.internshipDetail = response.data
-
         return response.data
       } catch (error) {
-        console.error('Nepodarilo sa schváliť prax:', error)
-
         if (axios.isAxiosError(error)) {
-          throw new Error(error.response?.data?.message || 'Nepodarilo sa schváliť prax.')
+          throw new Error(error.response?.data?.message || 'Nepodarilo sa spracovať prax.')
         }
-
-        throw error
-      }
-    },
-
-    //Zamietnutie garantom
-    async rejectInternship(id: number) {
-      try {
-        const response = await axios.post(`${API_URL}/api/internships/${id}/reject`, {}, { headers: authHeaders() })
-
-        // refresh detail
-        this.internshipDetail = response.data
-
-        return response.data
-      } catch (error) {
-        console.error('Nepodarilo sa zamietnuť prax:', error)
-
-        if (axios.isAxiosError(error)) {
-          throw new Error(error.response?.data?.message || 'Nepodarilo sa zamietnuť prax.')
-        }
-
         throw error
       }
     },
