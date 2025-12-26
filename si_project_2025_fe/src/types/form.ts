@@ -26,7 +26,6 @@ export interface InternshipForm {
   year: number
   start_at?: string
   end_at?: string
-  status: Status
   garant_id: number
   is_paid: boolean
 }
