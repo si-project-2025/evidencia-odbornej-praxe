@@ -47,7 +47,7 @@
 <template>
   <div class="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
     <div class="bg-white p-6 rounded-xl w-full max-w-lg shadow-xl space-y-4">
-      <h2 class="text-lg font-semibold">Pridať novú firmu</h2>
+      <h2 class="text-lg font-semibold">Pridať novú kontaktnú osobu</h2>
 
       <Input v-model="form.name" label="Meno*" />
       <Input v-model="form.surname" label="Priezvisko*" />

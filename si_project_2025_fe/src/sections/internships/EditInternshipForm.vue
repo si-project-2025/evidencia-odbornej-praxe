@@ -10,7 +10,6 @@
   import { useUserStore } from '@/stores/user'
   import type { InternshipForm } from '@/types/form'
   import type { Internship } from '@/types/internship'
-  import { useStatusStore } from '@/stores/statuses'
   import { useCompaniesStore } from '@/stores/companies.ts'
   import { useLookupStore } from '@/stores/lookup.ts'
 
@@ -28,7 +27,6 @@
   const contactsStore = useContactstore()
   const lookupStore = useLookupStore()
   const userStore = useUserStore()
-  const statusStore = useStatusStore()
 
   const route = useRoute()
 
@@ -43,7 +41,6 @@
     year: new Date().getFullYear(),
     start_at: '',
     end_at: '',
-    status: 'Vytvorená',
     garant_id: 0,
     is_paid: false,
   })
@@ -51,7 +48,6 @@
   const errorMessage = ref('')
   const successMessage = ref('')
   const loading = ref(false)
-  const originalStatus = ref<string | null>(null)
 
   const isGarant = computed(() => userStore.user?.role === 'garant')
 
@@ -60,19 +56,11 @@
     return contactsStore.contacts.filter((c) => c.company_id === form.company_id)
   })
 
-  const availableStatuses = computed(() => {
-    if (userStore.user?.role === 'garant') {
-      return statusStore.allowedStatusesForGarant(form.status)
-    }
-    return statusStore.statuses
-  })
-
   onMounted(async () => {
     await companiesStore.fetchCompanies()
     await contactsStore.fetchContacts()
     await lookupStore.fetchStudents()
     await lookupStore.fetchGarants()
-    await statusStore.fetchStatuses()
 
     if (props.internship) {
       const internship = props.internship
@@ -84,7 +72,6 @@
       form.year = internship.year
       form.start_at = internship.start_at?.split('T')[0] || ''
       form.end_at = internship.end_at?.split('T')[0] || ''
-      form.status = internship.status || 'Vytvorená'
       form.garant_id = internship.garant?.users_id || 0
       form.is_paid = internship.is_paid
     }
@@ -103,8 +90,6 @@
   const submit = async () => {
     errorMessage.value = ''
     successMessage.value = ''
-
-    originalStatus.value = props.internship?.status ?? form.status
 
     if (!form.company_id || !form.year || !form.semester || !form.garant_id) {
       errorMessage.value = 'Vyplňte všetky povinné polia.'
@@ -129,10 +114,6 @@
       successMessage.value = 'Zmeny boli úspešne uložené!'
       await internshipStore.fetchInternshipDetail(id)
     } catch (error: unknown) {
-      if (originalStatus.value) {
-        form.status = originalStatus.value
-      }
-
       if (error instanceof Error) {
         errorMessage.value = error.message
       } else {
@@ -236,11 +217,6 @@
           type="date"
           :required="false"
         />
-
-        <!-- Stav -->
-        <Select v-model="form.status" id="status" label="Stav praxe" v-if="isGarant">
-          <option v-for="status in availableStatuses" :key="status" :value="status">{{ status }}</option>
-        </Select>
       </div>
     </FormSection>
 

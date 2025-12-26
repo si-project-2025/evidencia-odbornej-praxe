@@ -168,5 +168,43 @@ export const useInternshipStore = defineStore('internships', {
         this.loading = false
       }
     },
+    //Schvalenie garantom
+    async approveInternship(id: number) {
+      try {
+        const response = await axios.post(`${API_URL}/api/internships/${id}/approve`, {}, { headers: authHeaders() })
+
+        this.internshipDetail = response.data
+
+        return response.data
+      } catch (error) {
+        console.error('Nepodarilo sa schváliť prax:', error)
+
+        if (axios.isAxiosError(error)) {
+          throw new Error(error.response?.data?.message || 'Nepodarilo sa schváliť prax.')
+        }
+
+        throw error
+      }
+    },
+
+    //Zamietnutie garantom
+    async rejectInternship(id: number) {
+      try {
+        const response = await axios.post(`${API_URL}/api/internships/${id}/reject`, {}, { headers: authHeaders() })
+
+        // refresh detail
+        this.internshipDetail = response.data
+
+        return response.data
+      } catch (error) {
+        console.error('Nepodarilo sa zamietnuť prax:', error)
+
+        if (axios.isAxiosError(error)) {
+          throw new Error(error.response?.data?.message || 'Nepodarilo sa zamietnuť prax.')
+        }
+
+        throw error
+      }
+    },
   },
 })

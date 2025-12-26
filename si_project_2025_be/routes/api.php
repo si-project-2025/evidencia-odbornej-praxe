@@ -51,9 +51,16 @@ Route::prefix('external')
 // ----------------------------
 Route::middleware('auth:sanctum')->group(function () {
 
+
+    Route::post('/internships/{id}/approve', [InternshipController::class, 'approveByGarant']);
+    Route::post('/internships/{id}/reject', [InternshipController::class, 'rejectByGarant']);
+
+
+
     // Auth
     Route::get('/user', fn(Request $request) => $request->user());
     Route::post('/logout', [AuthController::class, 'logout']);
+
 
     // User-specific and helper endpoints
     Route::get('/internships/companies', [InternshipController::class, 'getCompanies']);
