@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\RegisterCompanyRequest;
 use App\Http\Requests\RegisterUserRequest;
 use App\Http\Requests\SetPasswordRequest;
 use App\Services\AuthService;
@@ -39,6 +40,22 @@ class AuthController extends Controller
             return response()->json(['message' => 'Registrácia úspešná.', 'email' => $user->email,]);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Registrácia zlyhala.', 'error' => $e->getMessage(),], 500);
+        }
+    }
+
+    public function registerCompany(RegisterCompanyRequest $request, UserService $userService): JsonResponse
+    {
+        try {
+            $user = $userService->registerCompany($request->validated());
+            return response()->json([
+                'message' => 'Registrácia firmy úspešná. Na email bol odoslaný odkaz na nastavenie hesla.',
+                'email' => $user->email,
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Registrácia firmy zlyhala.',
+                'error' => $e->getMessage(),
+            ], 500);
         }
     }
 

@@ -36,10 +36,52 @@ class UserService
                 'email' => $data['email'],
                 'password' => Hash::make(Str::random(40)),
                 'role_id' => Role::where('name', $data['role'])->firstOrFail()->role_id,
-                'address_id' => $addressId, // Priradíme ID adresy (bude null pre ne-študentov)
+                'address_id' => $addressId,
                 'alt_email' => $data['alt_email'] ?? null,
                 'study_program' => $data['study_program'] ?? null,
                 'phone_number' => $data['phone_number'] ?? null,
+                'created_at' => Carbon::now(),
+            ]);
+
+            $token = $this->createPasswordResetToken($user);
+            $this->sendSetPasswordEmail($user, $token);
+
+            return $user;
+        });
+    }
+
+    public function registerCompany(array $data): User
+    {
+        return DB::transaction(function () use ($data) {
+
+            $roleId = Role::where('name', 'firma')->firstOrFail()->role_id;
+
+
+            $addr = $data['address'];
+            $address = Address::create([
+                'street' => $addr['street'],
+                'house_number' => $addr['house_number'],
+                'city' => $addr['city'],
+                'zip_code' => $addr['zip_code'],
+                'country' => $addr['country'],
+            ]);
+
+
+            $company = \App\Models\Company::create([
+                'name' => $data['company_name'],
+                'ico' => $data['ico'],
+                'address_id' => $address->address_id,
+            ]);
+
+
+            $user = User::create([
+                'name' => $data['company_name'],
+                'surname' => 'Firma',
+                'email' => $data['email'],
+                'password' => Hash::make(Str::random(40)),
+                'role_id' => $roleId,
+                'company_id' => $company->company_id,
+                'alt_email' => $data['alt_email'] ?? null,
                 'created_at' => Carbon::now(),
             ]);
 

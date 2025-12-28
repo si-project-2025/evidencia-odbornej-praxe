@@ -63,8 +63,13 @@ class User extends Authenticatable
         'last_login',
         'role_id',
         'address_id',
+        'company_id',
     ];
 
+    public function company()
+    {
+        return $this->belongsTo(Company::class, 'company_id', 'company_id');
+    }
     public function address()
     {
         return $this->belongsTo(Address::class, 'address_id', 'address_id');
