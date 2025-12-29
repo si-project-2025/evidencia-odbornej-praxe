@@ -124,7 +124,7 @@ class InternshipController extends Controller
     public function getCompanies()
     {
         $companies = Company::with('address')
-            ->select('company_id as id', 'name', 'address_id')
+            ->select('company_id as id', 'name', 'address_id', 'ico')
             ->orderBy('name')
             ->get();
 

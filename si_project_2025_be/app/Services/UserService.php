@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Models\User;
 use App\Models\Role;
 use App\Models\Address;
+use App\Models\Company;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
@@ -36,7 +37,7 @@ class UserService
                 'email' => $data['email'],
                 'password' => Hash::make(Str::random(40)),
                 'role_id' => Role::where('name', $data['role'])->firstOrFail()->role_id,
-                'address_id' => $addressId, // Priradíme ID adresy (bude null pre ne-študentov)
+                'address_id' => $addressId,
                 'alt_email' => $data['alt_email'] ?? null,
                 'study_program' => $data['study_program'] ?? null,
                 'phone_number' => $data['phone_number'] ?? null,
@@ -47,6 +48,74 @@ class UserService
             $this->sendSetPasswordEmail($user, $token);
 
             return $user;
+        });
+    }
+
+    // Registrácia len s emailom
+    public function registerCompanyEmail(array $data): User
+    {
+        return DB::transaction(function () use ($data) {
+            $roleId = Role::where('name', 'firma')->firstOrFail()->role_id;
+
+            // Vytvoríme používateľa len s emailom a rolou firma
+            $user = User::create([
+                'name' => 'Pending', // Dočasná hodnota
+                'surname' => 'Company', // Dočasná hodnota
+                'email' => $data['email'],
+                'password' => Hash::make(Str::random(40)),
+                'role_id' => $roleId,
+                'created_at' => Carbon::now(),
+            ]);
+
+            $token = $this->createPasswordResetToken($user);
+            $this->sendSetCompanyPasswordEmail($user, $token); // Použijeme novú metódu
+
+            return $user;
+        });
+    }
+
+    // Krok 2: Dokončenie registrácie - vytvorenie alebo výber firmy
+    public function completeCompanyRegistration(User $user, array $data): User
+    {
+        return DB::transaction(function () use ($user, $data) {
+            // Ak vybral existujúcu firmu
+            if (isset($data['company_id']) && $data['company_id']) {
+                $company = Company::findOrFail($data['company_id']);
+
+                // Aktualizujeme firmu - pridáme user_id
+                $company->update(['user_id' => $user->users_id]);
+
+                // Aktualizujeme meno usera na názov firmy
+                $user->update([
+                    'name' => $company->name,
+                    'surname' => 'Firma',
+                ]);
+            } else {
+                // Vytvoríme novú firmu
+                $addr = $data['address'];
+                $address = Address::create([
+                    'street' => $addr['street'],
+                    'house_number' => $addr['house_number'],
+                    'city' => $addr['city'],
+                    'zip_code' => $addr['zip_code'],
+                    'country' => $addr['country'],
+                ]);
+
+                $company = Company::create([
+                    'name' => $data['company_name'],
+                    'ico' => $data['ico'],
+                    'address_id' => $address->address_id,
+                    'user_id' => $user->users_id,
+                ]);
+
+                // Aktualizujeme meno usera na názov firmy
+                $user->update([
+                    'name' => $company->name,
+                    'surname' => 'Firma',
+                ]);
+            }
+
+            return $user->fresh();
         });
     }
 
@@ -71,6 +140,17 @@ class UserService
         Mail::send('emails.set-initial-password', ['user' => $user, 'url' => $resetUrl], function ($message) use ($user) {
             $message->to($user->email);
             $message->subject('Aktivujte si účet a nastavte heslo');
+        });
+    }
+
+    private function sendSetCompanyPasswordEmail(User $user, string $token): void
+    {
+        $frontendUrl = config('app.frontend_url');
+        $resetUrl = "{$frontendUrl}/set-password?token={$token}&email=" . urlencode($user->email) . "&type=company";
+
+        Mail::send('emails.set-company-password', ['user' => $user, 'url' => $resetUrl], function ($message) use ($user) {
+            $message->to($user->email);
+            $message->subject('Aktivujte si firemný účet a nastavte heslo');
         });
     }
 

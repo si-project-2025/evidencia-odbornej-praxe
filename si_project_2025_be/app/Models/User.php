@@ -1,9 +1,5 @@
 <?php
 
-/**
- * Created by Reliese Model.
- */
-
 namespace App\Models;
 
 use Carbon\Carbon;
@@ -64,6 +60,11 @@ class User extends Authenticatable
         'role_id',
         'address_id',
     ];
+
+    public function company()
+    {
+        return $this->hasOne(Company::class, 'user_id', 'users_id');
+    }
 
     public function address()
     {
