@@ -12,6 +12,8 @@ import InternshipEditPage from '@/pages/InternshipEditPage.vue'
 import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
 
 import { useUserStore } from '@/stores/user.ts'
+import CompanyRegistrationPage from "@/pages/CompanyRegistrationPage.vue";
+import CompleteCompanyRegistrationPage from '@/pages/CompleteCompanyRegistrationPage.vue'
 
 const routes = [
   {
@@ -28,6 +30,17 @@ const routes = [
     path: '/registration',
     name: 'Registration',
     component: RegistrationPage,
+  },
+  {
+    path: '/register-company',
+    name: 'RegisterCompany',
+    component: CompanyRegistrationPage,
+  },
+  {
+    path: '/complete-company-registration',
+    name: 'CompleteCompanyRegistration',
+    component: CompleteCompanyRegistrationPage,
+    meta: { requiresAuth: true },
   },
   {
     path: '/forgot-password',

@@ -19,7 +19,8 @@ use App\Http\Controllers\Api\ExternalInternshipController;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::post('/register-company', [AuthController::class, 'registerCompany']);
+Route::post('/register-company-email', [AuthController::class, 'registerCompanyEmail']);
+Route::post('/complete-company-registration', [AuthController::class, 'completeCompanyRegistration'])->middleware('auth:sanctum');
 
 Route::post('/set-password', [AuthController::class, 'setPassword']);
 Route::post('/forgot-password', [ForgotPasswordController::class, 'sendResetLinkEmail']);
