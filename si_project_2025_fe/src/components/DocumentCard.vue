@@ -104,7 +104,7 @@
 
       <!-- vymazať -->
       <button
-        v-if="userStore.user?.role === 'student'"
+        v-if="userStore.user?.role === 'student' && !document.is_verified"
         @click.stop="deleteFile"
         class="p-2 rounded-lg transition text-red-600 hover:text-red-800 hover:bg-red-100"
         title="Vymazať dokument"

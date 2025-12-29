@@ -89,31 +89,36 @@
 </script>
 
 <template>
-  <div class="pt-6 border-t border-gray-200 mt-10 flex flex-col gap-2 sm:flex-row items-end sm:justify-between">
-    <div class="flex flex-row gap-2">
-      <ActionButton
-        v-if="isGarant && internshipStore.internshipDetail?.status === 'Potvrdená'"
-        variant="primary"
-        @click="handleGarantAction('approve')"
-        :disabled="updating"
-      >
+  <div
+    class="pt-6 border-t border-gray-200 mt-10 flex flex-col gap-2 sm:flex-row items-end"
+    :class="internshipStore.internshipDetail?.is_paid ? 'sm:justify-end' : 'sm:justify-between'"
+  >
+    <div
+      class="flex flex-row gap-2"
+      v-if="
+        isGarant &&
+        internshipStore.internshipDetail?.status === 'Potvrdená' &&
+        !internshipStore.internshipDetail?.is_paid
+      "
+    >
+      <ActionButton variant="primary" @click="handleGarantAction('approve')" :disabled="updating">
         <Check class="w-4 h-4" />
         Schváliť prax
       </ActionButton>
 
-      <ActionButton
-        v-if="isGarant && internshipStore.internshipDetail?.status === 'Potvrdená'"
-        color="red"
-        @click="handleGarantAction('reject')"
-        :disabled="updating"
-      >
+      <ActionButton color="red" @click="handleGarantAction('reject')" :disabled="updating">
         <X class="w-4 h-4" />
         Neschváliť prax
       </ActionButton>
     </div>
+
     <div class="flex flex-row gap-2">
       <ActionButton
-        v-if="isStudent && internshipStore.internshipDetail?.status == 'Vytvorená'"
+        v-if="
+          isStudent &&
+          internshipStore.internshipDetail?.status == 'Vytvorená' &&
+          !internshipStore.internshipDetail.is_paid
+        "
         color="yellow"
         @click="sendToCompany"
       >
