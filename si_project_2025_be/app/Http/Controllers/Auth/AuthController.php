@@ -44,7 +44,6 @@ class AuthController extends Controller
         }
     }
 
-    // Krok 1: Registrácia firmy - iba email
     public function registerCompanyEmail(RegisterCompanyEmailRequest $request): JsonResponse
     {
         try {
@@ -61,18 +60,15 @@ class AuthController extends Controller
         }
     }
 
-    // Dokončenie registrácie firmy
     public function completeCompanyRegistration(CompleteCompanyRegistrationRequest $request): JsonResponse
     {
         try {
             $user = $request->user();
 
-            // Kontrola, či je to firma
             if ($user->role->name !== 'firma') {
                 return response()->json(['message' => 'Unauthorized'], 403);
             }
 
-            // Kontrola, či už firma nie je priradená
             if ($user->company()->exists()) {
                 return response()->json(['message' => 'Firma už bola priradená k tomuto účtu.'], 400);
             }

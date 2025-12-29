@@ -64,7 +64,7 @@ const submit = async () => {
     completionSuccess.value = true
 
     setTimeout(() => {
-      router.push('/dashboard')
+      router.push('/')
     }, 2000)
 
   } catch (err: unknown) {

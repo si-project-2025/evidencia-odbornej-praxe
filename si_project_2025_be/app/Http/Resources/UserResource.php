@@ -14,7 +14,6 @@ class UserResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        // Základné údaje pre všetky roly
         $data = [
             'users_id' => $this->users_id,
             'email' => $this->email,
@@ -23,8 +22,6 @@ class UserResource extends JsonResource
             'last_login' => $this->last_login,
             'role' => $this->role->name,
         ];
-
-        // Ak je to firma
         if ($this->role->name === 'firma') {
             $data['company'] = $this->company ? [
                 'company_id' => $this->company->company_id,
