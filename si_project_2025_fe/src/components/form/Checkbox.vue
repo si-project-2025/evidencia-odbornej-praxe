@@ -3,7 +3,7 @@
 
   defineProps({
     modelValue: { type: Boolean, required: true },
-    label: { type: String, required: true },
+    label: { type: String, required: false },
   })
 
   const emits = defineEmits(['update:modelValue'])
@@ -15,7 +15,7 @@
 </script>
 
 <template>
-  <label class="flex items-center w-full cursor-pointer">
+  <label class="flex items-center cursor-pointer" :class="[label ? 'w-full' : 'w-8']">
     <input type="checkbox" class="hidden peer" :checked="modelValue" @change="toggle" />
 
     <div class="checkbox border border-dark/50 peer-checked:bg-secondary">

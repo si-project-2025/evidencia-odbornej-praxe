@@ -16,6 +16,7 @@
   import type { InternshipForm } from '@/types/form'
   import { useContactstore } from '@/stores/contacts.ts'
   import CreateContactModal from '@/components/modals/CreateContactModal.vue'
+  import Checkbox from '@/components/form/Checkbox.vue'
 
   const userStore = useUserStore()
   const internshipStore = useInternshipStore()
@@ -135,17 +136,11 @@
             ]"
             @click="form.is_paid = !form.is_paid"
           >
-            <span class="text-base text-gray-700">
+            <span class="w-full text-base text-gray-700">
               Platená prax – prax vykonávaná na základe pracovnej zmluvy, dohody alebo živnosti
             </span>
 
-            <input
-              id="is_paid"
-              type="checkbox"
-              v-model="form.is_paid"
-              class="h-4 w-4 text-green-600 pointer-events-none"
-              tabindex="-1"
-            />
+            <Checkbox v-model="form.is_paid" id="is_paid" tabindex="-1" class="w-4 pointer-events-none" />
           </div>
         </div>
 

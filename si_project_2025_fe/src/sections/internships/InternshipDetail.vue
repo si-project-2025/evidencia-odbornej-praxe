@@ -8,6 +8,7 @@
 
   const internshipStore = useInternshipStore()
 
+  const internship = internshipStore.internshipDetail
   const contactPerson = computed(() => internshipStore.internshipDetail?.contact_person)
 
   const formatDate = (date: string | null) => {
@@ -26,10 +27,11 @@
       <div class="flex justify-between items-center">
         <h2 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
           <Building class="w-7 h-7 text-green-600" />
-          {{ internshipStore.internshipDetail?.company?.name || 'Neznáma firma' }}
+          <span>{{ internship?.company?.name || 'Neznáma firma' }}</span>
+          <span v-if="internship?.is_paid" class="text-lg text-green-700 italic">(Platená prax)</span>
         </h2>
 
-        <StatusBadge :status="internshipStore.internshipDetail?.status" />
+        <StatusBadge :status="internship?.status" />
       </div>
 
       <!-- Základné info -->
@@ -37,37 +39,37 @@
         <!-- Semester -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Semester: {{ internshipStore.internshipDetail?.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
+          <span>Semester: {{ internship?.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
         </div>
 
         <!-- Začiatok praxe -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Začiatok praxe: {{ formatDate(internshipStore.internshipDetail?.start_at ?? '') }}</span>
+          <span>Začiatok praxe: {{ formatDate(internship?.start_at ?? '') }}</span>
         </div>
 
         <!-- Koniec praxe -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Koniec praxe: {{ formatDate(internshipStore.internshipDetail?.end_at ?? '') }}</span>
+          <span>Koniec praxe: {{ formatDate(internship?.end_at ?? '') }}</span>
         </div>
 
         <!-- Rok -->
         <div class="flex items-center gap-2">
           <Calendar class="w-4 h-4 text-green-600" />
-          <span>Rok: {{ internshipStore.internshipDetail?.year }}</span>
+          <span>Rok: {{ internship?.year }}</span>
         </div>
 
         <!-- Vytvorená -->
         <div class="flex items-center gap-2">
           <Info class="w-4 h-4 text-green-600" />
-          <span>Pridaná: {{ formatDate(internshipStore.internshipDetail?.created_at ?? '') }}</span>
+          <span>Pridaná: {{ formatDate(internship?.created_at ?? '') }}</span>
         </div>
 
         <!-- Naposledy upravená -->
         <div class="flex items-center gap-2">
           <Info class="w-4 h-4 text-green-600" />
-          <span>Naposledy upravená: {{ formatDate(internshipStore.internshipDetail?.updated_at ?? '') }}</span>
+          <span>Naposledy upravená: {{ formatDate(internship?.updated_at ?? '') }}</span>
         </div>
       </div>
 
@@ -82,20 +84,20 @@
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Meno:</strong>
-              {{ internshipStore.internshipDetail?.student?.name || 'Neznáme meno' }}
-              {{ internshipStore.internshipDetail?.student?.surname || '' }}
+              {{ internship?.student?.name || 'Neznáme meno' }}
+              {{ internship?.student?.surname || '' }}
             </p>
             <p>
               <strong>Študijný program:</strong>
-              {{ internshipStore.internshipDetail?.student?.study_program || '—' }}
+              {{ internship?.student?.study_program || '—' }}
             </p>
             <p>
               <strong>Email:</strong>
-              {{ internshipStore.internshipDetail?.student?.email || '—' }}
+              {{ internship?.student?.email || '—' }}
             </p>
-            <p v-if="internshipStore.internshipDetail?.student?.phone_number">
+            <p v-if="internship?.student?.phone_number">
               <strong>Telefón:</strong>
-              {{ internshipStore.internshipDetail?.student?.phone_number }}
+              {{ internship?.student?.phone_number }}
             </p>
           </div>
         </div>
@@ -109,20 +111,20 @@
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Názov:</strong>
-              {{ internshipStore.internshipDetail?.company.name }}
+              {{ internship?.company.name }}
             </p>
             <p>
               <strong>IČO:</strong>
-              {{ internshipStore.internshipDetail?.company.ico }}
+              {{ internship?.company.ico }}
             </p>
             <p>
               <strong>Adresa:&nbsp;</strong>
-              <span v-if="internshipStore.internshipDetail?.company.address">
-                {{ internshipStore.internshipDetail.company.address.street }}
-                {{ internshipStore.internshipDetail.company.address.house_number }},
-                {{ internshipStore.internshipDetail.company.address.zip_code }}
-                {{ internshipStore.internshipDetail.company.address.city }},
-                {{ internshipStore.internshipDetail.company.address.country }}
+              <span v-if="internship?.company.address">
+                {{ internship.company.address.street }}
+                {{ internship.company.address.house_number }},
+                {{ internship.company.address.zip_code }}
+                {{ internship.company.address.city }},
+                {{ internship.company.address.country }}
               </span>
               <span v-else>—</span>
             </p>
@@ -138,12 +140,12 @@
           <div class="pl-7 text-gray-700 text-sm space-y-1">
             <p>
               <strong>Meno:</strong>
-              {{ internshipStore.internshipDetail?.garant?.name || 'Neznáme meno' }}
-              {{ internshipStore.internshipDetail?.garant?.surname || '' }}
+              {{ internship?.garant?.name || 'Neznáme meno' }}
+              {{ internship?.garant?.surname || '' }}
             </p>
             <p>
               <strong>Kontakt:</strong>
-              {{ internshipStore.internshipDetail?.garant?.email || '—' }}
+              {{ internship?.garant?.email || '—' }}
             </p>
           </div>
         </div>

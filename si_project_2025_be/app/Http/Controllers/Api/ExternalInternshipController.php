@@ -59,7 +59,7 @@ class ExternalInternshipController extends Controller
         $statusDefended = Status::where('type', 'Obhájená')->value('id');
 
         // --- Overenie oprávnenosti zmeny stavu ---
-        if ($internship->status_id !== $statusApproved) {
+        if (!$internship->is_paid && $internship->status_id !== $statusApproved) {
             Log::warning('Pokus o zmenu stavu praxe, ktorá nie je v stave Schválená', [
                 'internship_id' => $internship->internships_id,
                 'current_status_id' => $internship->status_id,
@@ -71,6 +71,20 @@ class ExternalInternshipController extends Controller
                 'current_status_id' => $internship->status_id,
                 'internship_id' => $internship->internships_id,
             ], 409);
+        }
+
+        if ($internship->is_paid) {
+            $hasContract = $internship->documents()
+                ->where('type', 'Zmluva')
+                ->where('is_verified', true)
+                ->exists();
+
+            if (!$hasContract) {
+                return response()->json([
+                    'message' => 'Operácia bola zamietnutá. Pre platenú prax musí existovať dokument typu "Zmluva".',
+                    'internship_id' => $internship->internships_id,
+                ], 409);
+            }
         }
 
         // --- Aktualizácia stavu praxe ---
