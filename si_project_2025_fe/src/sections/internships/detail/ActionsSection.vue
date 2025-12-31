@@ -15,23 +15,21 @@
   const updating = ref(false)
   const updateError = ref('')
 
-  const isAuthenticated = userStore.user
+  const internship = computed(() => internshipStore.internshipDetail)
   const isStudent = computed(() => userStore.user?.role === 'student')
   const isGarant = computed(() => userStore.user?.role === 'garant')
+  const isCompany = computed(() => userStore.user?.role === 'firma')
 
   const handleGarantAction = async (action: 'approve' | 'reject') => {
     const isApprove = action === 'approve'
 
-    if (!confirm(`Naozaj chcete ${isApprove ? 'schváliť' : 'zamietnuť'} túto prax?`)) {
+    if (!confirm(`Naozaj chcete ${isApprove ? 'schváliť' : 'neschváliť'} túto prax?`)) {
       return
     }
 
     try {
       updating.value = true
-      updateError.value = ''
-
-      await internshipStore.verifyInternshipByGarant(Number(route.params.id), isApprove)
-
+      await internshipStore.verifyInternship(Number(route.params.id), isApprove)
       alert(isApprove ? 'Prax bola úspešne schválená.' : 'Prax bola zamietnutá.')
     } catch (error) {
       updateError.value =
@@ -39,6 +37,29 @@
           ? error.message
           : isApprove
             ? 'Nepodarilo sa schváliť prax.'
+            : 'Nepodarilo sa neschváliť prax.'
+    } finally {
+      updating.value = false
+    }
+  }
+
+  const handleCompanyAction = async (action: 'confirm' | 'reject') => {
+    const isConfirm = action === 'confirm'
+
+    if (!confirm(`Naozaj chcete ${isConfirm ? 'potvrdiť' : 'zamietnuť'} túto prax?`)) {
+      return
+    }
+
+    try {
+      updating.value = true
+      await internshipStore.verifyInternship(Number(route.params.id), isConfirm)
+      alert(isConfirm ? 'Prax bola úspešne potvrdená.' : 'Prax bola zamietnutá.')
+    } catch (error) {
+      updateError.value =
+        error instanceof Error
+          ? error.message
+          : isConfirm
+            ? 'Nepodarilo sa potvrdiť prax.'
             : 'Nepodarilo sa zamietnuť prax.'
     } finally {
       updating.value = false
@@ -66,7 +87,7 @@
   // odoslanie na verifikáciu firme
   const sendToCompany = async () => {
     // overiť firmou
-    if (!internshipStore.internshipDetail?.contact_person) {
+    if (!internship.value?.contact_person) {
       alert('Pre túto prax nie je zadaná žiadna kontaktná osoba.')
       return
     }
@@ -91,16 +112,13 @@
 <template>
   <div
     class="pt-6 border-t border-gray-200 mt-10 flex flex-col gap-2 sm:flex-row items-end"
-    :class="internshipStore.internshipDetail?.is_paid ? 'sm:justify-end' : 'sm:justify-between'"
+    :class="
+      internship?.is_paid || isStudent || (isGarant && internship?.status !== 'Potvrdená')
+        ? 'sm:justify-end'
+        : 'sm:justify-between'
+    "
   >
-    <div
-      class="flex flex-row gap-2"
-      v-if="
-        isGarant &&
-        internshipStore.internshipDetail?.status === 'Potvrdená' &&
-        !internshipStore.internshipDetail?.is_paid
-      "
-    >
+    <div class="flex flex-row gap-2" v-if="isGarant && internship?.status === 'Potvrdená' && !internship?.is_paid">
       <ActionButton variant="primary" @click="handleGarantAction('approve')" :disabled="updating">
         <Check class="w-4 h-4" />
         Schváliť prax
@@ -112,13 +130,20 @@
       </ActionButton>
     </div>
 
-    <div class="flex flex-row gap-2">
+    <div v-if="isCompany && internship?.status === 'Vytvorená' && !internship?.is_paid" class="flex flex-row gap-3">
+      <ActionButton variant="primary" @click="handleCompanyAction('confirm')" :disabled="updating">
+        <Check class="w-4 h-4" />
+        Potvrdiť prax
+      </ActionButton>
+      <ActionButton color="red" @click="handleCompanyAction('reject')" :disabled="updating">
+        <X class="w-4 h-4" />
+        Zamietnuť prax
+      </ActionButton>
+    </div>
+
+    <div class="flex flex-row gap-2" v-if="isStudent || isGarant">
       <ActionButton
-        v-if="
-          isStudent &&
-          internshipStore.internshipDetail?.status == 'Vytvorená' &&
-          !internshipStore.internshipDetail.is_paid
-        "
+        v-if="isStudent && internship?.status == 'Vytvorená' && !internship.is_paid"
         color="yellow"
         @click="sendToCompany"
       >
@@ -126,13 +151,13 @@
         Overiť firmou
       </ActionButton>
 
-      <ActionButton :href="`/internships/${route.params.id}/edit`" v-if="isAuthenticated" :disabled="updating">
+      <ActionButton :href="`/internships/${route.params.id}/edit`" :disabled="updating">
         <Pencil class="w-4 h-4" />
         Upraviť prax
       </ActionButton>
 
       <ActionButton
-        v-if="isAuthenticated && internshipStore.internshipDetail?.status === 'Vytvorená'"
+        v-if="internship?.status === 'Vytvorená'"
         color="red"
         @click="deleteInternship"
         :disabled="updating"

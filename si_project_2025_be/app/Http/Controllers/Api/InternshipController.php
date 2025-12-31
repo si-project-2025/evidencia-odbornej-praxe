@@ -110,7 +110,11 @@ class InternshipController extends Controller
 
         if ($user->role->name === 'garant') {
             $query->where('garant_id', $user->users_id);
-        } else {
+        } else if ($user->role->name === 'firma') {
+            $company_id = Company::where('user_id', $user->users_id)->value('company_id');
+            $query->where('company_id', $company_id);
+        }
+        else {
             $query->where('users_id', $user->users_id);
         }
 
@@ -169,22 +173,13 @@ class InternshipController extends Controller
             'decision' => ['required', 'in:approve,reject'],
         ]);
 
-        $user = $request->user();
+        $userId = $request->user()->users_id;
+        $userRole = $request->user()->role->name;
         $internship = Internship::with(['status', 'documents'])->findOrFail($id);
 
-        if ($user->role->name !== 'garant') {
-            return response()->json(['message' => 'Nemáte oprávnenie vykonať túto akciu.'], 403);
-        }
+        $this->checkPermission($internship, $userId, $userRole);
 
-        if ($internship->garant_id !== $user->users_id) {
-            return response()->json(['message' => 'Nemôžete spracovať prax iného garanta.'], 403);
-        }
-
-        if ($internship->status->type !== 'Potvrdená') {
-            return response()->json(['message' => 'Prax nie je v stave Potvrdená.'], 409);
-        }
-
-        if ($request->decision === 'approve') {
+        if ($request->decision === 'approve' && $userRole === 'garant') {
             $contract = $internship->documents()
                 ->where('type', 'Zmluva')
                 ->first();
@@ -196,17 +191,39 @@ class InternshipController extends Controller
             }
 
             $statusType = 'Schválená';
-        } else {
+        } else if ($request->decision === 'approve' && $userRole === 'firma') {
+            $statusType = 'Potvrdená';
+        } else if ($request->decision === 'reject' && $userRole === 'firma') {
             $statusType = 'Zamietnutá';
+        } else {
+            $statusType = 'Neschválená';
         }
 
-        $internship->update([
-            'status_id' => Status::where('type', $statusType)->value('status_id'),
-        ]);
+        $internship->status_id = Status::where('type', $statusType)->value('status_id');
+        $internship->save();
+        $internship->refresh();
 
         app(InternshipStatusNotificationService::class)
             ->sendStatusChangedEmails($internship);
 
         return response()->json(new InternshipResource($internship));
+    }
+
+    private function checkPermission(Internship $internship, int $userId, string $role)
+    {
+        if (!in_array($role, ['garant', 'firma'])) {
+            abort(403, 'Nemáte oprávnenie vykonať túto akciu.');
+        }
+
+        if (
+            ($role === 'garant' && $internship->garant_id !== $userId) ||
+            ($role === 'firma' && $internship->company_id !== $userId)
+        ) {
+            abort(403, 'Nemôžete spracovať prax pridelenú niekomu inému.');
+        }
+
+        if ($role === 'garant' && $internship->status->type !== 'Potvrdená') {
+            abort(409, 'Prax musí byť potvrdená firmou.');
+        }
     }
 }

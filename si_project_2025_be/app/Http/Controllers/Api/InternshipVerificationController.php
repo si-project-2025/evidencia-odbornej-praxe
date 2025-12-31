@@ -71,11 +71,6 @@ class InternshipVerificationController extends Controller
         }
     }
 
-    /**
-     * Potvrdiť alebo zamietnuť prax pomocou tokenu
-     * Ak je action = 'confirm', prax sa potvrdí
-     * Ak je action = 'reject', prax sa zamietne
-     */
     public function handleInternshipAction(Request $request)
     {
         $request->validate([

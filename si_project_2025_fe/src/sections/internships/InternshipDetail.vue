@@ -8,7 +8,7 @@
 
   const internshipStore = useInternshipStore()
 
-  const internship = internshipStore.internshipDetail
+  const internship = computed(() => internshipStore.internshipDetail)
   const contactPerson = computed(() => internshipStore.internshipDetail?.contact_person)
 
   const formatDate = (date: string | null) => {
