@@ -1,20 +1,15 @@
 <script setup lang="ts">
   import BaseButton from '@/components/atoms/BaseButton.vue'
   import Logo from '@/assets/images/logo-fpv.png'
-  import { CircleUser, CirclePlus, LogOut, Menu, X, Building2 } from 'lucide-vue-next'
+  import { CircleUser, CirclePlus, LogOut, Menu, X, Building2, UserPen } from 'lucide-vue-next'
   import { computed, ref } from 'vue'
   import { useUserStore } from '@/stores/user.ts'
-  import { watchEffect } from 'vue'
 
   const userStore = useUserStore()
 
   const menuOpen = ref(false)
   const isGarant = computed(() => userStore.user?.role === 'garant')
   const isFirma = computed(() => userStore.user?.role === 'firma')
-
-  watchEffect(() => {
-    console.log('USER IN STORE:', userStore.user)
-  })
 </script>
 
 <template>
@@ -64,7 +59,7 @@
         </RouterLink>
 
         <RouterLink v-if="isFirma" to="/contact-persons">
-          <CirclePlus class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
+          <UserPen class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
         </RouterLink>
 
         <BaseButton class="group" @click="userStore.logout()" variant="secondary">

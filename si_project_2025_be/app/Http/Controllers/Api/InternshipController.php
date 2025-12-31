@@ -151,7 +151,7 @@ class InternshipController extends Controller
         return response()->json($garants);
     }
 
-    public function getStudents()
+    public function getStudents(Request $request)
     {
         $studentRoleId = Role::where('name', 'student')->value('role_id');
 
@@ -159,10 +159,19 @@ class InternshipController extends Controller
             return response()->json([]);
         }
 
-        $students = User::where('role_id', $studentRoleId)
-            ->select('users_id', 'name', 'surname', 'email')
-            ->orderBy('surname')
-            ->get();
+        if ($request->user()->role->name === 'firma') {
+            $students = User::join('internships', 'internships.users_id', '=', 'users.users_id')
+                ->where('users.role_id', $studentRoleId)
+                ->where('internships.company_id', $request->user()->users_id)
+                ->select('users.users_id', 'users.name', 'users.surname', 'users.email')
+                ->orderBy('users.surname')
+                ->get();
+        } else {
+            $students = User::where('role_id', $studentRoleId)
+                ->select('users_id', 'name', 'surname', 'email')
+                ->orderBy('surname')
+                ->get();
+        }
 
         return response()->json($students);
     }
