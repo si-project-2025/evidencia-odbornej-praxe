@@ -110,7 +110,10 @@ class InternshipController extends Controller
 
         if ($user->role->name === 'garant') {
             $query->where('garant_id', $user->users_id);
-        } else {
+        } elseif ($user->role->name === 'firma') {
+            $companyId = Company::where('user_id', $user->users_id)->value('company_id');
+            $query->where('company_id', $companyId);
+        }else {
             $query->where('users_id', $user->users_id);
         }
 

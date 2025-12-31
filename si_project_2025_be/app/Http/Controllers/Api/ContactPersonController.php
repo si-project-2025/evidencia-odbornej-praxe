@@ -11,12 +11,21 @@ use Illuminate\Http\Request;
 
 class ContactPersonController extends Controller
 {
-    /**
-     * Získa všetky kontaktné osoby
-     */
-    public function index()
+    public function index(Request $request)
     {
-        return ContactPerson::all();
+        $user = $request->user();
+        $query = ContactPerson::query();
+
+        if ($user->role->name === 'firma') {
+            $companyId = Company::where('user_id', $user->users_id)->value('company_id');
+            $query->where('company_id', $companyId);
+        } else {
+            $companyId = $request->query('company_id');
+            if ($companyId) {
+                $query->where('company_id', $companyId);
+            }
+        }
+        return response()->json($query->get());
     }
 
     public function store(Request $request)
@@ -45,4 +54,22 @@ class ContactPersonController extends Controller
             'message' => 'Kontakt bol úspešne vytvorený',
         ], 201);
     }
+
+    public function destroy(Request $request, ContactPerson $contactPerson)
+    {
+        $user = $request->user();
+
+        if ($user->role->name === 'firma') {
+            $companyId = Company::where('user_id', $user->users_id)->value('company_id');
+
+            if (!$companyId || $contactPerson->company_id !== $companyId) {
+                return response()->json(['error' => 'Nemáte oprávnenie vymazať tento kontakt.'], 403);
+            }
+        }
+        $contactPerson->delete();
+
+        return response()->json(['message' => 'Kontakt bol vymazaný.'], 200);
+    }
+
+
 }

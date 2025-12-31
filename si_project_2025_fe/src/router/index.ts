@@ -10,9 +10,10 @@ import InternshipDetailPage from '@/pages/InternshipDetailPage.vue'
 import InternshipCreatePage from '@/pages/InternshipCreatePage.vue'
 import InternshipEditPage from '@/pages/InternshipEditPage.vue'
 import InternshipConfirmationPage from '@/pages/InternshipConfirmationPage.vue'
+import ContactPersonsPage from '@/pages/ContactPersonsPage.vue'
 
 import { useUserStore } from '@/stores/user.ts'
-import CompanyRegistrationPage from "@/pages/CompanyRegistrationPage.vue";
+import CompanyRegistrationPage from '@/pages/CompanyRegistrationPage.vue'
 import CompleteCompanyRegistrationPage from '@/pages/CompleteCompanyRegistrationPage.vue'
 
 const routes = [
@@ -85,6 +86,12 @@ const routes = [
     path: '/verify-internship',
     name: 'InternshipConfirmationPage',
     component: InternshipConfirmationPage,
+  },
+  {
+    path: '/contact-persons',
+    name: 'CompanyContactPersons',
+    component: ContactPersonsPage,
+    meta: { requiresAuth: true, role: 'firma' },
   },
 ]
 

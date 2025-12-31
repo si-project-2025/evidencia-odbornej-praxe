@@ -45,7 +45,12 @@
     created_at: (i) => i.created_at,
   }
 
-  const toggleSort = (field: SortableField) => {
+  const toggleSort = (field: SortableField | '') => {
+    if (field === '') {
+      sortField.value = null
+      sortDirection.value = null
+      return
+    }
     if (sortField.value === field) {
       if (sortDirection.value === 'desc') {
         sortDirection.value = 'asc'
@@ -95,13 +100,13 @@
   }
 
   const columns: Column[] = [
-    { field: 'company', label: 'Firma', span: 3, show: true },
-    { field: 'student', label: 'Študent', span: 3, show: props.role === 'garant' },
+    { field: 'company', label: 'Firma', span: 3, show: props.role !== 'firma' },
+    { field: 'student', label: 'Študent', span: 3, show: props.role !== 'student' },
     { field: 'semester', label: 'Semester', span: 2, show: true },
-    { field: 'year', label: 'Rok', span: 2, show: true },
+    { field: 'year', label: 'Rok', span: 1, show: true },
     { field: 'start_at', label: 'Začiatok praxe', span: 2, show: true },
     { field: 'end_at', label: 'Koniec praxe', span: 2, show: true },
-    { field: 'is_paid', label: 'Typ praxe', span: 1, show: true },
+    { field: 'is_paid', label: 'Typ praxe', span: 2, show: true },
     { field: 'status', label: 'Stav', span: 1, show: true, extraClass: 'justify-end mr-5' },
   ]
 
@@ -142,8 +147,8 @@
       @change="toggleSort(($event.target as HTMLSelectElement).value as SortableField)"
     >
       <option value="">Zoradiť podľa...</option>
-      <option value="company">Firma</option>
-      <option v-if="role === 'garant'" value="student">Študent</option>
+      <option v-if="role !== 'firma'" value="company">Firma</option>
+      <option v-if="role !== 'student'" value="student">Študent</option>
       <option value="semester">Semester</option>
       <option value="year">Rok</option>
       <option value="end_at">Koniec praxe</option>

@@ -5,7 +5,7 @@
 
   defineProps<{
     internship: Internship
-    role: 'student' | 'garant'
+    role: 'student' | 'garant' | 'firma'
   }>()
 
   const formatDate = (date: string | null) => {
@@ -28,12 +28,18 @@
         ]"
       >
         <!-- Firma -->
-        <div class="col-span-3 flex items-center gap-2 font-semibold text-gray-900 mb-2 md:mb-0 sm:mb-0">
+        <div
+          v-if="role !== 'firma'"
+          class="col-span-3 flex items-center gap-2 font-semibold text-gray-900 mb-2 md:mb-0 sm:mb-0"
+        >
           <Building class="w-5 h-5 text-emerald-600 shrink-0" />
           <span class="truncate">{{ internship.company?.name || 'Neznáma firma' }}</span>
         </div>
         <!-- Študent -->
-        <div v-if="role === 'garant'" class="col-span-3 flex items-center gap-2 font-medium text-gray-900">
+        <div
+          v-if="role === 'garant' || role === 'firma'"
+          class="col-span-3 flex items-center gap-2 font-medium text-gray-900"
+        >
           <User class="w-5 h-5 text-emerald-600 shrink-0" />
           <span class="truncate">
             {{
@@ -42,39 +48,39 @@
           </span>
         </div>
 
-        <div class="md:col-span-10 contents text-sm">
+        <div class="grid grid-cols-2 gap-x-3 gap-y-2 md:col-span-10 md:contents text-sm">
           <!-- Semester -->
-          <div class="col-span-2 flex items-center gap-1">
+          <div class="col-span-1 md:col-span-2 flex items-center gap-1">
             <CalendarDays class="w-4 h-4 text-gray-400" />
             <span>{{ internship.semester === 'Z' ? 'Zimný' : 'Letný' }}</span>
             <span class="md:hidden">semester</span>
           </div>
 
           <!-- Rok -->
-          <div class="col-span-2 flex items-center">
+          <div class="col-span-1 md:col-span-1 flex items-center">
             <span class="md:hidden text-gray-500">Rok:&nbsp;</span>
             <span>{{ internship.year }}</span>
           </div>
 
           <!-- Začiatok praxe -->
-          <div class="col-span-2 flex items-center gap-1">
+          <div class="col-span-1 md:col-span-2 flex items-center gap-1">
             <span class="md:hidden text-gray-500">Začiatok:&nbsp;</span>
             <CalendarDays class="hidden md:inline-block w-4 h-4 text-gray-400" />
             <span>{{ formatDate(internship.start_at) }}</span>
           </div>
 
           <!-- Koniec -->
-          <div class="col-span-2 flex items-center">
+          <div class="col-span-1 md:col-span-2 flex items-center">
             <span class="md:hidden text-gray-500">Koniec:&nbsp;</span>
             <span>{{ formatDate(internship.end_at) }}</span>
           </div>
 
           <!-- Typ praxe -->
-          <div class="col-span-1 flex items-center">
+          <div class="col-span-1 md:col-span-2 flex items-center">
+            <span class="md:hidden text-gray-500">Typ:&nbsp;</span>
             <span :class="internship.is_paid ? 'text-emerald-600 font-medium' : 'text-gray-500'">
               {{ internship.is_paid ? 'Platená' : 'Neplatená' }}
             </span>
-            <span class="md:hidden text-gray-500">Typ:&nbsp;</span>
           </div>
 
           <!-- Stav -->
