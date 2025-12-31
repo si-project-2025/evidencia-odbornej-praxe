@@ -44,7 +44,9 @@
           .toLowerCase()
           .includes(searchName.value.toLowerCase())
       const matchCompany =
-        !searchCompany.value || internship.company?.name.toLowerCase().includes(searchCompany.value.toLowerCase())
+        props.role === 'firma' ||
+        !searchCompany.value ||
+        internship.company?.name.toLowerCase().includes(searchCompany.value.toLowerCase())
       const matchSemester = !selectedSemester.value || internship.semester === selectedSemester.value
       const matchYear = !selectedYear.value || internship.year === Number(selectedYear.value)
       const matchIsPaid =
@@ -68,7 +70,7 @@
 </script>
 
 <template>
-  <div v-if="role === 'garant'" class="md:hidden px-4">
+  <div v-if="role === 'garant' || role === 'firma'" class="md:hidden px-4">
     <ActionButton class="w-full justify-center" @click="filtersOpen = !filtersOpen">
       {{ filtersOpen ? 'Skryť filtre' : 'Zobraziť filtre' }}
     </ActionButton>
@@ -76,7 +78,7 @@
 
   <!--Filtre-->
   <div
-    v-if="role === 'garant'"
+    v-if="role === 'garant' || role === 'firma'"
     :class="[
       'bg-gray-50 p-4 rounded-xl shadow-sm border border-gray-200',
       filtersOpen ? 'block md:block' : 'hidden md:block',
@@ -84,7 +86,7 @@
   >
     <div class="flex flex-col md:flex-row gap-4">
       <!-- Firma -->
-      <Select v-model="searchCompany" class="mt-2">
+      <Select v-if="role === 'garant'" v-model="searchCompany" class="mt-2">
         <option value="" class="text-gray-400">Všetky firmy</option>
         <option
           v-for="company in companiesStore.companies"

@@ -13,10 +13,11 @@ export const useContactstore = defineStore('contacts', {
   }),
 
   actions: {
-    async fetchContacts() {
+    async fetchContacts(companyId?: number) {
       try {
         const response = await axios.get(`${API_URL}/api/contact-persons`, {
           headers: authHeaders(),
+          params: companyId != null ? { company_id: companyId } : undefined,
         })
 
         this.contacts = response.data
@@ -31,7 +32,7 @@ export const useContactstore = defineStore('contacts', {
           headers: authHeaders(),
         })
 
-        await this.fetchContacts()
+        await this.fetchContacts(data.company_id ?? undefined)
         return response.data.id
       } catch (e) {
         if (axios.isAxiosError(e) && e.response) {
@@ -44,6 +45,20 @@ export const useContactstore = defineStore('contacts', {
           }
         }
         throw new Error('Nepodarilo sa vytvoriť kontakt.')
+      }
+    },
+
+    async deleteContact(contactPersonId: number, companyId?: number) {
+      try {
+        await axios.delete(`${API_URL}/api/contact-persons/${contactPersonId}`, {
+          headers: authHeaders(),
+        })
+        await this.fetchContacts(companyId)
+      } catch (e) {
+        if (axios.isAxiosError(e) && e.response?.data?.error) {
+          throw new Error(e.response.data.error)
+        }
+        throw new Error('Nepodarilo sa vymazať kontakt.')
       }
     },
   },

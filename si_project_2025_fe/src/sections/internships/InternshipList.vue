@@ -5,13 +5,14 @@
   import type { Internship } from '@/types/internship.ts'
   import FiltersSection from '@/sections/internships/detail/FiltersSection.vue'
   import SortSection from '@/sections/internships/detail/SortingSection.vue'
+  import type { Role } from '@/types/common'
 
   const props = defineProps<{
     internships: Internship[]
   }>()
 
   const userStore = useUserStore()
-  const role = computed(() => (userStore.user?.role === 'garant' ? 'garant' : 'student'))
+  const role = computed<Role>(() => userStore.user?.role ?? 'student')
 
   const filteredFromFilters = ref<Internship[]>([...props.internships])
   const updateFiltered = (list: Internship[]) => {

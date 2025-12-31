@@ -66,6 +66,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::get('contact-persons', [ContactPersonController::class, 'index']);
     Route::post('contact-persons', [ContactPersonController::class, 'store']);
+    Route::delete('contact-persons/{contactPerson}', [ContactPersonController::class, 'destroy']);
     Route::post('/companies', [CompanyController::class, 'store']);
 
     Route::apiResource('internships', InternshipController::class);

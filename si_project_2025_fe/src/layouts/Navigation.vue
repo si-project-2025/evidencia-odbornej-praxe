@@ -1,14 +1,20 @@
 <script setup lang="ts">
   import BaseButton from '@/components/atoms/BaseButton.vue'
   import Logo from '@/assets/images/logo-fpv.png'
-  import { CircleUser, CirclePlus, LogOut, Menu, X } from 'lucide-vue-next'
+  import { CircleUser, CirclePlus, LogOut, Menu, X, Building2 } from 'lucide-vue-next'
   import { computed, ref } from 'vue'
   import { useUserStore } from '@/stores/user.ts'
+  import { watchEffect } from 'vue'
 
   const userStore = useUserStore()
 
   const menuOpen = ref(false)
   const isGarant = computed(() => userStore.user?.role === 'garant')
+  const isFirma = computed(() => userStore.user?.role === 'firma')
+
+  watchEffect(() => {
+    console.log('USER IN STORE:', userStore.user)
+  })
 </script>
 
 <template>
@@ -38,14 +44,27 @@
         class="flex flex-col md:flex-row gap-4 w-full md:w-fit items-center"
       >
         <div class="flex flex-row items-center gap-2">
-          <CircleUser class="size-6" :class="isGarant ? 'text-amber-500' : 'text-emerald-600'" />
-          <span class="text-primary-dark">
-            {{ userStore.user.name + ' ' + userStore.user.surname }}
-          </span>
+          <template v-if="isFirma">
+            <Building2 class="size-6 text-emerald-600" />
+            <span class="text-primary-dark">
+              {{ userStore.user.company?.name }}
+            </span>
+          </template>
+
+          <template v-else>
+            <CircleUser class="size-6" :class="isGarant ? 'text-amber-500' : 'text-emerald-600'" />
+            <span class="text-primary-dark">
+              {{ userStore.user.name + ' ' + userStore.user.surname }}
+            </span>
+          </template>
         </div>
 
-        <RouterLink to="/registration">
-          <CirclePlus v-if="isGarant" class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
+        <RouterLink v-if="isGarant" to="/registration">
+          <CirclePlus class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
+        </RouterLink>
+
+        <RouterLink v-if="isFirma" to="/contact-persons">
+          <CirclePlus class="size-6 text-emerald-600 hover:scale-105 transition duration-500" />
         </RouterLink>
 
         <BaseButton class="group" @click="userStore.logout()" variant="secondary">

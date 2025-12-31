@@ -1,3 +1,3 @@
-export type Role = 'student' | 'garant'
+export type Role = 'student' | 'garant' | 'firma'
 
 export type Status = string
