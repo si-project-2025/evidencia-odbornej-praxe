@@ -153,7 +153,7 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    async verifyInternshipByCompany(email: string, token: string, action: 'confirm' | 'reject') {
+    async verifyInternshipByCompanyPublic(email: string, token: string, action: 'confirm' | 'reject') {
       try {
         this.loading = true
         const response = await axios.post(`${API_URL}/api/public/internships/verify`, { email, token, action })
@@ -169,7 +169,7 @@ export const useInternshipStore = defineStore('internships', {
       }
     },
 
-    async verifyInternshipByGarant(id: number, isApprove: boolean) {
+    async verifyInternship(id: number, isApprove: boolean) {
       try {
         const response = await axios.post(
           `${API_URL}/api/internships/${id}/verify`,
@@ -178,7 +178,6 @@ export const useInternshipStore = defineStore('internships', {
         )
 
         this.internshipDetail = response.data
-        return response.data
       } catch (error) {
         if (axios.isAxiosError(error)) {
           throw new Error(error.response?.data?.message || 'Nepodarilo sa spracovať prax.')

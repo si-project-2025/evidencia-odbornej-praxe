@@ -25,7 +25,7 @@ export interface User {
   created_at: Date
   last_login?: Date
   role: Role
+  company?: Company | null
   address?: Address
   remember_token?: string
-  company?: Company | null
 }

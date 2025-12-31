@@ -237,7 +237,10 @@ class DocumentController extends Controller
         $internship = Internship::findOrFail($id);
 
         if (auth()->check()) {
-            if (auth()->id() !== $internship->users_id && auth()->id() !== $internship->garant_id) {
+            if (auth()->id() !== $internship->users_id
+                && auth()->id() !== $internship->garant_id
+                && auth()->id() !== $internship->company_id
+            ) {
                 abort(403, 'Unauthorized');
             }
         } else {

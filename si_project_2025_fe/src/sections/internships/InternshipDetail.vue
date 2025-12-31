@@ -5,16 +5,11 @@
   import DocumentsSection from '@/sections/internships/detail/DocumentsSection.vue'
   import ActionsSection from '@/sections/internships/detail/ActionsSection.vue'
   import { computed } from 'vue'
-  import { useUserStore } from '@/stores/user.ts'
-  import type { Role } from '@/types/common.ts'
 
   const internshipStore = useInternshipStore()
 
-  const internship = internshipStore.internshipDetail
+  const internship = computed(() => internshipStore.internshipDetail)
   const contactPerson = computed(() => internshipStore.internshipDetail?.contact_person)
-
-  const userStore = useUserStore()
-  const role = computed<Role>(() => userStore.user?.role ?? 'student')
 
   const formatDate = (date: string | null) => {
     if (!date) return '—'
@@ -194,6 +189,6 @@
     </div>
 
     <!-- Buttony -->
-    <ActionsSection v-if="role !== 'firma'" />
+    <ActionsSection />
   </div>
 </template>
