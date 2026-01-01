@@ -123,9 +123,18 @@ class UserService
     {
         $token = Str::random(60);
 
-        DB::table('password_reset_tokens')->insert([
+        DB::table('pending_registrations')->insert([
             'email' => $user->email,
             'token' => Hash::make($token),
+            'user_data' => json_encode([
+                'name' => $user->name,
+                'surname' => $user->surname,
+                'role_id' => $user->role_id,
+                'address_id' => $user->address_id,
+                'alt_email' => $user->alt_email,
+                'study_program' => $user->study_program,
+                'phone_number' => $user->phone_number,
+            ]),
             'created_at' => Carbon::now(),
         ]);
 
@@ -156,7 +165,7 @@ class UserService
 
     public function setPassword(array $data): void
     {
-        $passwordReset = DB::table('password_reset_tokens')
+        $passwordReset = DB::table('pending_registrations')
             ->where('email', $data['email'])
             ->first();
 
@@ -181,6 +190,6 @@ class UserService
         $user->save();
 
         // Vymazanie tokenu
-        DB::table('password_reset_tokens')->where('email', $data['email'])->delete();
+        DB::table('pending_registrations')->where('email', $data['email'])->delete();
     }
 }

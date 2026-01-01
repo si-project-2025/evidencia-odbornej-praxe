@@ -13,7 +13,7 @@ class AuthService
 {
     public function login(array $credentials): JsonResponse
     {
-        if (DB::table('password_reset_tokens')->where('email', $credentials['email'])->exists()) {
+        if (DB::table('pending_registrations')->where('email', $credentials['email'])->exists()) {
             return response()->json([
                 'message' => 'Váš účet ešte nie je aktívny. Skontrolujte si e-mail.'
             ], 403);
@@ -28,7 +28,6 @@ class AuthService
         $user = User::with(['role', 'address'])
             ->where('email', $credentials['email'])
             ->firstOrFail();
-
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
