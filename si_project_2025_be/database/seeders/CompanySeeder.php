@@ -10,33 +10,44 @@ class CompanySeeder extends Seeder
     public function run(): void
     {
         $addressId1 = DB::table('address')->insertGetId([
-            'street' => 'Hlavná',
-            'house_number' => '10',
+            'street' => 'Palárikova',
+            'house_number' => '3',
             'city' => 'Nitra',
-            'zip_code' => '81101',
+            'zip_code' => '94901',
             'country' => 'Slovensko',
         ]);
 
         $addressId2 = DB::table('address')->insertGetId([
-            'street' => 'Prievozská',
-            'house_number' => '7',
+            'street' => 'Novozámocká',
+            'house_number' => '233',
+            'city' => 'Nitra-Dolné Krškany',
+            'zip_code' => '94905',
+            'country' => 'Slovensko',
+        ]);
+
+        $addressId3 = DB::table('address')->insertGetId([
+            'street' => 'Janka Alexyho ',
+            'house_number' => '2954/1A',
             'city' => 'Bratislava',
-            'zip_code' => '82109',
+            'zip_code' => '84101',
             'country' => 'Slovensko',
         ]);
 
         DB::table('companies')->insert([
             [
-                'company_id' => 1,
-                'name' => 'Uniqua',
-                'ico' => 12345678,
+                'name' => 'UNIQA Group Service Center',
+                'ico' => '34145311',
                 'address_id' => $addressId1,
             ],
             [
-                'company_id' => 2,
-                'name' => 'Muehlbauer',
-                'ico' => 87654321,
+                'name' => 'Muehlbauer Automation',
+                'ico' => '51952491',
                 'address_id' => $addressId2,
+            ],
+            [
+                'name' => 'AMCEF',
+                'ico' => '51026694',
+                'address_id' => $addressId3,
             ],
         ]);
     }

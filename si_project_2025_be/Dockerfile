@@ -7,7 +7,11 @@ RUN apk update && apk add --no-cache \
     zip \
     unzip \
     mysql-client \
-    && docker-php-ext-install pdo pdo_mysql zip
+    freetype-dev \
+    libjpeg-turbo-dev \
+    libpng-dev \
+    && docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo pdo_mysql zip gd
 
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 

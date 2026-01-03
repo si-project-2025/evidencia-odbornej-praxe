@@ -14,20 +14,15 @@ class StatusSeeder extends Seeder
     public function run(): void
     {
         $statuses = [
-            'Vytvorená',
-            'Potvrdená',
-            'Zamietnutá',
-            'Schválená',
-            'Obhájená',
-            'Neschválená',
-            'Neobhájená'
+            ['type' => 'Vytvorená'],
+            ['type' => 'Potvrdená'],
+            ['type' => 'Zamietnutá'],
+            ['type' => 'Schválená'],
+            ['type' => 'Neschválená'],
+            ['type' => 'Obhájená'],
+            ['type' => 'Neobhájená'],
         ];
 
-        foreach ($statuses as $index => $type) {
-            DB::table('status')->insert([
-                'status_id' => $index + 1,
-                'type' => $type,
-            ]);
-        }
+        DB::table('status')->insert($statuses);
     }
 }

@@ -12,15 +12,15 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('internships', function (Blueprint $table) {
-            $table->integer('internships_id', true);
+            $table->id('internships_id');
             $table->enum('semester', ['Z', 'L']);
             $table->integer('year');
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrentOnUpdate()->useCurrent();
             $table->timestamp('end_at')->nullable();
-            $table->integer('users_id')->index('fk_interships_users1_idx');
-            $table->integer('company_id')->index('fk_interships_companies1_idx');
-            $table->integer('status_id')->index('fk_interships_status1_idx');
+            $table->unsignedBigInteger('users_id')->index('fk_interships_users1_idx');
+            $table->unsignedBigInteger('company_id')->index('fk_interships_companies1_idx');
+            $table->unsignedBigInteger('status_id')->index('fk_interships_status1_idx');
             $table->unsignedBigInteger('contact_person_id')->nullable()->index('fk_interships_contact_person1_idx');
         });
     }

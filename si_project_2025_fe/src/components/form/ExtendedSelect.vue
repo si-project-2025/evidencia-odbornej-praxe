@@ -13,14 +13,21 @@
   const open = ref(false)
   const search = ref('')
 
-  const filtered = computed(() => {
-    return props.options.filter((c) => c.name.toLowerCase().includes(search.value.toLowerCase()))
-  })
+  const filtered = computed(() =>
+    props.options.filter((o) => optionLabel(o).toLowerCase().includes(search.value.toLowerCase())),
+  )
+
+  const selected = computed(() => props.options.find((o) => o.id === props.modelValue))
 
   const selectOption = (id: number) => {
     emit('update:modelValue', id)
     open.value = false
   }
+
+  const isContactPerson = (option: Company | ContactPerson): option is ContactPerson => 'surname' in option
+
+  const optionLabel = (option: Company | ContactPerson) =>
+    isContactPerson(option) ? `${option.name} ${option.surname}` : option.name
 </script>
 
 <template>
@@ -32,7 +39,7 @@
       @click="open = !open"
     >
       <span>
-        {{ options.find((c) => c.id === modelValue)?.name || 'Vyberte zo zoznamu' }}
+        {{ selected ? optionLabel(selected) : 'Vyberte zo zoznamu' }}
       </span>
       <span class="text-gray-500">▾</span>
     </div>
@@ -53,7 +60,7 @@
         class="px-4 py-2 cursor-pointer hover:bg-gray-100"
         @click="selectOption(option.id)"
       >
-        {{ option.name }}
+        {{ optionLabel(option) }}
       </div>
 
       <div v-if="filtered.length === 0" class="px-4 py-2 text-sm text-gray-500">Žiadne výsledky</div>

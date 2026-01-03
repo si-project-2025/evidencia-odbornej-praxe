@@ -1,80 +1,79 @@
 <script setup lang="ts">
-import { computed, onMounted, reactive, ref } from 'vue'
-import axios from 'axios'
-import { useRouter } from 'vue-router'
-import BaseButton from '@/components/atoms/BaseButton.vue'
-import FormSection from '@/components/form/FormSection.vue'
-import ExtendedSelect from '@/components/form/ExtendedSelect.vue'
-import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
-import { useCompaniesStore } from '@/stores/companies'
+  import { computed, onMounted, reactive, ref } from 'vue'
+  import axios from 'axios'
+  import { useRouter } from 'vue-router'
+  import BaseButton from '@/components/atoms/BaseButton.vue'
+  import FormSection from '@/components/form/FormSection.vue'
+  import ExtendedSelect from '@/components/form/ExtendedSelect.vue'
+  import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
+  import { useCompaniesStore } from '@/stores/companies'
 
-const companiesStore = useCompaniesStore()
-const router = useRouter()
-const API_URL = import.meta.env.VITE_API_URL
+  const companiesStore = useCompaniesStore()
+  const router = useRouter()
+  const API_URL = import.meta.env.VITE_API_URL
 
-const showCompanyModal = ref(false)
-const selectedCompanyId = ref(0)
-const showCompanyDetails = ref(false)
+  const showCompanyModal = ref(false)
+  const selectedCompanyId = ref(0)
+  const showCompanyDetails = ref(false)
 
-onMounted(async () => {
-  await companiesStore.fetchCompanies()
-})
+  onMounted(async () => {
+    await companiesStore.fetchCompanies()
+  })
 
-const selectedCompany = computed(() => {
-  if (!selectedCompanyId.value) return null
-  return companiesStore.companies.find(c => c.id === selectedCompanyId.value)
-})
+  const selectedCompany = computed(() => {
+    if (!selectedCompanyId.value) return null
+    return companiesStore.companies.find((c) => c.id === selectedCompanyId.value)
+  })
 
-const form = reactive({
-  company_id: 0,
-})
+  const form = reactive({
+    company_id: 0,
+  })
 
-const submitError = ref('')
-const loading = ref(false)
-const completionSuccess = ref(false)
+  const submitError = ref('')
+  const loading = ref(false)
+  const completionSuccess = ref(false)
 
-const handleCompanySelected = () => {
-  if (selectedCompanyId.value) {
-    form.company_id = selectedCompanyId.value
+  const handleCompanySelected = () => {
+    if (selectedCompanyId.value) {
+      form.company_id = selectedCompanyId.value
+      showCompanyDetails.value = true
+      submitError.value = ''
+    }
+  }
+
+  const handleCompanyCreated = (newCompanyId: number) => {
+    selectedCompanyId.value = newCompanyId
+    form.company_id = newCompanyId
+    showCompanyModal.value = false
     showCompanyDetails.value = true
     submitError.value = ''
   }
-}
 
-const handleCompanyCreated = (newCompanyId: number) => {
-  selectedCompanyId.value = newCompanyId
-  form.company_id = newCompanyId
-  showCompanyModal.value = false
-  showCompanyDetails.value = true
-  submitError.value = ''
-}
+  const submit = async () => {
+    submitError.value = ''
 
-const submit = async () => {
-  submitError.value = ''
+    if (!form.company_id) {
+      submitError.value = 'Vyberte firmu alebo vytvorte novú.'
+      return
+    }
 
-  if (!form.company_id) {
-    submitError.value = 'Vyberte firmu alebo vytvorte novú.'
-    return
+    try {
+      loading.value = true
+      await axios.post(`${API_URL}/api/complete-company-registration`, form)
+
+      completionSuccess.value = true
+
+      setTimeout(() => {
+        router.push('/internships')
+      }, 2000)
+    } catch (err: unknown) {
+      submitError.value = axios.isAxiosError(err)
+        ? (err.response?.data?.message ?? 'Dokončenie registrácie zlyhalo.')
+        : 'Nastala neočakávaná chyba.'
+    } finally {
+      loading.value = false
+    }
   }
-
-  try {
-    loading.value = true
-    await axios.post(`${API_URL}/api/complete-company-registration`, form)
-
-    completionSuccess.value = true
-
-    setTimeout(() => {
-      router.push('/')
-    }, 2000)
-
-  } catch (err: unknown) {
-    submitError.value = axios.isAxiosError(err)
-      ? (err.response?.data?.message ?? 'Dokončenie registrácie zlyhalo.')
-      : 'Nastala neočakávaná chyba.'
-  } finally {
-    loading.value = false
-  }
-}
 </script>
 
 <template>
@@ -90,7 +89,10 @@ const submit = async () => {
             @update:model-value="handleCompanySelected"
           />
 
-          <div v-if="showCompanyDetails && selectedCompany" class="bg-gray-50 rounded-lg p-4 space-y-2 border border-gray-100">
+          <div
+            v-if="showCompanyDetails && selectedCompany"
+            class="bg-gray-50 rounded-lg p-4 space-y-2 border border-gray-100"
+          >
             <h3 class="font-semibold text-lg">{{ selectedCompany.name }}</h3>
             <p class="text-sm text-gray-600">IČO: {{ selectedCompany.ico }}</p>
             <div v-if="selectedCompany.address" class="text-sm text-gray-600">
@@ -117,16 +119,10 @@ const submit = async () => {
   <div class="form-container" v-else>
     <div class="text-center p-6 bg-green-100 text-secondary rounded-2xl">
       <h3 class="text-lg font-semibold mb-2">Registrácia firmy úspešne dokončená!</h3>
-      <p>
-        Vaše údaje boli uložené.
-      </p>
+      <p>Vaše údaje boli uložené.</p>
       <p class="mt-2 text-sm">Za chvíľu budete presmerovaný na dashboard...</p>
     </div>
   </div>
 
-  <CreateCompanyModal
-    v-if="showCompanyModal"
-    @close="showCompanyModal = false"
-    @created="handleCompanyCreated"
-  />
+  <CreateCompanyModal v-if="showCompanyModal" @close="showCompanyModal = false" @created="handleCompanyCreated" />
 </template>

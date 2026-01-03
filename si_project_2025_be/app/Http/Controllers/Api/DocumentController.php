@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\InternshipResource;
 use App\Models\Internship;
 use App\Models\Document;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -176,18 +174,6 @@ class DocumentController extends Controller
         if ($contact) {
             $pdf->SetXY(60, 76.3);
             $pdf->Write(5, $contact->name . ' ' . $contact->surname);
-
-            //keď bude v databáze aj pozícia kontaktnej osoby tak
-            //vymazať predošlé 2 riadky a odkomentovať nasledovné
-            //prípdane upraviť podľa názvu stĺpca pozície v databáze:
-           /*
-           $pdf->SetXY(65, 76.5);
-           $pdf->Write(5,
-                $this->cleanJoin([
-                    $contact->name . ' ' . $contact->surname,
-                    $contact->position
-                ])
-            );*/
         }
 
         // Študent - meno
