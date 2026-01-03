@@ -30,6 +30,8 @@ php artisan db:seed
 php artisan serve
 ```
 
+- potrebné presunúť *resources\fonts\LiberationSans-Regular.ttf* do *vendor\setasign\tfpdf\font\unifont*
+
 ### Frontend
 ```
 cd si_project_2025_fe
