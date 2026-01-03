@@ -12,11 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('documents', function (Blueprint $table) {
-            $table->integer('document_id', true);
+            $table->id('document_id');
             $table->string('type', 45);
             $table->string('file_name', 255);
             $table->boolean('is_verified')->default(false);
-            $table->integer('internships_id')->index('fk_documents_interships1_idx');
+            $table->unsignedBigInteger('internships_id')->index('fk_documents_interships1_idx');
             $table->timestamp('created_at')->useCurrent();
         });
     }

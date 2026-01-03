@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('phone')->nullable();
 
 
-            $table->integer('company_id')->index();
+            $table->unsignedBigInteger('company_id')->index();
 
             $table->foreign('company_id')
                 ->references('company_id')
