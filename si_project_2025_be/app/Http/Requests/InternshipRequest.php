@@ -50,6 +50,10 @@ class InternshipRequest extends FormRequest
             'company_id.integer' => 'ID firmy musí byť celé číslo.',
             'company_id.exists' => 'Zvolená firma neexistuje.',
 
+            'contact_person_id.required' => 'Kontaktná osoba je povinná.',
+            'contact_person_id.integer' => 'ID kontaktnej osoby musí byť celé číslo.',
+            'contact_person_id.exists' => 'Kontaktná osoba neexistuje.',
+
             'status.required' => 'Status je povinný.',
             'status.string' => 'Status musí byť text.',
             'status.exists' => 'Zvolený status neexistuje.',

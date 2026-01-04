@@ -8,13 +8,18 @@ use Illuminate\Support\Facades\Log;
 
 class InternshipStatusNotificationService
 {
-    public function sendStatusChangedEmails(Internship $internship): bool
+    public function sendStatusChangedEmails(Internship $internship, string $userRole, string $status): bool
     {
         try {
-            $internship->load(['student', 'company', 'status', 'contactPersons', 'garant']);
+            $internship->load(['student', 'company', 'status', 'contactPerson', 'garant']);
 
             $this->sendEmailToStudent($internship);
-            $this->sendEmailToCompany($internship);
+
+            if ($userRole === 'garant') {
+                $this->sendEmailToCompany($internship);
+            } else if ($status !== 'Zamietnutá' ) {
+                $this->sendEmailToGarant($internship);
+            }
 
             return true;
 
@@ -72,30 +77,27 @@ class InternshipStatusNotificationService
                 ->subject('Zmena stavu praxe študenta');
         });
     }
-    private function sendEmailToCompany(Internship $internship): void
+    public function sendEmailToCompany(Internship $internship): void
     {
         $company = $internship->company;
-        $contactPersons = $internship->contactPersons;
+        $contactPerson = $internship->contactPerson;
 
         if (!$company) return;
+        if (!$contactPerson->email) return;
 
-        foreach ($contactPersons as $person) {
-            if (!$person->email) continue;
+        $contactUrl = $this->buildUrl($contactPerson->email, $internship);
 
-            $contactUrl = $this->buildUrl($person->email, $internship);
+        $data = [
+            'name' => $contactPerson->name . ' ' . $contactPerson->surname,
+            'student' => $internship->student->name . ' ' . $internship->student->surname,
+            'company' => $company->name,
+            'status' => $internship->status->type,
+            'url' => $contactUrl,
+        ];
 
-            $data = [
-                'name' => $person->name . ' ' . $person->surname,
-                'student' => $internship->student->name . ' ' . $internship->student->surname,
-                'company' => $company->name,
-                'status' => $internship->status->type,
-                'url' => $contactUrl,
-            ];
-
-            Mail::send('emails.internship-status-change', $data, function ($message) use ($person) {
-                $message->to($person->email)
-                    ->subject('Zmena stavu praxe študenta');
-            });
-        }
+        Mail::send('emails.internship-status-change', $data, function ($message) use ($contactPerson) {
+            $message->to($contactPerson->email)
+                ->subject('Zmena stavu praxe študenta');
+        });
     }
 }

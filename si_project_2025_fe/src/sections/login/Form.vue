@@ -15,7 +15,6 @@
   const form = reactive<LoginForm>({
     email: '',
     password: '',
-    remember: false,
   })
 
   const submitError = ref('')
@@ -56,7 +55,6 @@
   <form @submit.prevent="login" class="form-container w-full md:w-1/2 2xl:w-1/3">
     <Input v-model="form.email" id="email" label="Email" type="email" />
     <Input v-model="form.password" id="password" label="Heslo" type="password" />
-    <!--<Checkbox v-model="form.remember" id="remember" label="Zapamätať si ma" />-->
 
     <BaseButton type="submit" class="w-[80%]">Prihlásiť sa</BaseButton>
 

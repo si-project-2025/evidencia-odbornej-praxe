@@ -15,12 +15,13 @@
   const userStore = useUserStore()
   const isStudent = computed(() => userStore.user?.role === 'student')
   const isGarant = computed(() => userStore.user?.role === 'garant')
+  const isCompany = computed(() => userStore.user?.role === 'firma')
 
   const email = computed(() => route.query.email as string | undefined)
   const token = computed(() => route.query.token as string | undefined)
 
   const fileInput = ref<HTMLInputElement | null>(null)
-  const isAgreement = ref(true)
+  const isAgreement = ref(!isCompany.value)
 
   const internshipStore = useInternshipStore()
   const documentStore = useDocumentStore()
