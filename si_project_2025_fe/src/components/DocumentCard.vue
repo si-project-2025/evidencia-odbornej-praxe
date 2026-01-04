@@ -18,7 +18,7 @@
     return (
       !props.document.is_verified &&
       ((userStore.user?.role === 'garant' && props.document.type === 'Zmluva') ||
-        (!userStore.user && props.document.type === 'Výkaz'))
+        ((!userStore.user || userStore.user?.role === 'firma') && props.document.type === 'Výkaz'))
     )
   })
 

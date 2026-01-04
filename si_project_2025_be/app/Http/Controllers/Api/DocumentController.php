@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Company;
 use App\Models\Internship;
 use App\Models\Document;
 use Illuminate\Http\Request;
@@ -221,11 +222,15 @@ class DocumentController extends Controller
     private function checkPermission(Request $request, int $id)
     {
         $internship = Internship::findOrFail($id);
+        $companyUserId = Company::where('company_id', $internship->company_id)
+            ->value('user_id');
 
         if (auth()->check()) {
+
+
             if (auth()->id() !== $internship->users_id
                 && auth()->id() !== $internship->garant_id
-                && auth()->id() !== $internship->company_id
+                && auth()->id() !== $companyUserId
             ) {
                 abort(403, 'Unauthorized');
             }

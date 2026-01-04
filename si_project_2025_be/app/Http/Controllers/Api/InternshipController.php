@@ -48,8 +48,6 @@ class InternshipController extends Controller
         $internship = Internship::findOrFail($id);
         $data = $request->validated();
 
-        $oldStatus = $internship->status?->type;
-
         // Dátumy
         if (isset($data['start_at'])) {
             $data['start_at'] = $data['start_at'] ? $data['start_at'] . ' 00:00:00' : $internship->start_at;
@@ -59,36 +57,14 @@ class InternshipController extends Controller
             $data['end_at'] = $data['end_at'] ? $data['end_at'] . ' 00:00:00' : null;
         }
 
-        // Status pri update
-        if (isset($data['status'])) {
-            if ($data['status'] === 'Schválená') {
-                $contract = $internship->documents()
-                    ->where('type', 'Zmluva')
-                    ->first();
-
-                if (!$contract || !$contract->is_verified) {
-                    return response()->json([
-                        'message' =>
-                            'Nie je možné zmeniť stav praxe na Schválená, kým zmluva nie je nahratá a potvrdená garantom.'
-                    ], 409);
-                }
-            }
-
-            $data['status_id'] = Status::where('type', $data['status'])->value('status_id');
-        }
-        unset($data['status']);
-
         $data['updated_at'] = now();
 
-        $internship->update($data);
-        $internship->load('status');
-
-
-        // Ak sa zmenil stav, pošleme e-maily
-        if ($oldStatus !== $internship->status?->type) {
-            app(InternshipStatusNotificationService::class)
-                ->sendStatusChangedEmails($internship);
+        if (isset($data['company_id'])) {
+            $data['status_id'] = Status::where('type', 'Vytvorená')->value('status_id');
+            $internship->documents()->update(['is_verified' => false]);
         }
+
+        $internship->update($data);
 
         return response()->json(new InternshipResource($internship));
     }
@@ -213,7 +189,7 @@ class InternshipController extends Controller
         $internship->refresh();
 
         app(InternshipStatusNotificationService::class)
-            ->sendStatusChangedEmails($internship);
+            ->sendStatusChangedEmails($internship, $userRole, $statusType);
 
         return response()->json(new InternshipResource($internship));
     }
@@ -224,9 +200,11 @@ class InternshipController extends Controller
             abort(403, 'Nemáte oprávnenie vykonať túto akciu.');
         }
 
+        $companyId = Company::where('user_id', $userId)->value('company_id');
+
         if (
             ($role === 'garant' && $internship->garant_id !== $userId) ||
-            ($role === 'firma' && $internship->company_id !== $userId)
+            ($role === 'firma' && $internship->company_id !== $companyId)
         ) {
             abort(403, 'Nemôžete spracovať prax pridelenú niekomu inému.');
         }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Internship;
 use App\Models\Status; // Pridaný import modelu Status
+use App\Services\InternshipStatusNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Http\Request;
@@ -25,8 +26,7 @@ class ExternalInternshipController extends Controller
             'semester' => 'nullable|in:Z,L',
         ]);
 
-        // Dynamické získanie ID pre stav "Schválená"
-        $statusApprovedId = Status::where('type', 'Schválená')->value('id');
+        $statusApprovedId = Status::where('type', 'Schválená')->value('status_id');
         $query = Internship::where('status_id', $statusApprovedId);
 
         if (isset($validated['year'])) {
@@ -55,8 +55,8 @@ class ExternalInternshipController extends Controller
 
     public function defend(Internship $internship): JsonResponse
     {
-        $statusApproved = Status::where('type', 'Schválená')->value('id');
-        $statusDefended = Status::where('type', 'Obhájená')->value('id');
+        $statusApproved = Status::where('type', 'Schválená')->value('status_id');
+        $statusDefended = Status::where('type', 'Obhájená')->value('status_id');
 
         // --- Overenie oprávnenosti zmeny stavu ---
         if (!$internship->is_paid && $internship->status_id !== $statusApproved) {
@@ -81,7 +81,7 @@ class ExternalInternshipController extends Controller
 
             if (!$hasContract) {
                 return response()->json([
-                    'message' => 'Operácia bola zamietnutá. Pre platenú prax musí existovať dokument typu "Zmluva".',
+                    'message' => 'Operácia bola zamietnutá. Pre platenú prax musí existovať schválený dokument typu "Zmluva".',
                     'internship_id' => $internship->internships_id,
                 ], 409);
             }
@@ -90,6 +90,10 @@ class ExternalInternshipController extends Controller
         // --- Aktualizácia stavu praxe ---
         $internship->status_id = $statusDefended;
         $internship->save();
+
+        // --- Emailové notifikácie ---
+        app(InternshipStatusNotificationService::class)->sendEmailToStudent($internship);
+        app(InternshipStatusNotificationService::class)->sendEmailToCompany($internship);
 
         Log::info('Stav praxe úspešne zmenený na Obhájenú', [
             'internship_id' => $internship->internships_id,

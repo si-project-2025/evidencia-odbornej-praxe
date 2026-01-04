@@ -1,10 +1,9 @@
 import type { Address } from './address'
-import type { Role, Status } from '@/types/common.ts'
+import type { Role } from '@/types/common.ts'
 
 export interface LoginForm {
   email: string
   password: string
-  remember: boolean
 }
 
 export interface RegistrationForm {
