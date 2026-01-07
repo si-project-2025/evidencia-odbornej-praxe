@@ -48,9 +48,9 @@ export const useContactstore = defineStore('contacts', {
       }
     },
 
-    async deleteContact(contactPersonId: number, companyId?: number) {
+    async toggleContactVisibility(contactPersonId: number, companyId?: number) {
       try {
-        await axios.delete(`${API_URL}/api/contact-persons/${contactPersonId}`, {
+        await axios.patch(`${API_URL}/api/contact-persons/${contactPersonId}/toggleVisibility`, {
           headers: authHeaders(),
         })
         await this.fetchContacts(companyId)
@@ -58,7 +58,7 @@ export const useContactstore = defineStore('contacts', {
         if (axios.isAxiosError(e) && e.response?.data?.error) {
           throw new Error(e.response.data.error)
         }
-        throw new Error('Nepodarilo sa vymazať kontakt.')
+        throw new Error('Nepodarilo sa skryť kontakt.')
       }
     },
   },

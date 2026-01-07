@@ -7,6 +7,7 @@ export interface ContactPerson {
   surname: string
   email: string
   phone: string | null
+  hidden: boolean
   company_id: number
 }
 

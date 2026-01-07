@@ -56,6 +56,7 @@ class InternshipResource extends JsonResource
                 'surname' => $this->contactPerson->surname,
                 'email' => $this->contactPerson->email,
                 'phone' => $this->contactPerson->phone,
+                'hidden' => $this->contactPerson->hidden,
             ] : [],
 
             'documents' => $this->documents->map(function ($document) {

@@ -3,7 +3,7 @@
   import { useUserStore } from '@/stores/user'
   import { useContactstore } from '@/stores/contacts'
   import type { ContactPerson } from '@/types/internship'
-  import { Trash2, Mail, Phone } from 'lucide-vue-next'
+  import { Eye, EyeOff, Mail, Phone } from 'lucide-vue-next'
 
   const userStore = useUserStore()
   const contactsStore = useContactstore()
@@ -26,17 +26,17 @@
     }
   }
 
-  const deleteContact = async (id: number, name: string) => {
+  const toggleContactVisibility = async (id: number, name: string) => {
     errorMessage.value = ''
-    const ok = window.confirm(`Naozaj chcete vymazať kontaktnú osobu: ${name}?`)
+    const ok = window.confirm(`Naozaj chcete zmeniť viditeľnosť kontaktnej osoby: ${name}?`)
     if (!ok) return
 
     loading.value = true
     try {
-      await contactsStore.deleteContact(id, companyId.value ?? undefined)
+      await contactsStore.toggleContactVisibility(id, companyId.value ?? undefined)
       await loadContacts()
     } catch {
-      errorMessage.value = 'Nepodarilo sa vymazať kontaktnú osobu.'
+      errorMessage.value = 'Nepodarilo sa zmeniť viditeľnosť.'
     } finally {
       loading.value = false
     }
@@ -75,12 +75,13 @@
           </div>
 
           <button
-            class="self-end md:self-auto p-2 rounded-lg text-red-600 hover:bg-red-50 transition disabled:opacity-50"
+            class="self-end md:self-auto p-2 rounded-lg hover:bg-gray-50 transition disabled:opacity-50 cursor-pointer"
             :disabled="loading"
-            @click="deleteContact(p.id, `${p.name} ${p.surname}`)"
-            title="Vymazať kontaktnú osobu"
+            @click="toggleContactVisibility(p.id, `${p.name} ${p.surname}`)"
+            :title="p.hidden ? 'Zobraziť' : 'Skryť'"
           >
-            <Trash2 class="w-5 h-5" />
+            <EyeOff v-if="p.hidden" class="w-5 h-5 text-red-500" />
+            <Eye v-else class="w-5 h-5 text-green-500" />
           </button>
         </div>
       </div>
