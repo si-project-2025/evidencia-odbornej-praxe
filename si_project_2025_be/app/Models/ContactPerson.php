@@ -16,6 +16,7 @@ class ContactPerson extends Model
         'surname',
         'email',
         'phone',
+        'hidden',
         'company_id',
     ];
 

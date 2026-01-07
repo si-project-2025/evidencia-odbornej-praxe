@@ -55,7 +55,7 @@ class ContactPersonController extends Controller
         ], 201);
     }
 
-    public function destroy(Request $request, ContactPerson $contactPerson)
+    public function toggleVisibility(Request $request, ContactPerson $contactPerson)
     {
         $user = $request->user();
 
@@ -66,10 +66,9 @@ class ContactPersonController extends Controller
                 return response()->json(['error' => 'Nemáte oprávnenie vymazať tento kontakt.'], 403);
             }
         }
-        $contactPerson->delete();
 
-        return response()->json(['message' => 'Kontakt bol vymazaný.'], 200);
+        $contactPerson->update(['hidden' => !$contactPerson->hidden]);
+
+        return response()->json(['message' => 'Viditeľnosť kontaktu bola zmenená.'], 200);
     }
-
-
 }

@@ -53,7 +53,7 @@
 
   const filteredContacts = computed(() => {
     if (!form.company_id) return contactsStore.contacts
-    return contactsStore.contacts.filter((c) => c.company_id === form.company_id)
+    return contactsStore.contacts.filter((c) => c.company_id === form.company_id && !c.hidden)
   })
 
   onMounted(async () => {
