@@ -1,34 +1,28 @@
 <script setup lang="ts">
-  import { ref, computed, watch } from 'vue'
+  import { ref, computed, watch, onMounted } from 'vue'
   import Select from '@/components/form/Select.vue'
   import { ArrowUp, ArrowDown } from 'lucide-vue-next'
   import type { Internship } from '@/types/internship'
-  import { onMounted } from 'vue'
+  import {
+    getColumns,
+    getGridTemplate,
+    getAlignClass,
+    type Role,
+    type SortableField,
+  } from '@/sections/internships/internshipColumns'
 
   const props = defineProps<{
     internships: Internship[]
-    role: string
+    role: Role
   }>()
 
   onMounted(() => {
     sortField.value = 'created_at'
     sortDirection.value = 'desc'
   })
-
   const emit = defineEmits<{
     (e: 'update', sorted: Internship[]): void
   }>()
-
-  type SortableField =
-    | 'company'
-    | 'student'
-    | 'semester'
-    | 'year'
-    | 'start_at'
-    | 'end_at'
-    | 'is_paid'
-    | 'status'
-    | 'created_at'
 
   const sortField = ref<SortableField | null>(null)
   const sortDirection = ref<'asc' | 'desc' | null>(null)
@@ -52,15 +46,13 @@
       return
     }
     if (sortField.value === field) {
-      if (sortDirection.value === 'desc') {
-        sortDirection.value = 'asc'
-      } else if (sortDirection.value === 'asc') {
+      if (sortDirection.value === 'desc') sortDirection.value = 'asc'
+      else if (sortDirection.value === 'asc') {
         sortField.value = null
         sortDirection.value = null
       }
       return
     }
-
     sortField.value = field
     sortDirection.value = 'desc'
   }
@@ -81,9 +73,14 @@
 
       if (fa == null) return 1
       if (fb == null) return -1
-      if (typeof fa === 'string')
+
+      if (typeof fa === 'string') {
         return sortDirection.value === 'asc' ? fa.localeCompare(fb as string) : (fb as string).localeCompare(fa)
-      if (typeof fa === 'number') return sortDirection.value === 'asc' ? fa - (fb as number) : (fb as number) - fa
+      }
+
+      if (typeof fa === 'number') {
+        return sortDirection.value === 'asc' ? fa - (fb as number) : (fb as number) - fa
+      }
 
       return 0
     })
@@ -91,55 +88,32 @@
 
   watch(sortedList, (val) => emit('update', val), { immediate: true })
 
-  type Column = {
-    field: SortableField
-    label: string
-    span: number
-    show: boolean
-    extraClass?: string
-  }
-
-  const columns: Column[] = [
-    { field: 'company', label: 'Firma', span: 3, show: props.role !== 'firma' },
-    { field: 'student', label: 'Študent', span: 3, show: props.role !== 'student' },
-    { field: 'semester', label: 'Semester', span: 2, show: true },
-    { field: 'year', label: 'Rok', span: 1, show: true },
-    { field: 'start_at', label: 'Začiatok praxe', span: 2, show: true },
-    { field: 'end_at', label: 'Koniec praxe', span: 2, show: true },
-    { field: 'is_paid', label: 'Typ praxe', span: 2, show: true },
-    { field: 'status', label: 'Stav', span: 1, show: true, extraClass: 'justify-end mr-5' },
-  ]
-
-  const visibleColumns = computed(() => columns.filter((c) => c.show))
+  const columns = computed(() => getColumns(props.role))
 </script>
 
 <template>
+  <!-- DESKTOP HEADER: -->
   <div
-    :class="[
-      'hidden md:grid gap-2 px-8 py-3 text-xs font-semibold uppercase text-gray-500 border-b border-gray-200',
-      role === 'garant' ? 'grid-cols-16' : 'grid-cols-13',
-    ]"
+    class="hidden md:grid gap-2 px-8 py-3 text-xs font-semibold uppercase text-gray-500 border-b border-gray-200 items-center"
+    :style="{ gridTemplateColumns: getGridTemplate(role) }"
   >
     <div
-      v-for="col in visibleColumns"
+      v-for="col in columns"
       :key="col.field"
-      class="cursor-pointer flex items-center"
-      :class="[
-        `col-span-${col.span}`,
-        col.extraClass || '',
-        sortField === col.field ? 'text-emerald-600 font-bold' : 'text-gray-500',
-      ]"
+      class="cursor-pointer flex items-center select-none"
+      :class="[getAlignClass(col), sortField === col.field ? 'text-emerald-600 font-bold' : 'text-gray-500']"
       @click="toggleSort(col.field)"
     >
       {{ col.label }}
 
-      <span v-if="sortField === col.field">
+      <span v-if="sortField === col.field" class="ml-1">
         <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-        <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
+        <ArrowDown v-else class="w-4 h-4 inline-block" />
       </span>
     </div>
   </div>
 
+  <!-- MOBILE SORT: -->
   <div class="md:hidden px-4 py-3 border-b border-gray-200 flex items-center justify-between gap-1">
     <Select
       class="flex-1"
@@ -147,18 +121,14 @@
       @change="toggleSort(($event.target as HTMLSelectElement).value as SortableField)"
     >
       <option value="">Zoradiť podľa...</option>
-      <option v-if="role !== 'firma'" value="company">Firma</option>
-      <option v-if="role !== 'student'" value="student">Študent</option>
-      <option value="semester">Semester</option>
-      <option value="year">Rok</option>
-      <option value="end_at">Koniec praxe</option>
-      <option value="is_paid">Typ praxe</option>
-      <option value="status">Stav</option>
+      <option v-for="col in columns" :key="col.field" :value="col.field">
+        {{ col.label }}
+      </option>
     </Select>
 
     <span v-if="sortField" class="cursor-pointer text-base select-none" @click="toggleDirection">
       <ArrowUp v-if="sortDirection === 'asc'" class="w-4 h-4 inline-block" />
-      <ArrowDown v-if="sortDirection === 'desc'" class="w-4 h-4 inline-block" />
+      <ArrowDown v-else class="w-4 h-4 inline-block" />
     </span>
   </div>
 </template>
