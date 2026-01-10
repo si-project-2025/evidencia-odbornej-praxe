@@ -9,7 +9,7 @@
     getAlignClass,
     type Role,
     type SortableField,
-  } from '@/sections/internships/internshipColumns'
+  } from '@/utils/internshipColumns.ts'
 
   const props = defineProps<{
     internships: Internship[]

@@ -2,13 +2,7 @@
   import StatusBadge from '@/components/atoms/StatusBadge.vue'
   import { Building, CalendarDays, User } from 'lucide-vue-next'
   import type { Internship } from '@/types/internship.ts'
-  import {
-    getColumns,
-    getGridTemplate,
-    getAlignClass,
-    type Role,
-    type Column,
-  } from '@/sections/internships/internshipColumns'
+  import { getColumns, getGridTemplate, getAlignClass, type Role, type Column } from '@/utils/internshipColumns.ts'
 
   const props = defineProps<{
     internship: Internship
