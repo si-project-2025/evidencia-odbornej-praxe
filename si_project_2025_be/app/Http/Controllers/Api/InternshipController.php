@@ -101,14 +101,17 @@ class InternshipController extends Controller
         return response()->json(InternshipResource::collection($internships));
     }
 
-    public function getCompanies()
+    public function getCompanies(Request $request)
     {
-        $companies = Company::with('address')
+        $query = Company::with('address')
             ->select('company_id as id', 'name', 'address_id', 'ico')
-            ->orderBy('name')
-            ->get();
+            ->orderBy('name');
 
-        return response()->json($companies);
+        if ($request->boolean('registration')) {
+            $query->whereNull('user_id');
+        }
+
+        return response()->json($query->get());
     }
 
     public function getGarants()

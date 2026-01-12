@@ -12,10 +12,11 @@ export const useCompaniesStore = defineStore('companies', {
   }),
 
   actions: {
-    async fetchCompanies() {
+    async fetchCompanies(registration = false) {
       try {
         const response = await axios.get(`${API_URL}/api/internships/companies`, {
           headers: authHeaders(),
+          params: { registration },
         })
 
         this.companies = response.data
