@@ -17,7 +17,7 @@
   const showCompanyDetails = ref(false)
 
   onMounted(async () => {
-    await companiesStore.fetchCompanies()
+    await companiesStore.fetchCompanies(true)
   })
 
   const selectedCompany = computed(() => {
