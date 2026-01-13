@@ -7,6 +7,7 @@
   import ExtendedSelect from '@/components/form/ExtendedSelect.vue'
   import CreateCompanyModal from '@/components/modals/CreateCompanyModal.vue'
   import { useCompaniesStore } from '@/stores/companies'
+  import { useUserStore } from '@/stores/user.ts'
 
   const companiesStore = useCompaniesStore()
   const router = useRouter()
@@ -59,8 +60,9 @@
 
     try {
       loading.value = true
-      await axios.post(`${API_URL}/api/complete-company-registration`, form)
+      const response = await axios.post(`${API_URL}/api/complete-company-registration`, form)
 
+      useUserStore().updateUser(response.data.user)
       completionSuccess.value = true
 
       setTimeout(() => {
