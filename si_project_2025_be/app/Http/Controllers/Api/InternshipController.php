@@ -107,7 +107,7 @@ class InternshipController extends Controller
             ->select('company_id as id', 'name', 'address_id', 'ico')
             ->orderBy('name');
 
-        if ($request->boolean('registration')) {
+        if ($request->boolean('onlyAvailable')) {
             $query->whereNull('user_id');
         }
 

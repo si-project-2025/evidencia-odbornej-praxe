@@ -30,7 +30,6 @@
       const user = userStore.user
 
       if (user?.role === 'firma' && !user?.company) {
-        console.log('Firma bez profilu -> presmerujem na registráciu firmy')
         await router.push('/complete-company-registration')
         return
       }

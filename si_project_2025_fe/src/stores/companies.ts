@@ -7,16 +7,17 @@ import type { CompanyForm } from '@/types/form.ts'
 export const useCompaniesStore = defineStore('companies', {
   state: () => ({
     companies: [] as Company[],
+    onlyAvailable: false,
     loading: false,
     error: null as string | null,
   }),
 
   actions: {
-    async fetchCompanies(registration = false) {
+    async fetchCompanies() {
       try {
         const response = await axios.get(`${API_URL}/api/internships/companies`, {
           headers: authHeaders(),
-          params: { registration },
+          params: { onlyAvailable: this.onlyAvailable },
         })
 
         this.companies = response.data
