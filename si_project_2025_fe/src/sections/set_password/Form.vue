@@ -44,7 +44,7 @@
       }, 3000)
     } catch (err: unknown) {
       submitError.value = axios.isAxiosError(err)
-        ? (err.response?.data.message ?? 'Pri nastavovaní hesla nastala chyba.')
+        ? (err.response?.data.error ?? err.response?.data.error)
         : 'Pri nastavovaní hesla nastala chyba.'
     }
   }
@@ -67,21 +67,19 @@
 
 <template>
   <form @submit.prevent="setPassword" class="form-container w-full md:w-1/2 2xl:w-1/3" v-if="!successMessage">
-    <!-- Informácia pre firmu -->
     <div v-if="isCompany" class="bg-blue-50 border border-blue-200 rounded-lg p-3 text-blue-700 text-sm mb-4">
       <p class="font-semibold mb-1">Registrácia firmy</p>
       <p>Po nastavení hesla sa prihláste a dokončite registráciu výberom alebo vytvorením vašej firmy.</p>
     </div>
 
-    <!-- Email je disabled, aby ho nemenili -->
     <Input v-model="email" id="email" label="Email" type="email" :disabled="true" />
     <Input v-model="password" id="password" label="Heslo" type="password" placeholder="Minimálne 8 znakov" />
     <Input v-model="password_confirmation" id="password_confirmation" label="Potvrďte heslo" type="password" />
 
     <BaseButton type="submit" class="w-[80%] mt-4">Nastaviť heslo a aktivovať účet</BaseButton>
+    <p v-if="submitError" class="text-red-600 mt-2 whitespace-pre-line">{{ submitError }}</p>
   </form>
 
-  <!-- Úspešná správa -->
   <div class="form-container !gap-2 text-center" v-if="successMessage">
     <div class="flex flex-col gap-1 text-green-600 mb-4">
       <span class="font-semibold text-lg">{{ successMessage }}</span>
@@ -94,7 +92,6 @@
       </span>
     </div>
 
-    <p v-if="submitError" class="text-red-600 mt-2 whitespace-pre-line">{{ submitError }}</p>
     <RouterLink to="/login" class="font-light hover:underline">Späť na prihlásenie</RouterLink>
   </div>
 </template>
