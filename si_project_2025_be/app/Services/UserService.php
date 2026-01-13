@@ -63,6 +63,15 @@ class UserService
     public function registerCompanyEmail(array $data): User
     {
         return DB::transaction(function () use ($data) {
+
+            User::where('email', $data['email'])
+                ->whereNull('email_verified_at')
+                ->delete();
+
+            DB::table('pending_registrations')
+                ->where('email', $data['email'])
+                ->delete();
+
             $roleId = Role::where('name', 'firma')->firstOrFail()->role_id;
 
 
