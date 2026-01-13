@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, computed } from 'vue'
+  import { ref, computed, onMounted, onUnmounted } from 'vue'
   import type { Company, ContactPerson } from '@/types/internship.ts'
 
   const props = defineProps<{
@@ -28,16 +28,37 @@
 
   const optionLabel = (option: Company | ContactPerson) =>
     isContactPerson(option) ? `${option.name} ${option.surname}` : option.name
+
+  const CLOSE_EVENT = 'close-all-extended-selects'
+
+  const closeSelf = () => {
+    open.value = false
+  }
+
+  onMounted(() => {
+    window.addEventListener(CLOSE_EVENT, closeSelf)
+  })
+
+  onUnmounted(() => {
+    window.removeEventListener(CLOSE_EVENT, closeSelf)
+  })
+
+  const toggle = () => {
+    if (open.value) {
+      open.value = false
+      return
+    }
+
+    window.dispatchEvent(new Event(CLOSE_EVENT))
+    open.value = true
+  }
 </script>
 
 <template>
   <div class="relative">
     <label v-if="label" class="block text-sm font-medium mb-1">{{ label }}</label>
 
-    <div
-      class="border rounded-lg px-3 py-2 bg-white flex justify-between items-center cursor-pointer"
-      @click="open = !open"
-    >
+    <div class="border rounded-lg px-3 py-2 bg-white flex justify-between items-center cursor-pointer" @click="toggle">
       <span>
         {{ selected ? optionLabel(selected) : 'Vyberte zo zoznamu' }}
       </span>
