@@ -13,14 +13,16 @@
       return
     }
 
-    const headers = ['Firma', 'Študent', 'Semester', 'Rok', 'Hodiny spolu', 'Koniec praxe', 'Stav']
+    const headers = ['Firma', 'Študent', 'Semester', 'Rok', 'Začiatok praxe', 'Koniec praxe', 'Typ praxe', 'Stav']
 
     const rows = props.internships.map((row) => [
       row.company?.name || '',
       `${row.student?.name || ''} ${row.student?.surname || ''}`.trim(),
       row.semester || '',
       row.year || '',
+      row.start_at ? new Date(row.start_at).toLocaleDateString() : '',
       row.end_at ? new Date(row.end_at).toLocaleDateString() : '',
+      row.is_paid ? 'Platená' : 'Neplatená',
       row.status || '',
     ])
 
@@ -28,7 +30,9 @@
       .map((row) => row.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n')
 
-    const blob = new Blob(['\uFEFF' + csvContent], { type: 'text/csv;charset=utf-8;' })
+    const blob = new Blob(['\uFEFF' + csvContent], {
+      type: 'text/csv;charset=utf-8;',
+    })
     const url = URL.createObjectURL(blob)
     const link = document.createElement('a')
     link.href = url
