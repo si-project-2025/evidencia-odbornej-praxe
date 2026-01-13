@@ -23,11 +23,10 @@ class AppServiceProvider extends ServiceProvider
     {
         Schema::defaultStringLength(191);
 
-        // Definícia OAuth scopes
         Passport::tokensCan([
-            'internship:defend' => 'Zmena stavu praxe na obhájenú',
+            'internship:write' => 'Zmena stavu praxe na obhájenú alebo neobhájenú',
+            'internship:read' => 'Získanie id vytvorených praxí',
         ]);
-        // Expirácie
         Passport::tokensExpireIn(now()->addDays(15));
     }
 }

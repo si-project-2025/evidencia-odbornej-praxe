@@ -37,17 +37,16 @@ Route::prefix('public/internships')->group(function () {
 // ----------------------------
 // External system routes
 // ----------------------------
-Route::prefix('external')
-    ->middleware(['client:internship:defend'])
-    ->group(function () {
-        Route::get('/internships',
-            [ExternalInternshipController::class, 'index']
-        )->name('api.external.internships.index');
+Route::prefix('external')->group(function () {
+    Route::get('/internships', [ExternalInternshipController::class, 'index'])
+        ->middleware(['client:internship:read']);
 
-        Route::patch('/internships/{internship}/defend',
-            [ExternalInternshipController::class, 'defend']
-        )->name('api.external.internships.defend');
+
+    Route::middleware(['client:internship:write'])->group(function () {
+        Route::patch('/internships/{internship}/defend', [ExternalInternshipController::class, 'defend']);
+        Route::patch('/internships/{internship}/not-defend', [ExternalInternshipController::class, 'notDefend']);
     });
+});
 
 // ----------------------------
 // Authenticated routes
