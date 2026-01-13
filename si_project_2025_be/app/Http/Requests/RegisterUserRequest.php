@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class RegisterUserRequest extends FormRequest
 {
@@ -31,13 +32,22 @@ class RegisterUserRequest extends FormRequest
                 'string',
                 'email',
                 'max:191',
-                'unique:users,email',
+                Rule::unique('users')->where(function ($query) {
+                    return $query->whereNotNull('email_verified_at');
+                }),
                 'regex:/^[a-zA-Z0-9._%+-]+@(student\.)?ukf\.sk$/i'
             ],
 
             'role' => 'required|string|exists:roles,name',
-
-            'alt_email' => 'nullable|string|email|max:191|unique:users,alt_email',
+            'alt_email' => [
+                'nullable',
+                'string',
+                'email',
+                'max:191',
+                Rule::unique('users', 'alt_email')->where(function ($query) {
+                    return $query->whereNotNull('email_verified_at');
+                }),
+            ],
             'study_program' => 'nullable|string|max:100',
             'phone_number' => 'nullable|string|max:20',
 
@@ -64,7 +74,7 @@ class RegisterUserRequest extends FormRequest
             'email.string' => 'Email musí byť text.',
             'email.email' => 'Email musí byť platný.',
             'email.max' => 'Email môže mať maximálne :max znakov.',
-            'email.unique' => 'Tento email už je registrovaný.',
+            'email.unique' => 'Tento email už je registrovaný a aktívny.',
             'email.regex' => 'Registrácia je povolená len pre e-maily z domény ukf.sk alebo student.ukf.sk.',
 
             'role.required' => 'Rola je povinná.',

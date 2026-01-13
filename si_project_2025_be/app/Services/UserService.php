@@ -17,6 +17,15 @@ class UserService
     public function register(array $data): User
     {
         return DB::transaction(function () use ($data) {
+
+            User::where('email', $data['email'])
+                ->whereNull('email_verified_at')
+                ->delete();
+
+            DB::table('pending_registrations')
+                ->where('email', $data['email'])
+                ->delete();
+
             $addressId = null;
 
             if ($data['role'] === 'student' && isset($data['address'])) {
@@ -51,16 +60,15 @@ class UserService
         });
     }
 
-    // Registrácia len s emailom
     public function registerCompanyEmail(array $data): User
     {
         return DB::transaction(function () use ($data) {
             $roleId = Role::where('name', 'firma')->firstOrFail()->role_id;
 
-            // Vytvoríme používateľa len s emailom a rolou firma
+
             $user = User::create([
-                'name' => 'Pending', // Dočasná hodnota
-                'surname' => 'Company', // Dočasná hodnota
+                'name' => 'Pending',
+                'surname' => 'Company',
                 'email' => $data['email'],
                 'password' => Hash::make(Str::random(40)),
                 'role_id' => $roleId,
@@ -68,30 +76,27 @@ class UserService
             ]);
 
             $token = $this->createPasswordResetToken($user);
-            $this->sendSetCompanyPasswordEmail($user, $token); // Použijeme novú metódu
+            $this->sendSetCompanyPasswordEmail($user, $token);
 
             return $user;
         });
     }
 
-    // Krok 2: Dokončenie registrácie - vytvorenie alebo výber firmy
     public function completeCompanyRegistration(User $user, array $data): User
     {
         return DB::transaction(function () use ($user, $data) {
-            // Ak vybral existujúcu firmu
+
             if (isset($data['company_id']) && $data['company_id']) {
                 $company = Company::findOrFail($data['company_id']);
 
-                // Aktualizujeme firmu - pridáme user_id
                 $company->update(['user_id' => $user->users_id]);
 
-                // Aktualizujeme meno usera na názov firmy
                 $user->update([
                     'name' => $company->name,
                     'surname' => 'Firma',
                 ]);
             } else {
-                // Vytvoríme novú firmu
+
                 $addr = $data['address'];
                 $address = Address::create([
                     'street' => $addr['street'],
@@ -108,7 +113,7 @@ class UserService
                     'user_id' => $user->users_id,
                 ]);
 
-                // Aktualizujeme meno usera na názov firmy
+
                 $user->update([
                     'name' => $company->name,
                     'surname' => 'Firma',
