@@ -103,10 +103,11 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore()
   userStore.loadUser()
+
   const isAuthenticated = !!userStore.token
   const isGarant = userStore.user?.role === 'garant'
+  const isCompany = userStore.user?.role === 'firma'
 
-  // pre emailové odkazy o zmene stavu praxe
   const expectedEmail = to.query.email as string | undefined
   const redirect = to.query.redirect as string | undefined
   const isStatusChangeLink = expectedEmail && redirect && redirect.startsWith('/internships/')
@@ -142,6 +143,10 @@ router.beforeEach(async (to, from, next) => {
 
   if (to.name === 'InternshipCreate' && isGarant) {
     return next({ name: 'Internships' })
+  }
+
+  if (isAuthenticated && isCompany && !userStore.user?.company && to.name !== 'CompleteCompanyRegistration') {
+    return next({ name: 'CompleteCompanyRegistration' })
   }
 
   next()
