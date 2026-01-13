@@ -156,12 +156,7 @@
         Upraviť prax
       </ActionButton>
 
-      <ActionButton
-        v-if="internship?.status === 'Vytvorená'"
-        color="red"
-        @click="deleteInternship"
-        :disabled="updating"
-      >
+      <ActionButton color="red" @click="deleteInternship" :disabled="updating">
         <Trash2 class="w-4 h-4" />
         Zmazať prax
       </ActionButton>
