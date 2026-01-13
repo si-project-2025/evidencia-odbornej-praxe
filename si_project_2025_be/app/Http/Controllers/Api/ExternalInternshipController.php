@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Internship;
-use App\Models\Status; // Pridaný import modelu Status
+use App\Models\Status;
 use App\Services\InternshipStatusNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
@@ -58,7 +58,7 @@ class ExternalInternshipController extends Controller
         $statusApproved = Status::where('type', 'Schválená')->value('status_id');
         $statusDefended = Status::where('type', 'Obhájená')->value('status_id');
 
-        // --- Overenie oprávnenosti zmeny stavu ---
+
         if (!$internship->is_paid && $internship->status_id !== $statusApproved) {
             Log::warning('Pokus o zmenu stavu praxe, ktorá nie je v stave Schválená', [
                 'internship_id' => $internship->internships_id,
@@ -87,11 +87,11 @@ class ExternalInternshipController extends Controller
             }
         }
 
-        // --- Aktualizácia stavu praxe ---
+
         $internship->status_id = $statusDefended;
         $internship->save();
 
-        // --- Emailové notifikácie ---
+
         app(InternshipStatusNotificationService::class)->sendEmailToStudent($internship);
         app(InternshipStatusNotificationService::class)->sendEmailToCompany($internship);
 
@@ -100,9 +100,51 @@ class ExternalInternshipController extends Controller
             'oauth_token_id' => request()->attributes->get('oauth_token')?->id,
         ]);
 
-        // --- Odpoveď API ---
+
         return response()->json([
             'message' => 'Stav praxe bol úspešne zmenený na "Obhájená".',
+            'data' => [
+                'id' => $internship->internships_id,
+                'status_id' => $internship->status_id,
+                'status' => $internship->status,
+                'updated_at' => $internship->updated_at,
+            ],
+        ], 200);
+    }
+
+    public function notDefend(Internship $internship): JsonResponse
+    {
+        $statusApproved = Status::where('type', 'Schválená')->value('status_id');
+        $statusNotDefended = Status::where('type', 'Neobhájená')->value('status_id');
+
+
+        if ($internship->status_id !== $statusApproved) {
+            Log::warning('Pokus o zmenu stavu praxe, ktorá nie je v stave Schválená', [
+                'internship_id' => $internship->internships_id,
+                'current_status_id' => $internship->status_id,
+                'oauth_token_id' => request()->attributes->get('oauth_token')?->id,
+            ]);
+
+            return response()->json([
+                'message' => 'Operácia bola zamietnutá. Prax je možné označiť ako "Neobhájená" iba ak je v stave "Schválená".',
+                'current_status_id' => $internship->status_id,
+                'internship_id' => $internship->internships_id,
+            ], 409);
+        }
+
+        $internship->status_id = $statusNotDefended;
+        $internship->save();
+
+        app(InternshipStatusNotificationService::class)->sendEmailToStudent($internship);
+        app(InternshipStatusNotificationService::class)->sendEmailToCompany($internship);
+
+        Log::info('Stav praxe úspešne zmenený na Neobhájenú', [
+            'internship_id' => $internship->internships_id,
+            'oauth_token_id' => request()->attributes->get('oauth_token')?->id,
+        ]);
+
+        return response()->json([
+            'message' => 'Stav praxe bol úspešne zmenený na "Neobhájená".',
             'data' => [
                 'id' => $internship->internships_id,
                 'status_id' => $internship->status_id,
