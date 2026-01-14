@@ -4,6 +4,7 @@ import type { Company } from '@/types/internship'
 import { authHeaders } from '@/stores/helpers/auth.ts'
 import { API_URL } from '@/stores/helpers/env.ts'
 import type { CompanyForm } from '@/types/form.ts'
+
 export const useCompaniesStore = defineStore('companies', {
   state: () => ({
     companies: [] as Company[],

@@ -114,9 +114,8 @@ router.beforeEach(async (to, from, next) => {
 
   if (isStatusChangeLink && userStore.user) {
     const currentEmail = userStore.user.email
-    const altEmail = userStore.user.alt_email
 
-    if (currentEmail !== expectedEmail && altEmail !== expectedEmail) {
+    if (currentEmail !== expectedEmail) {
       await userStore.logout()
 
       return next({
@@ -127,6 +126,8 @@ router.beforeEach(async (to, from, next) => {
         },
       })
     }
+
+    await router.push(redirect)
   }
 
   if (to.meta.requiresAuth && !isAuthenticated) {
@@ -138,10 +139,13 @@ router.beforeEach(async (to, from, next) => {
     ['Login', 'Registration'].includes(to.name as string) &&
     !(to.name === 'Registration' && isGarant)
   ) {
+    if (to.query.redirect) {
+      return next({ path: to.query.redirect as string })
+    }
     return next({ name: 'Home' })
   }
 
-  if (to.name === 'InternshipCreate' && isGarant) {
+  if (to.name === 'InternshipCreate' && (isGarant || isCompany)) {
     return next({ name: 'Internships' })
   }
 

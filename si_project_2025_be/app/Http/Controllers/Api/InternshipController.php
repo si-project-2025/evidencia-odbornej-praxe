@@ -11,7 +11,6 @@ use App\Models\Company;
 use App\Models\User;
 use App\Models\Role;
 use App\Services\InternshipStatusNotificationService;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 
 
